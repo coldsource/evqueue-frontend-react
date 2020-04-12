@@ -145,9 +145,10 @@ export class evQueueComponent extends React.Component {
 					{
 						if(xmla[i].documentElement.hasAttribute('error'))
 						{
-							var error = xmla[i].documentElement.getAttribute('error');
-							var code = xmla[i].documentElement.getAttribute('error-code');
-							App.warning("evQueue engine returned error : "+error+" ("+code+")");
+							let error = xmla[i].documentElement.getAttribute('error');
+							if(xmla[i].documentElement.hasAttribute('error-code'))
+								error += ' ('+xmla[i].documentElement.getAttribute('error-code')+')';
+							App.warning("evQueue engine returned error : "+error);
 							reject(error);
 							has_error = true;
 						}
@@ -184,6 +185,8 @@ export class evQueueComponent extends React.Component {
 				document.documentElement.style.cursor = 'default';
 				if(message!==false)
 					App.notice(message);
+			}, () => {
+				document.documentElement.style.cursor = 'default';
 			});
 		}
 	}
