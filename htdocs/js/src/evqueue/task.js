@@ -38,7 +38,7 @@ export class task {
 		this.script_type = 'static';
 		this.script_xpath = '';
 		this.script_source = '';
-		this.output_method = '';
+		this.output_method = 'TEXT';
 		this.merge_stderr = false;
 		this.wd = '';
 		this.condition = '';
