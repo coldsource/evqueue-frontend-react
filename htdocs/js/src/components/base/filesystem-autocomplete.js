@@ -43,6 +43,9 @@ export class FilesystemAutocomplete extends evQueueComponent {
 	fillAutocomplete(val) {
 		var type = this.props.type?this.props.type:'file';
 		
+		let parts = val.split(' ');
+		val = parts[0];
+		
 		if (val.substr(val.length - 1) == "/" || val == "") {
 			this.API({
 				group: 'filesystem',
