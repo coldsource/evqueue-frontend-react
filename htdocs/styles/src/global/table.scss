@@ -43,3 +43,9 @@ table.border {
 		width: 6rem;
 	}
 }
+
+table.hover {
+	tr:hover {
+		background-color: $evq-background-blue;
+	}
+}

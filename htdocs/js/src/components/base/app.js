@@ -21,6 +21,7 @@
 
 import {PageHome} from '../../pages/home.js';
 import {PageSystemState} from '../../pages/system-state.js';
+import {PageRunningConfiguration} from '../../pages/running-configuration.js';
 import {PageWorkflows} from '../../pages/workflows.js';
 import {PageEngineLogs} from '../../pages/enginelogs.js';
 import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
@@ -148,6 +149,8 @@ export class App extends React.Component {
 			return (<PageAuth />);
 		else if(path=='/system-state')
 			return (<PageSystemState />);
+		else if(path=='/running-configuration')
+			return (<PageRunningConfiguration />);
 		else if(path=='/workflows')
 			return (<PageWorkflows />);
 		else if(path=='/logs-engine')

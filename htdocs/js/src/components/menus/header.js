@@ -29,7 +29,8 @@ export class HeaderMenu extends React.Component {
 				icon: 'fa-desktop',
 				submenu: [
 					{ label: 'Workflows Instances', icon: 'fa-cubes', url: '/'},
-					{ label: 'Queues', icon: 'fa-hand-stop-o', url: '/system-state' }
+					{ label: 'Queues', icon: 'fa-hand-stop-o', url: '/system-state' },
+					{ label: 'Running configuration', icon: 'fa-terminal', url: '/running-configuration' }
 				]
 			},
 			{
