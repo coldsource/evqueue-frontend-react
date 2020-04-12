@@ -32,22 +32,26 @@ export class WorkflowSelector extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		var self = this;
-		this.API({group:'workflows',action:'list'}).then( (data) => {
-			var workflows = this.xpath('/response/workflow',data.documentElement);
+		let api = {group:'workflows',action:'list'};
+		this.Subscribe('WORKFLOW_CREATED',api,false);
+		this.Subscribe('WORKFLOW_MODIFIED',api,false);
+		this.Subscribe('WORKFLOW_REMOVED',api,true);
+	}
+	
+	evQueueEvent(data) {
+		let workflows = this.xpath('/response/workflow',data.documentElement);
 			
-			var values = [];
-			for(var i=0;i<workflows.length;i++)
-			{
-				values.push({
-					group: workflows[i].group?workflows[i].group:'No group',
-					name: workflows[i].name,
-					value: this.props.valueType=='id'?workflows[i].id:workflows[i].name
-				});
-			}
-			
-			this.setState({values: values});
-		});
+		let values = [];
+		for(let i=0;i<workflows.length;i++)
+		{
+			values.push({
+				group: workflows[i].group?workflows[i].group:'No group',
+				name: workflows[i].name,
+				value: this.props.valueType=='id'?workflows[i].id:workflows[i].name
+			});
+		}
+		
+		this.setState({values: values});
 	}
 	
 	changeWorkflow(event) {
