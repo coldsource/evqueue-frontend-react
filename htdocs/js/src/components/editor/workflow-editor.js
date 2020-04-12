@@ -62,6 +62,14 @@ export class WorkflowEditor extends evQueueComponent {
 		
 		this.objectUpdate = this.objectUpdate.bind(this);
 		this.onDlgChange = this.onDlgChange.bind(this);
+		
+		document.addEventListener('keydown',(e) => {
+			if(e.ctrlKey==true && e.key=='s')
+			{
+				e.preventDefault();
+				this.save();
+			}
+		});
 	}
 	
 	componentDidMount() {
