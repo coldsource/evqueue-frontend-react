@@ -38,6 +38,7 @@ export class PageWorkflowEditor extends React.Component {
 					onUndo={ () => this.editor.current.undo() }
 					onRedo={ () => this.editor.current.redo() }
 					onExit={ () => this.editor.current.exit() }
+					onDownload={ () => this.editor.current.download() }
 				/>
 				<WorkflowEditor ref={this.editor} />
 			</div>

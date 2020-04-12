@@ -33,6 +33,7 @@ export class WorkflowEditorMenu extends React.Component {
 						<span className="faicon fa-cogs" title="Undo" onClick={ this.props.onProperties }></span>
 						<span className="faicon fa-rotate-left" title="Undo" onClick={ this.props.onUndo }></span>
 						<span className="faicon fa-rotate-right" title="Redo" onClick={ this.props.onRedo }></span>
+						<span className="faicon fa-arrow-down" title="Download workflow XML" onClick={ this.props.onDownload }></span>
 					</div>
 					<div className="menu-right">
 						<span className="faicon fa-remove" title="Exit editor" onClick={ this.props.onExit }></span>

@@ -56,7 +56,7 @@ export class App extends React.Component {
 			var el = e.target;
 			while(el)
 			{
-				if(el.tagName=='A' && el.hasAttribute('href'))
+				if(el.tagName=='A' && el.hasAttribute('href') && !el.hasAttribute('download'))
 				{
 					e.preventDefault();
 			

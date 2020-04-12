@@ -145,6 +145,19 @@ export class WorkflowEditor extends evQueueComponent {
 		this.setState({workflow:this.state.workflow});
 	}
 	
+	download() {
+		var element = document.createElement('a');
+		element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(this.state.workflow.saveXML()));
+		element.setAttribute('download', 'workflow.xml');
+		
+		element.style.display = 'none';
+		document.body.appendChild(element);
+		
+		element.click();
+		
+		document.body.removeChild(element);
+	}
+	
 	onTaskDragStart(e, task) {
 		e.stopPropagation();
 		
