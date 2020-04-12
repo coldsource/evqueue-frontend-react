@@ -93,14 +93,19 @@ export class EventDispatcher {
 		var external_id = 0;
 		for(var i=0;i<subscriptions.length;i++)
 		{
-			if(subscriptions[i].instance==instance && (event===undefined || subscriptions[i].event==event) && (instance_id==0 || subscriptions[i].instance_id==instance_id))
+			if(subscriptions[i].instance===instance && (event===undefined || subscriptions[i].event==event) && (instance_id==0 || subscriptions[i].instance_id==instance_id))
 			{
-				external_id = subscriptions[i].external_id;
+				let sub_event = subscriptions[i].event;
+				let sub_external_id = subscriptions[i].external_id;
+				let sub_instance_id = subscriptions[i].instance_id;
+				
 				subscriptions.splice(i,1);
 				delete this.handlers[external_id];
 				delete this.external_id_ref[external_id];
-				this.evqueue_event.Unsubscribe(event, external_id, instance_id);
-				return;
+				
+				this.evqueue_event.Unsubscribe(sub_event, sub_external_id, sub_instance_id);
+				
+				i--;
 			}
 		}
 	}
