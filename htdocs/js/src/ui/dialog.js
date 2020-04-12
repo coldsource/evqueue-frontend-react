@@ -65,6 +65,8 @@ export class Dialog extends React.Component {
 		
 		this.closed = false;
 		
+		document.addEventListener('keydown',(e) => { if(e.keyCode === 27) this.close() });
+		
 		// Global styles
 		this.height_delta = 0;
 		this.resize_border = 7;
