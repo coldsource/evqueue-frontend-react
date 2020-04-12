@@ -33,17 +33,18 @@ export class Task extends React.Component {
 		if(path=='')
 			return (<span className="cmd action error">empty task</span>);
 		
-		var parts = path.split('/');
-		
-		var cmd = parts[parts.length-1];
 		var params = '';
-		
+		var cmd = path;
 		var idx = cmd.indexOf(' ');
 		if(idx!=-1)
 		{
 			params = cmd.substr(idx);
 			cmd = cmd.substr(0,idx);
 		}
+		
+		let parts = cmd.split('/');
+		
+		cmd = parts[parts.length-1];
 		
 		if(cmd=='')
 			return (<span className="cmd action error">incomplete filename</span>);
