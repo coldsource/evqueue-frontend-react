@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<errors>
-	<error id="wrong-creds">Login or password is incorrect</error>
-	<error id="no-right">You don't have the right to perform this action</error>
-</errors>

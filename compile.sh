@@ -1,3 +1,3 @@
 #!/bin/bash
 
-htdocs/js/react/compile.sh & htdocs/styles/compile.sh && fg
+htdocs/js/compile.sh & htdocs/styles/compile.sh && fg
