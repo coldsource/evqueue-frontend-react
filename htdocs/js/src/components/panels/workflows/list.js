@@ -120,6 +120,10 @@ export class WorkflowsList extends evQueueComponent {
 		App.changeURL('/workflow-editor');
 	}
 	
+	editWorkflow(id) {
+		App.changeURL('/workflow-editor?id='+id);
+	}
+	
 	gitPull() {
 		this.simpleAPI({
 			group: 'git',

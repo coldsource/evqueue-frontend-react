@@ -6,6 +6,10 @@
 	text-align: right;
 }
 
+.float-right {
+	float: right;
+}
+
 .success { color: $evq-success }
 .errorThenSuccess, .warning { color: #e67e22; }
 .error { color: $evq-error; }

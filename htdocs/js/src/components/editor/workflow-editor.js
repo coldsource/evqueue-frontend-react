@@ -22,6 +22,7 @@
 import {App} from '../base/app.js';
 import {evQueueComponent} from '../base/evqueue-component.js';
 import {Dialogs} from '../../ui/dialogs.js';
+import {Confirm} from '../../ui/confirm.js';
 import {Job} from './job.js';
 import {job} from '../../evqueue/job.js';
 import {workflow} from '../../evqueue/workflow.js';
@@ -35,6 +36,9 @@ import {WorkflowProperties} from '../dialogs/workflows/properties.js';
 export class WorkflowEditor extends evQueueComponent {
 	constructor(props) {
 		super(props);
+		
+		this.id = 0;
+		this.modified = false;
 		
 		this.state.workflow = new workflow();
 		this.state.new_job = false;
@@ -61,9 +65,65 @@ export class WorkflowEditor extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		this.API({group: 'workflow', action: 'get', attributes: {id: 84}}).then( (response) => {
-			this.state.workflow.loadXML(response.documentElement.firstChild);
-			this.setState({workflow:this.state.workflow});
+		var id = App.getParameter('id');
+		if(id)
+		{
+			this.API({group: 'workflow', action: 'get', attributes: {id: id}}).then( (response) => {
+				this.state.workflow.loadXML(response.documentElement.firstChild);
+				this.setState({workflow:this.state.workflow});
+				this.id = id;
+			});
+		}
+		else
+		{
+			this.openDialog('properties',0);
+		}
+	}
+	
+	exit() {
+		if(this.modified)
+		{
+			 Dialogs.open(Confirm, {
+				content: "You have unsaved changes, are you sure you want to exit ?",
+				confirm: () => App.changeURL('/workflows')
+			});
+		}
+		else
+			App.changeURL('/workflows');
+	}
+	
+	save() {
+		let workflow = this.state.workflow;
+		let xml = workflow.saveXML();
+		
+		let cmd = {
+			group: 'workflow',
+			attributes: {
+				name: workflow.properties.name,
+				content: btoa(xml),
+				group: workflow.properties.group,
+				comment: workflow.properties.comment
+			}
+		};
+		
+		if(this.id!=0)
+		{
+			cmd['action'] = 'edit';
+			cmd.attributes['id'] = this.id;
+		}
+		else
+			cmd['action'] = 'create';
+		
+		var self = this;
+		this.API(cmd).then( (xml) => {
+			App.notice("Workflow has been successfully saved");
+			self.modified = false
+			
+			if(cmd['action']=='create')
+			{
+				self.id = xml.documentElement.getAttribute('workflow-id');
+				App.changeURL('/workflow-editor?id='+self.id);
+			}
 		});
 	}
 	
@@ -125,7 +185,8 @@ export class WorkflowEditor extends evQueueComponent {
 		e.currentTarget.classList.remove('dragover');
 		var origin_type = e.dataTransfer.getData('origin_type');
 		
-		this.state.workflow.preBackup();
+		this.state.workflow.backup();
+		this.modified = true;
 		
 		var ret;
 		if(origin_type=='task')
@@ -139,12 +200,12 @@ export class WorkflowEditor extends evQueueComponent {
 		else if(origin_type=='job' || origin_type=='branch')
 			this.state.workflow.moveJob(job, position, this.origin_job, origin_type);
 		
-		this.state.workflow.postBackup();
 		this.setState({new_job: false, workflow: this.state.workflow});
 	}
 	
 	objectUpdate(e, obj) {
 		this.state.workflow.backup();
+		this.modified = true;
 		
 		if(Array.isArray(e.target.name))
 		{

@@ -28,9 +28,15 @@ export class WorkflowEditorMenu extends React.Component {
 		return (
 			<div className="evq-workflow-editor-menu">
 				<div>
-					<span className="faicon fa-cogs" title="Undo" onClick={ this.props.onProperties }></span>
-					<span className="faicon fa-rotate-left" title="Undo" onClick={ this.props.onUndo }></span>
-					<span className="faicon fa-rotate-right" title="Redo" onClick={ this.props.onRedo }></span>
+					<div className="menu-left">
+						<span className="faicon fa-save" title="Save" onClick={ this.props.onSave }></span>
+						<span className="faicon fa-cogs" title="Undo" onClick={ this.props.onProperties }></span>
+						<span className="faicon fa-rotate-left" title="Undo" onClick={ this.props.onUndo }></span>
+						<span className="faicon fa-rotate-right" title="Redo" onClick={ this.props.onRedo }></span>
+					</div>
+					<div className="menu-right">
+						<span className="faicon fa-remove" title="Exit editor" onClick={ this.props.onExit }></span>
+					</div>
 				</div>
 			</div>
 		);

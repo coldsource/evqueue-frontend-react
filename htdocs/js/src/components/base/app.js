@@ -33,8 +33,12 @@ export class App extends React.Component {
 		
 		App.global = {instance: this};
 		
+		let url = new URL(document.location);
+		let get = new URLSearchParams(url.search);
+		
 		this.state = {
-			path: this.getPath(),
+			path: url.pathname,
+			get: get,
 			ready: false,
 			messages: [],
 		};
@@ -70,6 +74,7 @@ export class App extends React.Component {
 		App.notice = this.notice.bind(this);
 		App.warning = this.warning.bind(this);
 		App.changeURL = this.changeURL.bind(this);
+		App.getParameter = this.getParameter.bind(this);
 	}
 	
 	loadClusterConfig() {
@@ -84,18 +89,23 @@ export class App extends React.Component {
 		xhr.send();
 	}
 	
+	getParameter(name) {
+		return this.state.get.get(name);
+	}
+	
 	changeURL(path)
 	{
+		let url = new URL(path, document.location);
+		let get = new URLSearchParams(url.search);
+		
 		window.history.pushState('','',path);
-		this.setState({path: path});
+		this.setState({
+			path: url.pathname,
+			get: get
+		});
 	}
 	
-	getPath() {
-		var url = new URL(document.location);
-		return url.pathname;
-	}
-	
-	notice(msg)	{
+	notice(msg) {
 		return this.message('notice', msg);
 	}
 	

@@ -1,7 +1,7 @@
 div.evq-workflow-editor-menu {
 	height: 2rem;
 	
-	div {
+	&>div {
 		position: fixed;
 		top: 0px;
 		left: 0px;
@@ -9,6 +9,17 @@ div.evq-workflow-editor-menu {
 		padding: 0.2rem;
 		border-bottom: 1px solid black;
 		width: 100%;
+		box-sizing: border-box;
+		
+		div.menu-left {
+			display: inline-block;
+			float: left;
+		}
+		
+		div.menu-right {
+			display: inline-block;
+			float: right;
+		}
 		
 		span {
 			margin: 0.2rem;
