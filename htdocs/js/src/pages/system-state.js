@@ -20,7 +20,7 @@
 'use strict';
 
 import {HeaderMenu} from '../components/menus/header.js';
-import {ListQueues} from '../components/panels/queues/list.js';
+import {QueuesState} from '../components/panels/queues/state.js';
 
 export class PageSystemState extends React.Component {
 	constructor(props) {
@@ -33,7 +33,7 @@ export class PageSystemState extends React.Component {
 		return (
 			<div>
 				<HeaderMenu current="System state" />
-				<ListQueues />
+				<QueuesState />
 			</div>
 		);
 	}

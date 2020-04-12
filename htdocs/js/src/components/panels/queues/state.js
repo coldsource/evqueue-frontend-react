@@ -24,7 +24,7 @@ import {Panel} from '../../../ui/panel.js';
 import {Tabs} from '../../../ui/tabs.js';
 import {Tab} from '../../../ui/tab.js';
 
-export class ListQueues extends evQueueComponent {
+export class QueuesState extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
