@@ -66,7 +66,7 @@ export class EngineLogs extends evQueueComponent {
 								<th>Timestamp</th>
 								<th>Severity</th>
 								<th>Node</th>
-								<th>Node</th>
+								<th>Message</th>
 							</tr>
 						</thead>
 						<tbody>
