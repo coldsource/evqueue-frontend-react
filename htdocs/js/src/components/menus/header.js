@@ -52,7 +52,8 @@ export class HeaderMenu extends React.Component {
 				label: 'Logging',
 				icon: 'fa-file-text-o',
 				submenu: [
-					{ label: 'Engine logs', icon: 'fa-file-text-o', url: '/logs-engine' }
+					{ label: 'Engine logs', icon: 'fa-file-text-o', url: '/logs-engine' },
+					{ label: 'Notification logs', icon: 'fa-file-text-o', url: '/logs-notification' }
 				]
 			}
 		];

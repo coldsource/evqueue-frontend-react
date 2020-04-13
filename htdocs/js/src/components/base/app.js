@@ -23,7 +23,8 @@ import {PageHome} from '../../pages/home.js';
 import {PageSystemState} from '../../pages/system-state.js';
 import {PageRunningConfiguration} from '../../pages/running-configuration.js';
 import {PageWorkflows} from '../../pages/workflows.js';
-import {PageEngineLogs} from '../../pages/enginelogs.js';
+import {PageEngineLogs} from '../../pages/engine-logs.js';
+import {PageNotificationLogs} from '../../pages/notification-logs.js';
 import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
 import {PageNotificationTypes} from '../../pages/notification-types.js';
 import {PageNotification} from '../../pages/notification.js';
@@ -157,6 +158,8 @@ export class App extends React.Component {
 			return (<PageWorkflows />);
 		else if(path=='/logs-engine')
 			return (<PageEngineLogs />);
+		else if(path=='/logs-notification')
+			return (<PageNotificationLogs />);
 		else if(path=='/workflow-editor')
 			return (<PageWorkflowEditor />);
 		else if(path=='/notification-plugins')
