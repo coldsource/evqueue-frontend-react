@@ -25,6 +25,8 @@ import {PageRunningConfiguration} from '../../pages/running-configuration.js';
 import {PageWorkflows} from '../../pages/workflows.js';
 import {PageEngineLogs} from '../../pages/enginelogs.js';
 import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
+import {PageNotificationTypes} from '../../pages/notification-types.js';
+import {PageNotification} from '../../pages/notification.js';
 import {Page404} from '../../pages/404.js';
 import {PageAuth} from '../../pages/auth.js';
 
@@ -157,6 +159,10 @@ export class App extends React.Component {
 			return (<PageEngineLogs />);
 		else if(path=='/workflow-editor')
 			return (<PageWorkflowEditor />);
+		else if(path=='/notification-plugins')
+			return (<PageNotificationTypes />);
+		else if(path=='/notification')
+			return (<PageNotification />);
 		
 		return (<Page404 />);
 	}

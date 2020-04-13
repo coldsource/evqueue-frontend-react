@@ -41,6 +41,14 @@ export class HeaderMenu extends React.Component {
 				]
 			},
 			{
+				label: 'Notifications',
+				icon: 'fa-rss',
+				submenu: [
+					{ label: 'Configure', icon: 'fa-rss', url: '/notification' },
+					{ label: 'Manage plugins', icon: 'fa-plug', url: '/notification-plugins' }
+				]
+			},
+			{
 				label: 'Logging',
 				icon: 'fa-file-text-o',
 				submenu: [
