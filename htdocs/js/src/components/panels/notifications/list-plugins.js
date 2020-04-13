@@ -48,7 +48,7 @@ export class ListNotificationPlugins extends evQueueComponent {
 			group: 'notification_type',
 			action: 'unregister',
 			attributes: {id: id}
-		}, "Plugin uninstalled");
+		}, "Plugin uninstalled", "Are you sure you want to remove this plugin ? All associated notifications will also be removed.");
 	}
 	
 	editPlugin(id) {

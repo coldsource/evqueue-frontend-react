@@ -71,7 +71,7 @@ export class ListNotifications extends evQueueComponent {
 			group: 'notification',
 			action: 'delete',
 			attributes: {id: id}
-		}, "Notification removed");
+		}, "Notification removed", "Are you sure you want to remove this notification ? All associated workflows will be unsubscribed.");
 	}
 	
 	renderList() {
