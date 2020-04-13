@@ -108,7 +108,7 @@ export class QueuesState extends evQueueComponent {
 		];
 		
 		return (
-			<div id="listqueues">
+			<div className="evq-queues-state">
 				<Panel left="" title="Queues States" actions={actions}>
 					<Tabs render={this.renderTabs}>
 						{ this.renderNodesList() }

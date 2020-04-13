@@ -37,7 +37,8 @@ export class HeaderMenu extends React.Component {
 				label: 'Settings',
 				icon: 'fa-cogs',
 				submenu: [
-					{ label: 'Workflows', icon: 'fa-cubes', url: 'workflows' }
+					{ label: 'Workflows', icon: 'fa-cubes', url: 'workflows' },
+					{ label: 'Queues', icon: 'fa-cubes', url: 'queues' }
 				]
 			},
 			{

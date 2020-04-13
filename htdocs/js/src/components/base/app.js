@@ -23,6 +23,7 @@ import {PageHome} from '../../pages/home.js';
 import {PageSystemState} from '../../pages/system-state.js';
 import {PageRunningConfiguration} from '../../pages/running-configuration.js';
 import {PageWorkflows} from '../../pages/workflows.js';
+import {PageQueues} from '../../pages/queues.js';
 import {PageEngineLogs} from '../../pages/engine-logs.js';
 import {PageNotificationLogs} from '../../pages/notification-logs.js';
 import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
@@ -167,6 +168,8 @@ export class App extends React.Component {
 			return (<PageRunningConfiguration />);
 		else if(path=='/workflows')
 			return (<PageWorkflows />);
+		else if(path=='/queues')
+			return (<PageQueues />);
 		else if(path=='/logs-engine')
 			return (<PageEngineLogs />);
 		else if(path=='/logs-notification')

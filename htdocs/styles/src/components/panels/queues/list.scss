@@ -1,4 +1,4 @@
-#listqueues {
+div.evq-queues-list {
 	div.queues {
 		display: flex;
 		flex-wrap: wrap;
@@ -31,12 +31,39 @@
 		width: 8rem;
 	}
 	
-	th:nth-child(2) {
-		width: 6rem;
+	td:nth-child(2) {
+		span {
+			display: inline-block;
+			border: 1px solid grey;
+			padding: 0.2rem;
+			margin: 0.2rem;
+			border-radius: 0.4rem;
+			cursor: pointer;
+		}
 	}
 	
 	th:nth-child(3) {
-		width: 7rem;
+		width: 6rem;
+	}
+	
+	td:nth-child(3) {
+		text-align: center;
+	}
+	
+	th:nth-child(4) {
+		width: 6rem;
+	}
+	
+	td:nth-child(4) {
+		text-align: center;
+	}
+	
+	th:nth-child(5) {
+		width: 5rem;
+	}
+	
+	td:nth-child(5) {
+		text-align: center;
 	}
 	
 	tbody tr {

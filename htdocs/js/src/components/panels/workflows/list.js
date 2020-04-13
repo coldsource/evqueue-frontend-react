@@ -22,8 +22,6 @@
 import {App} from '../../base/app.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Panel} from '../../../ui/panel.js';
-import {Tabs} from '../../../ui/tabs.js';
-import {Tab} from '../../../ui/tab.js';
 import {Dialogs} from '../../../ui/dialogs.js';
 import {Prompt} from '../../../ui/prompt.js';
 
