@@ -65,7 +65,9 @@ export class Dialog extends React.Component {
 		
 		this.closed = false;
 		
-		document.addEventListener('keydown',(e) => { if(e.keyCode === 27) this.close() });
+		// Keyboard handling
+		this.onKeyDown = this.onKeyDown.bind(this);
+		document.addEventListener('keydown', this.onKeyDown);
 		
 		// Global styles
 		this.height_delta = 0;
@@ -122,6 +124,11 @@ export class Dialog extends React.Component {
 		var new_height = this.node.querySelector(".evq-dlg-content").clientHeight+this.height_delta;
 		if(old_height!=new_height)
 			this.setState({height: new_height});
+	}
+	
+	onKeyDown(e) {
+		 if(e.keyCode === 27 && this.state.active)
+			 return this.close();
 	}
 	
 	beginMove(event) {
