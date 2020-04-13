@@ -37,8 +37,8 @@ export class WorkflowEditor extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
-		this.id = 0;
-		this.modified = false;
+		this.state.id = 0;
+		this.state.modified = false;
 		
 		this.state.workflow = new workflow();
 		this.state.new_job = false;
@@ -79,7 +79,7 @@ export class WorkflowEditor extends evQueueComponent {
 			this.API({group: 'workflow', action: 'get', attributes: {id: id}}).then( (response) => {
 				this.state.workflow.loadXML(response.documentElement.firstChild);
 				this.setState({workflow:this.state.workflow});
-				this.id = id;
+				this.setState({id: id});
 			});
 		}
 		else
@@ -89,7 +89,7 @@ export class WorkflowEditor extends evQueueComponent {
 	}
 	
 	exit() {
-		if(this.modified)
+		if(this.state.modified)
 		{
 			 Dialogs.open(Confirm, {
 				content: "You have unsaved changes, are you sure you want to exit ?",
@@ -114,10 +114,10 @@ export class WorkflowEditor extends evQueueComponent {
 			}
 		};
 		
-		if(this.id!=0)
+		if(this.state.id!=0)
 		{
 			cmd['action'] = 'edit';
-			cmd.attributes['id'] = this.id;
+			cmd.attributes['id'] = this.state.id;
 		}
 		else
 			cmd['action'] = 'create';
@@ -125,12 +125,13 @@ export class WorkflowEditor extends evQueueComponent {
 		var self = this;
 		this.API(cmd).then( (xml) => {
 			App.notice("Workflow has been successfully saved");
-			self.modified = false
+			self.setState({modified: false});
 			
 			if(cmd['action']=='create')
 			{
-				self.id = xml.documentElement.getAttribute('workflow-id');
-				App.changeURL('/workflow-editor?id='+self.id);
+				let id = xml.documentElement.getAttribute('workflow-id');
+				self.setState({id: id});
+				App.changeURL('/workflow-editor?id='+id);
 			}
 		});
 	}
@@ -207,7 +208,7 @@ export class WorkflowEditor extends evQueueComponent {
 		var origin_type = e.dataTransfer.getData('origin_type');
 		
 		this.state.workflow.backup();
-		this.modified = true;
+		this.setState({modified: true});
 		
 		var ret;
 		if(origin_type=='task')
@@ -226,7 +227,7 @@ export class WorkflowEditor extends evQueueComponent {
 	
 	objectUpdate(e, obj) {
 		this.state.workflow.backup();
-		this.modified = true;
+		this.setState({modified: true});
 		
 		if(Array.isArray(e.target.name))
 		{
@@ -273,7 +274,7 @@ export class WorkflowEditor extends evQueueComponent {
 			if(dialog.type=='properties')
 			{
 				let properties = this.state.workflow.properties;
-				return (<WorkflowProperties key={key} properties={properties} onChange={ (e, obj) => this.onDlgChange(e, obj, properties) } onClose={ (e) => this.closeDialog(dialog) } />);
+				return (<WorkflowProperties key={key} id={this.state.id} properties={properties} onChange={ (e, obj) => this.onDlgChange(e, obj, properties) } onClose={ (e) => this.closeDialog(dialog) } />);
 			}
 			else if(dialog.type=='job')
 			{
