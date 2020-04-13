@@ -114,6 +114,16 @@ export class QueuesList extends evQueueComponent {
 	
 	renderQueues() {
 		return this.state.queues.map( (queue) => {
+			let remove_title = "Remove queue";
+			let remove_onclick = (e) => this.removeQueue(e, queue.id);
+			let remove_class = "";
+			if(this.state.queue_workflows[queue.name]!==undefined)
+			{
+				remove_title = "Cannot remove used queue";
+				remove_onclick = undefined;
+				remove_class = "disabled";
+			}
+			
 			return (
 				<tr key={queue.name}>
 					<td>{queue.name}</td>
@@ -122,8 +132,8 @@ export class QueuesList extends evQueueComponent {
 					<td>{queue.concurrency}</td>
 					<td>{queue.dynamic}</td>
 					<td className="tdActions">
-						<span className="faicon fa-edit" onClick={ (e) => this.editQueue(e, queue.id) } />
-						<span className="faicon fa-remove" onClick={ (e) => this.removeQueue(e, queue.id) } />
+						<span className="faicon fa-edit" title="Edit queue" onClick={ (e) => this.editQueue(e, queue.id) } />
+						<span className={"faicon fa-remove "+remove_class} title={remove_title} onClick={remove_onclick } />
 					</td>
 				</tr>
 			);
