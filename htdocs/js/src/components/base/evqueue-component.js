@@ -164,31 +164,41 @@ export class evQueueComponent extends React.Component {
 	simpleAPI(api,message=false,confirm=false) {
 		var self = this;
 		
-		if(confirm!==false)
-		{
-			Dialogs.open(Confirm,{
-				content: confirm,
-				confirm: () => {
-					document.documentElement.style.cursor = 'progress';
-					self.API(api).then( () => {
-						document.documentElement.style.cursor = 'default';
-						if(message!==false)
-							App.notice(message);
-					});
-				}
-			});
-		}
-		else
-		{
-			document.documentElement.style.cursor = 'progress';
-			self.API(api).then( () => {
-				document.documentElement.style.cursor = 'default';
-				if(message!==false)
-					App.notice(message);
-			}, () => {
-				document.documentElement.style.cursor = 'default';
-			});
-		}
+		return new Promise(function(resolve, reject) {
+			if(confirm!==false)
+			{
+				Dialogs.open(Confirm,{
+					content: confirm,
+					confirm: () => {
+						document.documentElement.style.cursor = 'progress';
+						self.API(api).then(
+							(ok) => {
+								document.documentElement.style.cursor = 'default';
+								if(message!==false)
+									App.notice(message);
+								resolve(ok);
+							},
+							(ko) => {
+								reject(ko);
+							}
+						);
+					}
+				});
+			}
+			else
+			{
+				document.documentElement.style.cursor = 'progress';
+				self.API(api).then( (ok) => {
+					document.documentElement.style.cursor = 'default';
+					if(message!==false)
+						App.notice(message);
+					resolve(ok);
+				}, (ko) => {
+					document.documentElement.style.cursor = 'default';
+					reject(ko);
+				});
+			}
+		});
 	}
 	
 	prepareAPI(event) {
