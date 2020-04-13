@@ -28,32 +28,32 @@ export class HeaderMenu extends React.Component {
 				label: 'System state',
 				icon: 'fa-desktop',
 				submenu: [
-					{ label: 'Workflows Instances', icon: 'fa-cubes', url: '/'},
-					{ label: 'Queues', icon: 'fa-hand-stop-o', url: '/system-state' },
-					{ label: 'Running configuration', icon: 'fa-terminal', url: '/running-configuration' }
+					{ label: 'Workflows Instances', icon: 'fa-cubes', url: ''},
+					{ label: 'Queues', icon: 'fa-hand-stop-o', url: 'system-state' },
+					{ label: 'Running configuration', icon: 'fa-terminal', url: 'running-configuration' }
 				]
 			},
 			{
 				label: 'Settings',
 				icon: 'fa-cogs',
 				submenu: [
-					{ label: 'Workflows', icon: 'fa-cubes', url: '/workflows' }
+					{ label: 'Workflows', icon: 'fa-cubes', url: 'workflows' }
 				]
 			},
 			{
 				label: 'Notifications',
 				icon: 'fa-rss',
 				submenu: [
-					{ label: 'Configure', icon: 'fa-rss', url: '/notification' },
-					{ label: 'Manage plugins', icon: 'fa-plug', url: '/notification-plugins' }
+					{ label: 'Configure', icon: 'fa-rss', url: 'notification' },
+					{ label: 'Manage plugins', icon: 'fa-plug', url: 'notification-plugins' }
 				]
 			},
 			{
 				label: 'Logging',
 				icon: 'fa-file-text-o',
 				submenu: [
-					{ label: 'Engine logs', icon: 'fa-file-text-o', url: '/logs-engine' },
-					{ label: 'Notification logs', icon: 'fa-file-text-o', url: '/logs-notification' }
+					{ label: 'Engine logs', icon: 'fa-file-text-o', url: 'logs-engine' },
+					{ label: 'Notification logs', icon: 'fa-file-text-o', url: 'logs-notification' }
 				]
 			}
 		];
@@ -100,7 +100,7 @@ export class HeaderMenu extends React.Component {
 	render() {
 		return (
 			<div className="evq-headermenu">
-				<div><a href="/"><img src="images/evQueue-small.svg" title="evQueue" /></a></div>
+				<div><a href="."><img src="images/evQueue-small.svg" title="evQueue" /></a></div>
 				<ul className="level1">
 					{ this.level1() }
 				</ul>

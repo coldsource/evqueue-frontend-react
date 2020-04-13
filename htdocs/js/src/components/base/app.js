@@ -99,6 +99,13 @@ export class App extends React.Component {
 	
 	changeURL(path)
 	{
+		// Use relative path to make everything work even if not on root
+		if(path[0]=='/')
+			path = path.substr(1);
+		
+		if(path=='')
+			path='.';
+		
 		let url = new URL(path, document.location);
 		let get = new URLSearchParams(url.search);
 		
@@ -113,7 +120,7 @@ export class App extends React.Component {
 		return this.message('notice', msg);
 	}
 	
-	warning(msg)	{
+	warning(msg) {
 		return this.message('warning', msg);
 	}
 	
@@ -140,9 +147,13 @@ export class App extends React.Component {
 	route() {
 		var path = this.state.path;
 		
+		// Make path work even if we are in subfolder
+		let parts = path.split('/');
+		path = '/'+parts[parts.length-1];
+		
 		if(this.state.path!='/auth' && (window.localStorage.authenticated===undefined || window.localStorage.authenticated!='true'))
 		{
-			window.history.pushState('','','/auth');
+			window.history.pushState('','','auth');
 			path = '/auth';
 		}
 		
