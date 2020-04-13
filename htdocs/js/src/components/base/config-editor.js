@@ -44,7 +44,7 @@ export class ConfigEditor extends React.Component {
 				return (
 					<div key={field.name}>
 						<label>{field.label}</label>
-						<Select name={field.name} value={this.props.values[field.name]} values={values} onChange={this.props.onChange} />
+						<Select name={field.name} value={this.props.values[field.name]} values={values} placeholder={field.placeholder} onChange={this.props.onChange} />
 					</div>
 				);
 			}
@@ -54,7 +54,7 @@ export class ConfigEditor extends React.Component {
 				return (
 					<div key={field.name}>
 						<label>{field.label}</label>
-						<input type="text" name={field.name} value={this.props.values[field.name]} onChange={this.props.onChange} />
+						<input type="text" name={field.name} value={this.props.values[field.name]} placeholder={field.placeholder} onChange={this.props.onChange} />
 					</div>
 				);
 			}
@@ -64,7 +64,7 @@ export class ConfigEditor extends React.Component {
 				return (
 					<div key={field.name}>
 						<label>{field.label}</label>
-						<textarea name={field.name} value={this.props.values[field.name]} onChange={this.props.onChange} />
+						<textarea name={field.name} value={this.props.values[field.name]} placeholder={field.placeholder} onChange={this.props.onChange} />
 					</div>
 				);
 			}
