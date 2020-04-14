@@ -169,9 +169,17 @@ export class Dialog extends React.Component {
 			return;
 		}
 		
+		let top = this.dlg_start_pos.y+event.clientY-this.cursor_start_pos.y;
+		if(top<0)
+			top = 0;
+		
+		let left = this.dlg_start_pos.x+event.clientX-this.cursor_start_pos.x;
+		if(left<0)
+			left = 0;
+		
 		this.setState({
-			top:this.dlg_start_pos.y+event.clientY-this.cursor_start_pos.y,
-			left:this.dlg_start_pos.x+event.clientX-this.cursor_start_pos.x,
+			top: top,
+			left: left,
 		});
 	}
 	
