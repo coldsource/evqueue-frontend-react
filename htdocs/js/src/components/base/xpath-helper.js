@@ -20,6 +20,7 @@
 'use strict';
 
 import {Select} from '../../ui/select.js';
+import {EventsUtils} from "../../utils/events.js";
 
 export class XPathHelper extends React.Component {
 	constructor(props) {
@@ -39,18 +40,11 @@ export class XPathHelper extends React.Component {
 		
 		var val;
 		if(e.target.name=='node')
-			val = e.target.value + '/' + this.composed.xpath;
+			val = e.target.value + (this.composed.xpath?'/':'') + this.composed.xpath;
 		else
-			val = this.composed.node + '/' + e.target.value;
+			val = this.composed.node + (e.target.value?'/':'') + e.target.value;
 		
-		var event = {
-			target: {
-				name: this.props.name,
-				value: val
-			}
-		};
-		
-		this.props.onChange(event);
+		this.props.onChange(EventsUtils.createEvent(this.props.name, val));
 	}
 	
 	static renderValue(value, path) {
