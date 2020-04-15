@@ -32,6 +32,7 @@ export class InstanceFilters extends evQueueComponent {
 		super(props,'any');
 		
 		this.state.filters = {
+			filter_error: 'no',
 			filter_node: '',
 			filter_name: '',
 			filter_tag_id: 0,
@@ -191,7 +192,7 @@ export class InstanceFilters extends evQueueComponent {
 			return 'Showing all terminated workflows';
 		
 		var explain;
-		if(this.state.filters.filter_error)
+		if(this.state.filters.filter_error=='yes')
 			explain = 'Showing failed ';
 		else
 			explain = 'Showing terminated ';

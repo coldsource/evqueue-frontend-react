@@ -21,14 +21,15 @@
 
 import {ListInstances} from './list.js';
 import {Panel} from '../../../ui/panel.js';
+import {EventsUtils} from '../../../utils/events.js';
 
 export class TerminatedInstances extends ListInstances {
 	constructor(props) {
 		super(props,'any');
 		
 		// Off-state attributes
-		this.search_filters = {};
-		this.current_page = 1;
+		this.state.search_filters = {};
+		this.state.current_page = 1;
 		this.items_per_page = 30;
 		
 		// Bind actions
@@ -36,6 +37,7 @@ export class TerminatedInstances extends ListInstances {
 		this.previousPage = this.previousPage.bind(this);
 		this.removeInstance = this.removeInstance.bind(this);
 		this.updateFilters = this.updateFilters.bind(this);
+		this.toggleErrorFilter = this.toggleErrorFilter.bind(this);
 	}
 	
 	componentDidMount() {
@@ -76,15 +78,29 @@ export class TerminatedInstances extends ListInstances {
 			return <span className="faicon fa-check success" title="Workflow terminated"></span>;
 	}
 	
+	toggleErrorFilter() {
+		let e = EventsUtils.createEvent('filter_error',this.state.search_filters.filter_error=='yes'?'no':'yes');
+		this.props.filters.current.filterChange(e);
+	}
+	
+	renderErrorFilter() {
+		if(this.state.search_filters.filter_error!='yes')
+			return (<span className="faicon fa-exclamation evq-error-filter" title="Show only failed workflows" onClick={this.toggleErrorFilter} />);
+		else
+			return (<span className="faicon fa-exclamation evq-error-filter error" title="Show all workflows" onClick={this.toggleErrorFilter} />);
+	}
+	
 	renderTitle() {
+		let current_page = this.state.current_page;
+		
 		var title = (
 			<span>
 				Terminated workflows
 				&#160;
-				{ this.current_page>1?(<span className="faicon fa-backward" onClick={this.previousPage}></span>):'' }
+				{ current_page>1?(<span className="faicon fa-backward" onClick={this.previousPage}></span>):'' }
 				&#160;
-				{ (this.current_page-1)*this.items_per_page + 1 } - { this.current_page*this.items_per_page } &#47; {this.state.workflows.current.rows}
-				{ this.current_page*this.items_per_page<this.state.workflows.current.rows?(<span className="faicon fa-forward" onClick={this.nextPage}></span>):''}
+				{ (current_page-1)*this.items_per_page + 1 } - { current_page*this.items_per_page } &#47; {this.state.workflows.current.rows}
+				{ current_page*this.items_per_page<this.state.workflows.current.rows?(<span className="faicon fa-forward" onClick={this.nextPage}></span>):''}
 			</span>
 			
 		);
@@ -94,17 +110,16 @@ export class TerminatedInstances extends ListInstances {
 		];
 		
 		return (
-			<Panel left="" title={title} actions={actions} />
+			<Panel left={this.renderErrorFilter()} title={title} actions={actions} />
 		);
 	}
 	
 	updateFilters(search_filters) {
+		search_filters.limit = this.items_per_page;
+		search_filters.offset = (this.state.current_page-1)*this.items_per_page;
 		this.setState({search_filters: search_filters});
 		
 		this.Unsubscribe('INSTANCE_TERMINATED');
-		
-		this.search_filters.limit = this.items_per_page;
-		this.search_filters.offset = (this.current_page-1)*this.items_per_page;
 		
 		var api = {
 			group: 'instances',
@@ -116,12 +131,12 @@ export class TerminatedInstances extends ListInstances {
 	}
 	
 	nextPage() {
-		this.current_page++;
-		this.updateFilters(this.search_filters,this.current_page);
+		this.setState({current_page: ++this.state.current_page});
+		this.updateFilters(this.state.search_filters);
 	}
 	
 	previousPage() {
-		this.current_page--;
-		this.updateFilters(this.search_filters,this.current_page);
+		this.setState({current_page: --this.state.current_page});
+		this.updateFilters(this.state.search_filters);
 	}
 }

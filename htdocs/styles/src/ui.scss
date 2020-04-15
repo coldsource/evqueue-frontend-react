@@ -25,7 +25,8 @@
 @import 'components/base/app.scss';
 @import 'components/base/xpath-helper.scss';
 @import 'components/base/xpath-input.scss';
-@import 'components/panels/instances/details.scss';
+@import 'components/panels/instances/executing.scss';
+@import 'components/panels/instances/terminated.scss';
 @import 'components/panels/instances/filters.scss';
 @import 'components/panels/queues/state.scss';
 @import 'components/panels/queues/list.scss';
@@ -33,6 +34,7 @@
 @import 'components/panels/logs/filters.scss';
 @import 'components/panels/logs/engine.scss';
 @import 'components/panels/status/running-configuration.scss';
+@import 'components/dialogs/instances/details.scss';
 @import 'components/dialogs/tasks/editor.scss';
 @import 'components/dialogs/tasks/script-editor.scss';
 @import 'components/dialogs/workflows/value-selector.scss';

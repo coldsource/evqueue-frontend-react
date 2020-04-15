@@ -29,6 +29,7 @@ export class PageHome extends React.Component {
 		super(props);
 		
 		this.terminated_instances = React.createRef();
+		this.filters = React.createRef();
 	}
 	
 	render() {
@@ -37,9 +38,9 @@ export class PageHome extends React.Component {
 				<HeaderMenu current="System state" />
 				<ExecutingInstances />
 				<br />
-				<InstanceFilters onChange={this.terminated_instances}/>
+				<InstanceFilters ref={this.filters} onChange={this.terminated_instances}/>
 				<br />
-				<TerminatedInstances ref={this.terminated_instances} />
+				<TerminatedInstances ref={this.terminated_instances} filters={this.filters} />
 			</div>
 		);
 	}
