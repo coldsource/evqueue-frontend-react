@@ -114,7 +114,7 @@ export class XPathHelper extends React.Component {
 			<div className="evq-xpath-helper">
 				<fieldset>
 					<legend>Choose task</legend>
-					<Select name="node" values={path} value={this.composed.node} filter={false} onChange={ (e) => this.changeValue(e, 'value') } />
+					<Select name="node" values={path} value={this.composed.node} groupsort={false} filter={false} onChange={ (e) => this.changeValue(e, 'value') } />
 				</fieldset>
 				<fieldset>
 					<legend>Choose output node</legend>

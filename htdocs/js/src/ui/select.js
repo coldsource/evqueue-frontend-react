@@ -146,7 +146,9 @@ export class Select extends React.Component {
 		var ret = [];
 		
 		var groups = Object.keys(groupped_values);
-		groups.sort(function(a,b) { return a.toLowerCase()<=b.toLowerCase()?-1:1});
+		if(this.props.groupsort===undefined || this.props.groupsort===true)
+			groups.sort(function(a,b) { return a.toLowerCase()<=b.toLowerCase()?-1:1});
+		
 		for(var i=0;i<groups.length;i++)
 		{
 			var group = groups[i];

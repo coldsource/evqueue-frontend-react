@@ -400,11 +400,11 @@ export class workflow {
 	getObjectPath(type, id) {
 		let path = [];
 		
-		this.parent_depth = 0;
-		var ret = this.getObject(type, id, this.subjobs, path);
-		
 		for(let i=0;i<this.properties.parameters.length;i++)
 			path.push({group: 'Workflow parameters', value: "evqGetWorkflowParameter('"+this.properties.parameters[i]+"')", name: "Parameter: "+this.properties.parameters[i]});
+		
+		this.parent_depth = 0;
+		var ret = this.getObject(type, id, this.subjobs, path);
 		
 		return ret===false?false:path;
 	}
