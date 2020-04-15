@@ -83,8 +83,7 @@ export class ValueSelector extends evQueueComponent {
 									"In XPath-copy mode, the xml subtree is extracted from the output (or input) of a preceding task or from a workflow parameter. The resulting value is an XML subtree."
 								}
 							</div>
-							<div>
-								<br />
+							<div className="xpath-mode">
 								XPath mode&#160;:&#160;
 								<Select values={[{name: 'value', value: 'value'},{name: 'copy', value: 'copy'}]} value={type} filter={false} onChange={this.changeMode} />
 							</div>
@@ -92,8 +91,8 @@ export class ValueSelector extends evQueueComponent {
 						</Tab>
 						<Tab title="Advanced">
 							<div>Enter here your XPath expression.</div>
-							<div>
-								<br />XPath mode&#160;:&#160;
+							<div className="xpath-mode">
+								XPath mode&#160;:&#160;
 								<Select values={[{name: 'value', value: 'value'},{name: 'copy', value: 'copy'}]} value={type} filter={false} onChange={this.changeMode} />
 							</div>
 							<XPathInput name="advanced" value={this.props.part.value} onChange={ (e) => this.triggerPartChange(this.props.part.type, e.target.value) } />

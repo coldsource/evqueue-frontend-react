@@ -1,8 +1,12 @@
 div.evq-value-selector {
+	div.xpath-mode {
+		margin-top: 0.8rem;
+		margin-bottom: 0.8rem;
+	}
+	
 	input[name="simple_value"], div.evq-xpath-input {
 		width: 100%;
 		box-sizing: border-box;
-		margin-top: 1rem;
 		margin-bottom: 0.3rem;
 	}
 }
