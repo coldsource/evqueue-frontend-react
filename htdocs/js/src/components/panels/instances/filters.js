@@ -231,7 +231,7 @@ export class InstanceFilters extends evQueueComponent {
 			for(let i=0;i<this.state.custom_attributes.length;i++)
 			{
 				let name = this.state.custom_attributes[i];
-				let value = this.state.filters['customattributes_'+name];
+				let value = this.state.filters['customattribute_'+name];
 				if(!value)
 					continue;
 				
@@ -247,7 +247,11 @@ export class InstanceFilters extends evQueueComponent {
 		if(explain_parameters)
 			explain += ' '+explain_parameters;
 		if(explain_customattributes)
+		{
+			if(explain_parameters)
+				explain += ', ';
 			explain += ' '+explain_customattributes;
+		}
 
 		if(this.state.filters.filter_node)
 			explain += ' on node '+this.state.filters.filter_node;
