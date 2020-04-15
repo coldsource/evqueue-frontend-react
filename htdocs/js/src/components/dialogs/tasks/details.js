@@ -22,6 +22,7 @@
 import {Dialog} from '../../../ui/dialog.js';
 import {Tabs} from '../../../ui/tabs.js';
 import {Tab} from '../../../ui/tab.js';
+import {XML} from '../../../ui/xml.js';
 
 export class TaskDetails extends React.Component {
 	constructor(props) {
@@ -54,9 +55,9 @@ export class TaskDetails extends React.Component {
 		if(task.input.length==0)
 			return (<div>This task has no inputs</div>);
 		
-		return task.input.map( (input) => {
+		return task.input.map( (input, idx) => {
 			return (
-				<div key={input.name}>
+				<div key={idx}>
 					<div>{input.name}</div>
 					<div>{input.domnode.textContent}</div>
 				</div>
@@ -115,6 +116,7 @@ export class TaskDetails extends React.Component {
 				</div>
 			);
 		}
+		
 		
 		if(task['output-method']=='XML' && output.retval==0)
 			return (<XML xml={output.domnode}/>);
