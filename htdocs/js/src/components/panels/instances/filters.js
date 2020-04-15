@@ -31,7 +31,7 @@ export class InstanceFilters extends evQueueComponent {
 	constructor(props) {
 		super(props,'any');
 		
-		this.state.filters = {
+		this.empty_filters = {
 			filter_error: 'no',
 			filter_node: '',
 			filter_name: '',
@@ -46,7 +46,9 @@ export class InstanceFilters extends evQueueComponent {
 			dt_at: '',
 			hr_at: '',
 			filter_ended_from: ''
-		}
+		};
+		
+		this.state.filters = Object.assign({}, this.empty_filters);
 		
 		
 		this.state.opened = false;
@@ -166,15 +168,10 @@ export class InstanceFilters extends evQueueComponent {
 	}
 	
 	cleanFilters() {
-		var filters = this.state.filters;
-		for(name in filters)
-			filters[name] = '';
-		filters.filter_tag_id = 0;
-		
-		this.setState({filters:filters, opened:false});
+		this.setState({filters:Object.assign({}, this.empty_filters), opened:false});
 		
 		if(this.props.onChange.current)
-			this.props.onChange.current.updateFilters(filters);
+			this.props.onChange.current.updateFilters(this.empty_filters);
 	}
 	
 	hasFilter() {
