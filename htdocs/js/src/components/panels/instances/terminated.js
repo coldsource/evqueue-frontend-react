@@ -99,7 +99,7 @@ export class TerminatedInstances extends ListInstances {
 	}
 	
 	updateFilters(search_filters) {
-		Object.assign(this.search_filters, search_filters);
+		this.setState({search_filters: search_filters});
 		
 		this.Unsubscribe('INSTANCE_TERMINATED');
 		

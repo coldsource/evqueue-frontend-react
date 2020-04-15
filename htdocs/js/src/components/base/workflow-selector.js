@@ -27,6 +27,7 @@ export class WorkflowSelector extends evQueueComponent {
 		super(props);
 		
 		this.state.values = [];
+		this.state.id_name = {};
 		
 		this.changeWorkflow = this.changeWorkflow.bind(this);
 	}
@@ -42,22 +43,29 @@ export class WorkflowSelector extends evQueueComponent {
 		let workflows = this.xpath('/response/workflow',data.documentElement);
 			
 		let values = [];
+		let id_name = {};
 		for(let i=0;i<workflows.length;i++)
 		{
 			values.push({
 				group: workflows[i].group?workflows[i].group:'No group',
 				name: workflows[i].name,
-				value: this.props.valueType=='id'?workflows[i].id:workflows[i].name
+				value: workflows[i].id
 			});
+			
+			id_name[workflows[i].id] = workflows[i].name;
 		}
 		
-		this.setState({values: values});
+		this.setState({values: values, id_name: id_name});
 	}
 	
 	changeWorkflow(event) {
 		this.setState({value:event.target.value});
+		
 		if(this.props.onChange)
+		{
+			event.target.value2 = this.state.id_name[event.target.value];
 			this.props.onChange(event);
+		}
 	}
 	
 	render() {

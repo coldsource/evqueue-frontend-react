@@ -47,8 +47,10 @@ export class InstanceFilters extends evQueueComponent {
 			filter_ended_from: ''
 		}
 		
+		
 		this.state.opened = false;
 		this.state.parameters = [];
+		this.state.custom_attributes = [];
 		
 		this.hours = [];
 		for(var i=0;i<24;i++)
@@ -83,8 +85,58 @@ export class InstanceFilters extends evQueueComponent {
 		return date+' '+hour;
 	}
 	
+	loadWorkflowProperties(id) {
+		// Reset old parameters and custom attributes filters
+		let filters = Object.assign({}, this.state.filters);
+		for(name in filters)
+		{
+			if(name.substr(0,10)=='parameter_' || name.substr(0,16)=='customattribute_')
+				delete filters[name];
+		}
+		
+		// Get parameters and custom attributes of this workflow
+		this.API({
+			group: 'workflow',
+			action: 'get',
+			attributes: {id: id}
+		}).then( (response) => {
+			let parameters = [];
+			let custom_attributes = [];
+			
+			let parameter_ite = response.evaluate('/response/workflow/workflow/parameters/parameter', response.documentElement);
+			let parameter_node;
+			while(parameter_node = parameter_ite.iterateNext())
+			{
+				let name = parameter_node.getAttribute('name');
+				parameters.push(name);
+				filters['parameter_'+name] = '';
+			}
+			
+			let custom_attribute_ite = response.evaluate('/response/workflow/workflow/custom-attributes/custom-attribute', response.documentElement);
+			let custom_attribute_node;
+			while(custom_attribute_node = custom_attribute_ite.iterateNext())
+			{
+				let name = custom_attribute_node.getAttribute('name');
+				custom_attributes.push(name);
+				filters['customattribute_'+name] = '';
+			}
+			
+			this.setState({parameters: parameters, custom_attributes: custom_attributes, filters: filters});
+			
+			if(this.props.onChange.current)
+				this.props.onChange.current.updateFilters(filters);
+		});
+	}
+	
 	filterChange(event, opt) {
 		this.setFilter(event.target.name,event.target.value, opt);
+		
+		if(event.target.name=='filter_workflow_id')
+		{
+			this.setFilter('filter_workflow',event.target.value2, opt); // value is workflow ID and value2 is workflow name
+			this.loadWorkflowProperties(event.target.value);
+			return;
+		}
 		
 		if(event.target.name=='dt_inf' || event.target.name=='hr_inf')
 			this.setFilter('filter_launched_from',this.implodeDate(this.state.filters.dt_inf,this.state.filters.hr_inf));
@@ -156,23 +208,73 @@ export class InstanceFilters extends evQueueComponent {
 		else if(this.state.filters.filter_tag_id)
 			explain += ' tagged « '+this.state.filters.tag_label+' »';
 
-		var i = 0;
-		if(Object.keys(this.state.parameters).length)
+		let explain_parameters = '';
+		if(this.state.parameters.length>0)
 		{
-			explain += ' having ';
-			for(var param in parameters)
+			for(let i=0;i<this.state.parameters.length;i++)
 			{
-				if(i>0)
-					explain += ', ';
-				explain+= param.substr(10)+'='+parameters[param];
+				let name = this.state.parameters[i];
+				let value = this.state.filters['parameter_'+name];
+				if(!value)
+					continue;
+				
+				if(explain_parameters!='')
+					explain_parameters += ', ';
+				explain_parameters+= name+' = '+value+'';
 				i++;
 			}
 		}
+		
+		let explain_customattributes = '';
+		if(this.state.custom_attributes.length>0)
+		{
+			for(let i=0;i<this.state.custom_attributes.length;i++)
+			{
+				let name = this.state.custom_attributes[i];
+				let value = this.state.filters['customattributes_'+name];
+				if(!value)
+					continue;
+				
+				if(explain_customattributes!='')
+					explain_customattributes += ', ';
+				explain_customattributes+= name+' = '+value+'';
+				i++;
+			}
+		}
+		
+		if(explain_parameters || explain_customattributes)
+				explain += ' having';
+		if(explain_parameters)
+			explain += ' '+explain_parameters;
+		if(explain_customattributes)
+			explain += ' '+explain_customattributes;
 
 		if(this.state.filters.filter_node)
 			explain += ' on node '+this.state.filters.filter_node;
 		
 		return explain;
+	}
+	
+	renderParameterFilters() {
+		return this.state.parameters.map( (parameter) => {
+			return (
+				<div key={parameter}>
+					<label>{parameter}</label>
+					<input type="text" name={'parameter_'+parameter} value={this.state.filters['parameter_'+parameter]} onChange={this.filterChange} />
+				</div>
+			);
+		});
+	}
+	
+	renderCustomAttributeFilters() {
+		return this.state.custom_attributes.map( (custom_attribute) => {
+			return (
+				<div key={custom_attribute}>
+					<label>{custom_attribute}</label>
+					<input type="text" name={'customattribute_'+custom_attribute} value={this.state.filters['customattribute_'+custom_attribute]} onChange={this.filterChange} />
+				</div>
+			);
+		});
 	}
 	
 	renderFilters() {
@@ -187,8 +289,10 @@ export class InstanceFilters extends evQueueComponent {
 				</div>
 				<div>
 					<label>Workflow</label>
-					<WorkflowSelector valueType="name" name="filter_workflow" value={this.state.filters.filter_workflow} onChange={this.filterChange}/>
+					<WorkflowSelector valueType="name" name="filter_workflow_id" value={this.state.filters.filter_workflow_id} onChange={this.filterChange}/>
 				</div>
+				{ this.renderParameterFilters() }
+				{ this.renderCustomAttributeFilters() }
 				<div>
 					<label>Tag</label>
 					<TagSelector name="filter_tag_id" value={this.state.filters.filter_tag_id} onChange={this.filterChange}/>
