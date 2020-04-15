@@ -153,6 +153,16 @@ export class task {
 	toXML(xmldoc) {
 		let task_node = xmldoc.createElement('task');
 		
+		for(let i=0;i<this.inputs.length;i++)
+			task_node.appendChild(this.inputs[i].toXML(xmldoc));
+		
+		if(this.stdin.parts.length>0)
+		{
+			let stdin_node = task_node.appendChild(xmldoc.createElement('stdin'));
+			for(let i=0;i<this.stdin.parts.length;i++)
+				stdin_node.appendChild(this.stdin.parts[i].toXML(xmldoc));
+		}
+		
 		if(this.type && this.type=='SCRIPT')
 			task_node.setAttribute('type', this.type);
 		if(this.type=='BINARY')
@@ -195,16 +205,6 @@ export class task {
 			task_node.setAttribute('host', this.host);
 		if(this.use_agent)
 			task_node.setAttribute('use-agent', this.use_agent?'yes':'no');
-		
-		for(let i=0;i<this.inputs.length;i++)
-			task_node.appendChild(this.inputs[i].toXML(xmldoc));
-		
-		if(this.stdin.parts.length>0)
-		{
-			let stdin_node = task_node.appendChild(xmldoc.createElement('stdin'));
-			for(let i=0;i<this.stdin.parts.length;i++)
-				stdin_node.appendChild(this.stdin.parts[i].toXML(xmldoc));
-		}
 		
 		return task_node;
 	}
