@@ -36,8 +36,9 @@ export class Prompt extends React.Component {
 	}
 	
 	confirm() {
-		this.props.confirm(this.state.value);
-		this.dlg.current.close(this.props.dlgid);
+		let ret = this.props.confirm(this.state.value);
+		if(ret!==false)
+			this.dlg.current.close(this.props.dlgid);
 	}
 	
 	cancel() {

@@ -162,9 +162,9 @@ export class task {
 			task_node.setAttribute('name', this.name);
 			
 			let script_node = task_node.appendChild(xmldoc.createElement('script'));
-			if(script_type=='static')
+			if(this.script_type=='static')
 				script_node.appendChild(xmldoc.createTextNode(this.script_source));
-			else if(script_type=='dynamic')
+			else if(this.script_type=='dynamic')
 			{
 				let value_node = script_node.appendChild(xmldoc.createElement('value'));
 				value_node.setAttribute('select', this.script_xpath);

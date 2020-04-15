@@ -33,7 +33,8 @@ export class workflow {
 			name: '',
 			group: '',
 			comment: '',
-			parameters: []
+			parameters: [],
+			custom_attributes: []
 		}
 		
 		this.wf_pre_undo = undefined;
@@ -75,6 +76,14 @@ export class workflow {
 		let parameter_node;
 		while(parameter_node = parameter_ite.iterateNext())
 			this.properties.parameters.push(parameter_node.getAttribute('name'));
+		
+		let custom_attribute_ite = workflow.ownerDocument.evaluate('workflow/custom-attributes/custom-attribute',workflow);
+		let custom_attribute_node;
+		while(custom_attribute_node = custom_attribute_ite.iterateNext())
+			this.properties.custom_attributes.push({
+				name: custom_attribute_node.getAttribute('name'),
+				value: custom_attribute_node.getAttribute('select')
+			});
 	}
 	
 	saveXML() {
@@ -89,6 +98,17 @@ export class workflow {
 			{
 				let parameter_node = parameters_node.appendChild(xmldoc.createElement('parameter'));
 				parameter_node.setAttribute('name',this.properties.parameters[i]);
+			}
+		}
+		
+		if(this.properties.custom_attributes.length>0)
+		{
+			let custom_attributes_node = workflow_node.appendChild(xmldoc.createElement('custom-attributes'));
+			for(let i=0;i<this.properties.custom_attributes.length;i++)
+			{
+				let custom_attribute_node = custom_attributes_node.appendChild(xmldoc.createElement('custom-attribute'));
+				custom_attribute_node.setAttribute('name',this.properties.custom_attributes[i].name);
+				custom_attribute_node.setAttribute('select',this.properties.custom_attributes[i].value);
 			}
 		}
 		
@@ -387,6 +407,32 @@ export class workflow {
 			path.push({group: 'Workflow parameters', value: "evqGetWorkflowParameter('"+this.properties.parameters[i]+"')", name: "Parameter: "+this.properties.parameters[i]});
 		
 		return ret===false?false:path;
+	}
+	
+	getTasksPath() {
+		let path = [];
+		this._getTasksPath(this.subjobs, path);
+		return path;
+	}
+	
+	_getTasksPath(subjobs, path) {
+		for(let i=0;i<subjobs.length;i++)
+		{
+			for(let j=0;j<subjobs[i].tasks.length;j++)
+			{
+				if(subjobs[i].name)
+				{
+					path.push({
+						group: "Job « "+subjobs[i].name+" »",
+						value: "evqGetJob('"+subjobs[i].name+"')/evqGetOutput('"+subjobs[i].tasks[j].getPath()+"')",
+						name: "Task: "+subjobs[i].tasks[j].getPath(),
+						path: subjobs[i].tasks[j].getPath()
+					});
+				}
+			}
+			
+			this._getTasksPath(subjobs[i].subjobs, path);
+		}
 	}
 }
 

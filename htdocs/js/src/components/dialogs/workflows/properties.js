@@ -19,6 +19,7 @@
 
 'use strict';
 
+import {App} from '../../base/app.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Help} from '../../../ui/help.js';
 import {Checkbox} from '../../../ui/checkbox.js';
@@ -27,7 +28,9 @@ import {Dialogs} from '../../../ui/dialogs.js';
 import {Tabs} from '../../../ui/tabs.js';
 import {Tab} from '../../../ui/tab.js';
 import {Prompt} from '../../../ui/prompt.js';
+import {EventsUtils} from '../../../utils/events.js';
 import {GroupAutocomplete} from '../../base/group-autocomplete.js';
+import {XPathHelper} from '../../base/xpath-helper.js';
 
 export class WorkflowProperties extends evQueueComponent {
 	constructor(props) {
@@ -39,6 +42,8 @@ export class WorkflowProperties extends evQueueComponent {
 		
 		this.addParameter = this.addParameter.bind(this);
 		this.removeParameter = this.removeParameter.bind(this);
+		this.addCustomAttribute= this.addCustomAttribute.bind(this);
+		this.removeCustomAttribute= this.removeCustomAttribute.bind(this);
 		
 		this.changeSubscription = this.changeSubscription.bind(this);
 	}
@@ -109,17 +114,13 @@ export class WorkflowProperties extends evQueueComponent {
 	}
 	
 	triggerParametersChange(value) {
-		let event = {
-			target: {name: 'parameters', value: value }
-		}
-		
-		this.props.onChange(event);
+		this.props.onChange(EventsUtils.createEvent('parameters', value));
 	}
 	
 	addParameter(e) {
 		Dialogs.open(Prompt,{
 			content: "Please enter your parameter's name",
-			placeholder: "parameter name",
+			placeholder: "Parameter name",
 			width: 500,
 			confirm: (name) => {
 				let parameters = this.props.properties.parameters.concat();
@@ -133,6 +134,37 @@ export class WorkflowProperties extends evQueueComponent {
 		let parameters = this.props.properties.parameters.concat();
 		parameters.splice(idx, 1);
 		this.triggerParametersChange(parameters);
+	}
+	
+	triggerCustomAttributesChange(value) {
+		this.props.onChange(EventsUtils.createEvent('custom_attributes', value));
+	}
+	
+	addCustomAttribute(e) {
+		Dialogs.open(Prompt,{
+			content: "Please enter your custom attribute's name",
+			placeholder: "Custom attribute name",
+			width: 500,
+			confirm: (name) => {
+				let custom_attributes = this.props.properties.custom_attributes.concat();
+				for(let i=0;i<custom_attributes.length;i++)
+				{
+					if(custom_attributes[i].name==name)
+					{
+						App.warning("Custom attribute name must be unique");
+						return false;
+					}
+				}
+				custom_attributes.push({name: name, value: ''});
+				this.triggerCustomAttributesChange(custom_attributes);
+			}
+		});
+	}
+	
+	removeCustomAttribute(e, idx) {
+		let custom_attributes = this.props.properties.custom_attributes.concat();
+		custom_attributes.splice(idx, 1);
+		this.triggerCustomAttributesChange(custom_attributes);
 	}
 	
 	renderTabProperties() {
@@ -243,7 +275,44 @@ export class WorkflowProperties extends evQueueComponent {
 		});
 	}
 	
-	renderTabCustomFilters() {
+	renderTabCustomAttributes() {
+		return (
+			<div>
+				<h2>
+					Custom attributes
+					<Help>
+						Custom attributes are named instance attributes that will be filled uppon workflow completition. These attributes can then be used for searching specific workflows.
+						<br /><br />
+						Ony jobs with a name are eligible and will appear in the below selects. Please name your job first with a unique name if you want to use it here.
+					</Help>
+				</h2>
+				<div className="custom-attributes">
+					{ this.renderCustomAttributes() }
+					<span className="faicon fa-plus" title="Add a new custm attribute" onClick={ (e) => this.addCustomAttribute(e) } />
+				</div>
+			</div>
+		);
+	}
+	
+	renderCustomAttributes() {
+		let custom_attributes = this.props.properties.custom_attributes;
+		let path = this.props.workflow.getTasksPath();
+		
+		return custom_attributes.map( (custom_attribute, idx) => {
+			let name = XPathHelper.renderValue(custom_attribute.value, path);
+			return (
+				<div key={idx} className="custom-attribute">
+					<div className="custom-attributes-name">
+						<span className="faicon fa-remove" title="Remove this custom attribute" onClick={ (e) => this.removeCustomAttribute(e, idx) } />
+						&#160;
+						{custom_attribute.name}
+					</div>
+					<div className="custom-attributes-value">
+						<span className="custom-attribute-value" onClick={ (e) => this.props.openDialog('custom-attribute-select', idx) }>{name}</span>
+					</div>
+				</div>
+			);
+		});
 	}
 	
 	render() {
@@ -260,8 +329,8 @@ export class WorkflowProperties extends evQueueComponent {
 						<Tab title="Notifications">
 							{ this.renderTabNotifications() }
 						</Tab>
-						<Tab title="Custom filters">
-							{ this.renderTabCustomFilters() }
+						<Tab title="Custom attributes">
+							{ this.renderTabCustomAttributes() }
 						</Tab>
 					</Tabs>
 				</div>

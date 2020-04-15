@@ -31,6 +31,7 @@ import {JobEditor} from '../dialogs/jobs/editor.js';
 import {TaskEditor} from '../dialogs/tasks/editor.js';
 import {TaskInputEditor} from '../dialogs/tasks/input-editor.js';
 import {ValueSelector} from '../dialogs/workflows/value-selector.js';
+import {CustomAttributeSelector} from '../dialogs/workflows/custom-attribute-selector.js';
 import {WorkflowProperties} from '../dialogs/workflows/properties.js';
 
 export class WorkflowEditor extends evQueueComponent {
@@ -247,6 +248,12 @@ export class WorkflowEditor extends evQueueComponent {
 	}
 	
 	openDialog(type, id) {
+		for(let i=0;i<this.state.dialogs.length;i++)
+		{
+			if(this.state.dialogs[i].type==type && this.state.dialogs[i].id==id)
+				return; // Prevent from opening same dialog twice
+		}
+		
 		var dialogs = this.state.dialogs;
 		dialogs.push({
 			type: type,
@@ -274,7 +281,7 @@ export class WorkflowEditor extends evQueueComponent {
 			if(dialog.type=='properties')
 			{
 				let properties = this.state.workflow.properties;
-				return (<WorkflowProperties key={key} id={this.state.id} properties={properties} onChange={ (e, obj) => this.onDlgChange(e, obj, properties) } onClose={ (e) => this.closeDialog(dialog) } />);
+				return (<WorkflowProperties key={key} id={this.state.id} workflow={this.state.workflow} properties={properties} onChange={ (e, obj) => this.onDlgChange(e, obj, properties) } openDialog={ this.openDialog } onClose={ (e) => this.closeDialog(dialog) } />);
 			}
 			else if(dialog.type=='job')
 			{
@@ -295,6 +302,11 @@ export class WorkflowEditor extends evQueueComponent {
 			{
 				let part = this.state.workflow.getInputPart(dialog.id);
 				return (<ValueSelector key={key} part={part} onChange={ (e, obj) => this.onDlgChange(e, obj, part) } onClose={ (e) => this.closeDialog(dialog) } />);
+			}
+			else if(dialog.type=='custom-attribute-select')
+			{
+				let custom_attribute = this.state.workflow.properties.custom_attributes[dialog.id];
+				return (<CustomAttributeSelector key={key} workflow={this.state.workflow} custom_attribute={custom_attribute} onChange={ (e, obj) => this.onDlgChange(e, obj, custom_attribute) } onClose={ (e) => this.closeDialog(dialog) } />);
 			}
 		});
 	}

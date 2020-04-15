@@ -53,6 +53,33 @@ export class XPathHelper extends React.Component {
 		this.props.onChange(event);
 	}
 	
+	static renderValue(value, path) {
+		if(!value)
+			return "\xa0";
+		
+		let composed = XPathHelper.parseValue(path, value);
+		if(composed.path)
+		{
+			let parts = composed.path.split('/');
+			let cmd = parts[parts.length-1];
+			
+			let cmd_parts = cmd.split(' ');
+			name = 'Task: '+cmd_parts[cmd_parts.length-1];
+			if(composed.xpath)
+				name += ', node: '+composed.xpath;
+		}
+		else if(composed.name)
+		{
+			name = composed.name;
+			if(composed.xpath)
+				name += ', node: '+composed.xpath;
+		}
+		else
+			name = value;
+		
+		return name;
+	}
+	
 	static parseValue(path, value) {
 		var composed = {
 			node: '',

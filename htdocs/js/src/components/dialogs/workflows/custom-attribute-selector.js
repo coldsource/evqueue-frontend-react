@@ -23,31 +23,25 @@ import {App} from '../../base/app.js';
 import {XPathHelper} from '../../base/xpath-helper.js';
 import {Dialog} from '../../../ui/dialog.js';
 
-export class XPathSelector extends React.Component {
+export class CustomAttributeSelector extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.state = {
-			value: ''
-		};
-		
-		this.dlg = React.createRef();
 	}
 	
 	render() {
-		if(this.props.task)
-			var path = this.props.task.getWorkflow().getTaskPath(this.props.task._id);
-		else if(this.props.job)
-			var path = this.props.job.getWorkflow().getJobPath(this.props.job._id);
+		let custom_attribute = this.props.custom_attribute;
+		let path = this.props.workflow.getTasksPath();
 		
 		return (
-			<Dialog dlgid={this.props.dlgid} ref={this.dlg} title="Value selector helper" width="650" onClose={this.props.onClose}>
+			<Dialog dlgid={this.props.dlgid} title={"Custom attribute « "+custom_attribute.name+" »"} width="650" onClose={this.props.onClose}>
 				<div className="evq-xpath-selector">
-					<div>This helper allows you to write XPath expression to match a specific node in the workflow document.</div>
+					<div>
+						This helper allows you to create a custom attribute, writing an XPath expression to match a specific node in the workflow document that will be the value of your attribute
+						<br /><br />
+						Please remember that only named jobs can be used here. Add a name to your job first if you want to use it here.
+					</div>
 					<br />
-					<XPathHelper path={path} name="xpath" value={this.state.value} onChange={ (e) => this.setState({value: e.target.value}) } />
-					<br />
-					<button className="submit" onClick={ (e) => { this.props.onSubmit(this.state.value); this.dlg.current.close(); } }>Select this node</button>
+					<XPathHelper path={path} name="value" value={custom_attribute.value} onChange={ this.props.onChange } />
 				</div>
 			</Dialog>
 		);

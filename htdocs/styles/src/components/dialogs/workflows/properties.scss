@@ -7,4 +7,28 @@ div.evq-workflow-properties {
 			margin: 0.3rem;
 		}
 	}
+	
+	div.custom-attributes {
+		div.custom-attribute {
+			margin-bottom: 0.4rem;
+			
+			div.custom-attributes-name {
+				display: inline-block;
+				min-width: 15rem;
+				margin-right: 1rem;
+			}
+			
+			div.custom-attributes-value {
+				display: inline-block;
+			}
+			
+			span.custom-attribute-value {
+				display: inline-block;
+				border: 1px dotted grey;
+				border-radius: 0.4rem;
+				padding: 0.3rem;
+				cursor: pointer;
+			}
+		}
+	}
 }

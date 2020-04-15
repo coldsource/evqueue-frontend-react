@@ -62,29 +62,7 @@ export class TaskInput extends React.Component {
 		var path = workflow.getTaskPath(task._id);
 		
 		return input.parts.map( (part, idx) => {
-			let name = "\xa0";
-			if(part.value)
-			{
-				let composed = XPathHelper.parseValue(path, part.value);
-				if(composed.path)
-				{
-					let parts = composed.path.split('/');
-					let cmd = parts[parts.length-1];
-					
-					let cmd_parts = cmd.split(' ');
-					name = 'Task: '+cmd_parts[cmd_parts.length-1];
-					if(composed.xpath)
-						name += ', node: '+composed.xpath;
-				}
-				else if(composed.name)
-				{
-					name = composed.name;
-					if(composed.xpath)
-						name += ', node: '+composed.xpath;
-				}
-				else
-					name = part.value;
-			}
+			let name = XPathHelper.renderValue(part.value, path);
 			
 			return (
 				<div key={idx} className="input-part">
