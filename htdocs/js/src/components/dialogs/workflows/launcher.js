@@ -59,16 +59,19 @@ export class WorkflowLauncher extends evQueueComponent {
 	}
 	
 	changeWorkflow(event) {
-		var name = event.target.value;
-		this.API({group:'workflow',action:'get',attributes:{name:name}}).then( (data) => {
-			var workflow = this.xpath('/response/workflow',data.documentElement)[0];
+		let id = event.target.value;
+		let name = event.target.value2;
+		
+		this.API({group:'workflow',action:'get',attributes:{id:id}}).then( (data) => {
+			let workflow = this.xpath('/response/workflow',data.documentElement)[0];
 			
-			var parameters = this.xpath('/response/workflow/workflow/parameters/parameter',data.documentElement);
+			let parameters = this.xpath('/response/workflow/workflow/parameters/parameter',data.documentElement);
 			
-			var api = this.state.api;
-			api.attributes.name = data.documentElement.firstChild.getAttribute('name');
+			let api = this.state.api;
+			api.attributes.id = id;
+			api.attributes.name = name;
 			api.parameters = {};
-			for(var i=0;i<parameters.length;i++)
+			for(let i=0;i<parameters.length;i++)
 				api.parameters[parameters[i].name] = '';
 			
 			this.setState({api:api});
@@ -112,7 +115,7 @@ export class WorkflowLauncher extends evQueueComponent {
 						<div className="formdiv">
 							<div>
 								<label>Workflow</label>
-								<WorkflowSelector name="workflow" value={this.state.api.attributes.name} onChange={this.changeWorkflow} />
+								<WorkflowSelector name="workflow" value={this.state.api.attributes.id} onChange={this.changeWorkflow} />
 							</div>
 							{this.renderParameters()}
 							<div>
