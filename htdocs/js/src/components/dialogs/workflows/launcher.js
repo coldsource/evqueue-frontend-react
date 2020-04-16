@@ -43,6 +43,8 @@ export class WorkflowLauncher extends evQueueComponent {
 		
 		if(this.props.node!==undefined)
 			this.state.api.node = this.props.node;
+		if(this.props.id!==undefined)
+			this.state.api.attributes.id = this.props.id;
 		if(this.props.name!==undefined)
 			this.state.api.attributes.name = this.props.name;
 		if(this.props.user!==undefined)
@@ -56,6 +58,21 @@ export class WorkflowLauncher extends evQueueComponent {
 		
 		this.changeWorkflow = this.changeWorkflow.bind(this);
 		this.launch = this.launch.bind(this);
+	}
+	
+	componentDidMount() {
+		if(this.props.name)
+		{
+			this.API({
+				group: 'workflow',
+				action: 'get',
+				attributes: { name: this.props.name }
+			}).then( (response) => {
+				let api = this.state.api;
+				api.attributes.id = response.documentElement.firstChild.getAttribute('id');
+				this.setState({api: api});
+			});
+		}
 	}
 	
 	changeWorkflow(event) {
