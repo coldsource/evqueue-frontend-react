@@ -1,0 +1,21 @@
+div.evq-retry-schedules-list {
+	th:nth-child(1) {
+		width: 8rem;
+	}
+	
+	td:nth-child(2) {
+		span {
+			display: inline-block;
+			border: 1px solid grey;
+			padding: 0.2rem;
+			margin: 0.2rem;
+			border-radius: 0.4rem;
+			cursor: pointer;
+		}
+	}
+	
+	tbody tr {
+		//border: 1px solid grey;
+		margin: 5px;
+	}
+}
