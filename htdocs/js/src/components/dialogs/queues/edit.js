@@ -72,7 +72,7 @@ export class EditQueue extends evQueueComponent {
 		this.setState({queue: queue});
 	}
 	
-	save(values) {
+	save() {
 		let action = this.props.id?'edit':'create';
 		let action_name = this.props.id?'modified':'created';
 		
