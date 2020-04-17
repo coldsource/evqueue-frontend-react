@@ -23,6 +23,7 @@ import {Dialog} from '../../../ui/dialog.js';
 import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
 import {Checkbox} from '../../../ui/checkbox.js';
+import {InputSpinner} from '../../../ui/input-spinner.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
 import {retry_schedule} from '../../../evqueue/retry-schedule.js';
 
@@ -108,9 +109,9 @@ export class EditRetrySchedule extends evQueueComponent {
 					<label>{idx==0?"If task fails, retry":"then"}</label>
 					<span>
 						every&#160;
-						<input type="number" name="delay" step="1" min="1" value={level.delay} onChange={ (e) => this.onChange(e, idx) } />
+						<InputSpinner name="delay" step="1" min="1" value={level.delay} onChange={ (e) => this.onChange(e, idx) } />
 						&#160;seconds for&#160;
-						<input type="number" name="times" step="1" min="1" value={level.times} onChange={ (e) => this.onChange(e, idx) } />
+						<InputSpinner name="times" step="1" min="1" value={level.times} onChange={ (e) => this.onChange(e, idx) } />
 						&#160;times
 						&#160;
 						<span className="faicon fa-remove" title="Remove this level" onClick={ (e) => this.removeLevel(idx) } />

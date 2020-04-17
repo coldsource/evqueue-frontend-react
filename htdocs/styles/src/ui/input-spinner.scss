@@ -1,0 +1,29 @@
+div.evq-input-spinner {
+	position: relative;
+	border: 1px solid grey;
+	border-radius: 0.4rem;
+	width: 4rem;
+	display: inline-block;
+	
+	&:focus-within {
+		border-color: $evq-focus;
+	}
+	
+	input {
+		border: 0px;
+		box-sizing: border-box;
+		width: 3rem;
+	}
+	
+	span.evq-input-spinner-plus {
+		position: absolute;
+		top: 0.2rem;
+		right: 0.3rem;
+	}
+	
+	span.evq-input-spinner-minus {
+		position: absolute;
+		bottom: 0.2rem;
+		right: 0.3rem;
+	}
+}
