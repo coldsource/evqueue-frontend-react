@@ -30,8 +30,13 @@ export class NodeSelector extends evQueueComponent {
 	render() {
 		var nodes = this.state.cluster.nodes_names;
 		var values = [];
+		
 		if(this.props.all)
 			values.push({name: 'All', value: ''});
+		
+		if(this.props.any)
+			values.push({name: 'Any', value: 'any'});
+		
 		for(var i=0;i<nodes.length;i++)
 			values.push({name: nodes[i], value: nodes[i]});
 		
