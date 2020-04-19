@@ -38,6 +38,7 @@ export class HeaderMenu extends React.Component {
 				icon: 'fa-cogs',
 				submenu: [
 					{ label: 'Workflows', icon: 'fa-cubes', url: 'workflows' },
+					{ label: 'Workflow schedules', icon: 'fa-calendar', url: 'workflow-schedules' },
 					{ label: 'Retry schedules', icon: 'fa-clock-o', url: 'retry-schedules' },
 					{ label: 'Queues', icon: 'fa-cubes', url: 'queues' }
 				]

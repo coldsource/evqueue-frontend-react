@@ -69,7 +69,7 @@ export class EventDispatcher {
 		}
 	}
 	
-	Subscribe(event,api,send_now,instance_id = 0, instance, handler)
+	Subscribe(event,api,send_now,object_id = 0, instance, handler)
 	{
 		// Store state
 		var external_id = ++this.external_id;
@@ -79,31 +79,31 @@ export class EventDispatcher {
 			event:event,
 			api: api,
 			instance: instance,
-			instance_id: instance_id,
+			object_id: object_id,
 			external_id:external_id,
 		});
 		
-		return this.evqueue_event.Subscribe(event,api,send_now,instance_id,external_id);
+		return this.evqueue_event.Subscribe(event,api,send_now,object_id,external_id);
 	}
 	
-	Unsubscribe(instance, event = undefined, instance_id = 0)
+	Unsubscribe(instance, event = undefined, object_id = 0)
 	{
 		// Find correct subsciption
 		var subscriptions = this.subscriptions;
 		var external_id = 0;
 		for(var i=0;i<subscriptions.length;i++)
 		{
-			if(subscriptions[i].instance===instance && (event===undefined || subscriptions[i].event==event) && (instance_id==0 || subscriptions[i].instance_id==instance_id))
+			if(subscriptions[i].instance===instance && (event===undefined || subscriptions[i].event==event) && (object_id==0 || subscriptions[i].object_id==object_id))
 			{
 				let sub_event = subscriptions[i].event;
 				let sub_external_id = subscriptions[i].external_id;
-				let sub_instance_id = subscriptions[i].instance_id;
+				let sub_object_id = subscriptions[i].object_id;
 				
 				subscriptions.splice(i,1);
 				delete this.handlers[external_id];
 				delete this.external_id_ref[external_id];
 				
-				this.evqueue_event.Unsubscribe(sub_event, sub_external_id, sub_instance_id);
+				this.evqueue_event.Unsubscribe(sub_event, sub_external_id, sub_object_id);
 				
 				i--;
 			}
@@ -131,7 +131,7 @@ export class EventDispatcher {
 					var api = {};
 					Object.assign(api,subscriptions[i].api);
 					api.node = name;
-					this.evqueue_event.Subscribe(subscriptions[i].event,api,true,subscriptions[i].instance_id,subscriptions[i].external_id);
+					this.evqueue_event.Subscribe(subscriptions[i].event,api,true,subscriptions[i].object_id,subscriptions[i].external_id);
 				}
 			}
 		}

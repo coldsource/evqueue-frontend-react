@@ -181,7 +181,7 @@ export class evQueueCluster
 			this.stateChangeCallback(node, name, state);
 	}
 	
-	Subscribe(event,api,send_now,instance_id,external_id)
+	Subscribe(event,api,send_now,object_id,external_id)
 	{
 		var api_cmd_b64 = btoa(this.BuildAPI(api));
 		
@@ -192,8 +192,8 @@ export class evQueueCluster
 			external_id: external_id
 		};
 		
-		if(instance_id)
-			attributes.instance_id = instance_id;
+		if(object_id)
+			attributes.object_id = object_id;
 		
 		return this.API({
 			node: api.node,
@@ -203,15 +203,15 @@ export class evQueueCluster
 		});
 	}
 	
-	Unsubscribe(event, external_id, instance_id = 0)
+	Unsubscribe(event, external_id, object_id = 0)
 	{
 		var attributes = {
 			type: event,
 			external_id: external_id
 		};
 		
-		if(instance_id)
-			attributes.instance_id = instance_id;
+		if(object_id)
+			attributes.object_id = object_id;
 		
 		return this.API({
 			node:'*',

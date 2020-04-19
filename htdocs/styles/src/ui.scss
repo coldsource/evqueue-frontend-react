@@ -21,6 +21,7 @@
 @import 'ui/select.scss';
 @import 'ui/autocomplete.scss';
 @import 'ui/input.scss';
+@import 'ui/fieldset.scss';
 @import 'ui/input-spinner.scss';
 
 @import 'components/base/app.scss';
@@ -31,6 +32,7 @@
 @import 'components/panels/instances/filters.scss';
 @import 'components/panels/queues/state.scss';
 @import 'components/panels/retry-schedules/list.scss';
+@import 'components/panels/workflow-schedules/list.scss';
 @import 'components/panels/queues/list.scss';
 @import 'components/panels/workflows/list.scss';
 @import 'components/panels/logs/filters.scss';

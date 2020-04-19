@@ -212,7 +212,7 @@ export class evQueueComponent extends React.Component {
 		this.setState({api:api});
 	}
 	
-	Subscribe(event,api,send_now,instance_id = 0, handler = undefined)
+	Subscribe(event,api,send_now,object_id = 0, handler = undefined)
 	{
 		var self = this;
 		
@@ -220,7 +220,7 @@ export class evQueueComponent extends React.Component {
 			handler = this.evQueueEvent;
 		
 		this.subscriptions_asked++;
-		this.event_dispatcher.Subscribe(event, api, send_now, instance_id, this, handler).then(
+		this.event_dispatcher.Subscribe(event, api, send_now, object_id, this, handler).then(
 			() => {
 				this.subscriptions_done++;
 				if(this.subscriptions_done==this.subscriptions_asked && self.is_mounted)
@@ -237,9 +237,9 @@ export class evQueueComponent extends React.Component {
 		);
 	}
 	
-	Unsubscribe(event,instance_id = 0)
+	Unsubscribe(event,object_id = 0)
 	{
-		return this.event_dispatcher.Unsubscribe(this, event, instance_id);
+		return this.event_dispatcher.Unsubscribe(this, event, object_id);
 	}
 	
 	clusterStateChanged(node, name, state)

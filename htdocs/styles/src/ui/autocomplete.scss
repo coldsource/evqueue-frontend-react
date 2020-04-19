@@ -1,9 +1,28 @@
 div.evq-autocomplete {
 	display: inline-block;
 	
-	input {
+	div {
+		border: 1px solid grey;
+		border-radius: 0.4rem;
 		box-sizing: border-box;
-		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		
+		&>span {
+			border: 1px solid lightgrey;
+			margin: 0.2rem;
+			padding: 0.2rem;
+			border-radius: 0.4rem;
+		}
+		
+		input {
+			border: 0px;
+			box-sizing: border-box;
+			width: 100%;
+			flex-grow: 1;
+			flex-basis: 5ch;
+			min-width: 0;
+		}
 	}
 	
 	div.evq-autocomplete-dropdown {
@@ -20,6 +39,7 @@ div.evq-autocomplete {
 		padding-left: 0.4rem;
 		
 		ul {
+			width: 100%;
 			padding-left: 0rem;
 			padding-top: 0.1rem;
 			margin-top: 0px;
@@ -36,6 +56,16 @@ div.evq-autocomplete {
 				background-color: #5897fb;
 				color: #ffffff;
 			}
+		}
+	}
+}
+
+div.evq-autocomplete.multiple {
+	display: inline-block;
+	
+	div {
+		input {
+			margin: 0.2rem;
 		}
 	}
 }

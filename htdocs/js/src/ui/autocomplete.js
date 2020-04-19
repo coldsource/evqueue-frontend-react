@@ -19,13 +19,16 @@
 
 'use strict';
 
+import {EventsUtils} from '../utils/events.js';
+
 export class Autocomplete extends React.Component {
 	constructor(props) {
 		super(props);
 		
 		this.state = {
 			dropdown_opened: false,
-			filter: ''
+			filter: '',
+			value: ''
 		};
 		
 		this.ref = React.createRef();
@@ -70,10 +73,36 @@ export class Autocomplete extends React.Component {
 	click(value) {
 		this.setState({dropdown_opened:false});
 		
-		this.changeValue(value);
+		let e = EventsUtils.createEvent(this.props.name, value);
+		if(this.props.multiple)
+		{
+			for(let i=0;i<this.props.value.length;i++)
+			{
+				if(this.props.value[i]==value)
+					return;
+			}
+			
+			let new_value = this.props.value.concat();
+			new_value.push(value);
+			this.sortValue(new_value);
+			this.setState({value: ''});
+			
+			e.target.value = new_value;
+			e.target.value2 = value;
+		}
+		
+		if(this.props.onChange)
+			this.props.onChange(e);
 		
 		if(this.props.onChoose)
 			this.props.onChoose(value);
+	}
+	
+	removeValue(idx) {
+		this.props.value.splice(idx, 1);
+		
+		if(this.props.onChange)
+			this.props.onChange(EventsUtils.createEvent(this.props.name, this.props.value));
 	}
 	
 	toggleDropdown() {
@@ -81,31 +110,40 @@ export class Autocomplete extends React.Component {
 	}
 	
 	applyFilter() {
-		var filter = this.props.value.toLowerCase();
+		let filter;
+		if(this.props.multiple)
+			filter = this.state.value.toLowerCase()
+		else
+			filter = this.props.value.toLowerCase();
 		
 		if(filter=='')
 			return this.props.autocomplete;
 		
-		var autocomplete = [];
-		for(var i=0;i<this.props.autocomplete.length;i++)
+		let autocomplete = [];
+		for(let i=0;i<this.props.autocomplete.length;i++)
 		{
-			if(this.props.autocomplete[i].toLowerCase().includes(filter))
-				autocomplete.push(this.props.autocomplete[i]);
+			if((''+this.props.autocomplete[i]).toLowerCase().includes(filter))
+				autocomplete.push(''+this.props.autocomplete[i]);
 		}
 		
 		return autocomplete;
 	}
 	
 	changeValue(value) {
-		var event = {
-			target: {
-				name: this.props.name,
-				value: value
-			}
-		};
+		if(this.props.multiple)
+			this.setState({value: value});
+		else
+			this.props.onChange(EventsUtils.createEvent(this.props.name, value));
+	}
+	
+	sortValue(val) {
+		let autocomplete = {};
+		for(let i=0;i<this.props.autocomplete.length;i++)
+			autocomplete[this.props.autocomplete[i]] = i;
 		
-		if(this.props.onChange)
-			this.props.onChange(event);
+		val.sort( (a,b) => {
+			return autocomplete[a] - autocomplete[b];
+		});
 	}
 	
 	renderDropdown() {
@@ -130,28 +168,56 @@ export class Autocomplete extends React.Component {
 		});
 	}
 	
+	renderValues() {
+		if(!this.props.multiple)
+			return;
+		
+		return this.props.value.map( (value, idx) => {
+			return (
+				<span key={idx}>
+					<span className="faicon fa-remove" onClick={ (e) => this.removeValue(idx) } />
+					&#160;{value}
+				</span>
+			);
+		});
+	}
+	
 	render() {
-		var className = 'evq-autocomplete';
+		let className = 'evq-autocomplete';
+		if(this.props.multiple)
+			className += ' multiple';
 		if(this.props.className)
 			className += ' '+this.props.className;
 		
-		var value_style = {
+		let value_style = {
 			borderRadius: this.state.dropdown_opened?'0.4rem 0.4rem 0rem 0rem':'0.4rem 0.4rem 0.4rem 0.4rem'
+		};
+		
+		let input_value = this.props.multiple?this.state.value:this.props.value;
+		let input_style = {
+			flexBasis: input_value.length<5?'5ch':input_value.length+'ch'
 		};
 		
 		return (
 			<div ref={this.ref} className={className}>
-				<input
-					type="text"
-					value={this.props.value}
-					style={value_style}
-					onChange={ (event) => {this.changeValue(event.target.value)} }
-					onClick={ (e) => { if(!this.state.dropdown_opened) this.toggleDropdown() } }
-					onFocus={this.toggleDropdown}
-					onKeyUp={this._keyUp}
-				/>
+				<div style={value_style}>
+					{ this.renderValues() }
+					<input
+						type="text"
+						value={input_value}
+						style={input_style}
+						onChange={ (event) => {this.changeValue(event.target.value)} }
+						onClick={ (e) => { if(!this.state.dropdown_opened) this.toggleDropdown() } }
+						onFocus={this.toggleDropdown}
+						onKeyUp={this._keyUp}
+					/>
+				</div>
 				{this.renderDropdown()}
 			</div>
 		);
 	}
 }
+
+Autocomplete.defaultProps = {
+	multiple: false
+};
