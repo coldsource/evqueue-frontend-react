@@ -103,26 +103,13 @@ export class InstanceFilters extends evQueueComponent {
 			action: 'get',
 			attributes: {id: id}
 		}).then( (response) => {
-			let parameters = [];
-			let custom_attributes = [];
+			let parameters = this.xpath('/response/workflow/workflow/parameters/parameter/@name', response.documentElement);
+			for(let i=0;i<parameters.length;i++)
+				filters['parameter_'+parameters[i]] = '';
 			
-			let parameter_ite = response.evaluate('/response/workflow/workflow/parameters/parameter', response.documentElement);
-			let parameter_node;
-			while(parameter_node = parameter_ite.iterateNext())
-			{
-				let name = parameter_node.getAttribute('name');
-				parameters.push(name);
-				filters['parameter_'+name] = '';
-			}
-			
-			let custom_attribute_ite = response.evaluate('/response/workflow/workflow/custom-attributes/custom-attribute', response.documentElement);
-			let custom_attribute_node;
-			while(custom_attribute_node = custom_attribute_ite.iterateNext())
-			{
-				let name = custom_attribute_node.getAttribute('name');
-				custom_attributes.push(name);
-				filters['customattribute_'+name] = '';
-			}
+			let custom_attributes = this.xpath('/response/workflow/workflow/custom-attributes/custom-attribute/@name', response.documentElement);
+			for(let i=0;i<custom_attributes.length;i++)
+				filters['customattribute_'+custom_attributes[i]] = '';
 			
 			this.setState({parameters: parameters, custom_attributes: custom_attributes, filters: filters});
 			

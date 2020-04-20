@@ -103,11 +103,18 @@ export class evQueueComponent extends React.Component {
 		var node;
 		while(node = nodes_ite.iterateNext())
 		{
-			var obj = {domnode:node};
-			
-			for(var i=0;i<node.attributes.length;i++)
-				obj[node.attributes[i].name] = node.attributes[i].value;
-			ret.push(obj);
+			if(node.nodeType==Node.ATTRIBUTE_NODE)
+			{
+				ret.push(node.value);
+			}
+			else
+			{
+				var obj = {domnode:node};
+				
+				for(var i=0;i<node.attributes.length;i++)
+					obj[node.attributes[i].name] = node.attributes[i].value;
+				ret.push(obj);
+			}
 			
 		}
 		
