@@ -19,6 +19,7 @@
 
 'use strict';
 
+import {App} from '../../base/app.js';
 import {ListInstances} from './list.js';
 import {Panel} from '../../../ui/panel.js';
 import {EventsUtils} from '../../../utils/events.js';
@@ -32,6 +33,12 @@ export class TerminatedInstances extends ListInstances {
 		this.state.current_page = 1;
 		this.items_per_page = 30;
 		
+		if(App.getParameter('filter_schedule_id'))
+			this.state.search_filters.filter_schedule_id = App.getParameter('filter_schedule_id');
+		
+		if(App.getParameter('filter_id'))
+			this.state.search_filters.filter_id = App.getParameter('filter_id');
+		
 		// Bind actions
 		this.nextPage = this.nextPage.bind(this);
 		this.previousPage = this.previousPage.bind(this);
@@ -41,7 +48,7 @@ export class TerminatedInstances extends ListInstances {
 	}
 	
 	componentDidMount() {
-		var api = { node:'*',group:'instances',action:'list' };
+		var api = { node:'*',group:'instances',action:'list',attributes: this.state.search_filters };
 		this.Subscribe('INSTANCE_REMOVED',api);
 		this.Subscribe('INSTANCE_TERMINATED',api,true);
 	}
@@ -121,7 +128,7 @@ export class TerminatedInstances extends ListInstances {
 		
 		this.Unsubscribe('INSTANCE_TERMINATED');
 		
-		var api = {
+		let api = {
 			group: 'instances',
 			action: 'list',
 			attributes: search_filters

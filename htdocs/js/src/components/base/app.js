@@ -106,8 +106,8 @@ export class App extends React.Component {
 		if(path[0]=='/')
 			path = path.substr(1);
 		
-		if(path=='')
-			path='.';
+		if(path=='' || path[0]=='?')
+			path='.'+path;
 		
 		let url = new URL(path, document.location);
 		let get = new URLSearchParams(url.search);
