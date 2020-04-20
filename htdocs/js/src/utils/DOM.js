@@ -29,4 +29,20 @@ export class DOMUtils {
 		}
 		return obj;
 	}
+	
+	static objectToParameters(obj) {
+		if(Object.keys(obj).length==0)
+			return undefined;
+		
+		xmldoc = new Document();
+		for(let name in obj)
+		{
+			let node_parameter = xmldoc.appendChild(xmldoc.createElement('parameters'));
+			node_parameter.appendChild(xmldoc.createElement('parameter'));
+			node_parameter.setAttribute('name',name);
+			node_parameter.setAttribute('value',obj[name]);
+		}
+		
+		return xmldoc;
+	}
 }

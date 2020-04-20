@@ -40,11 +40,8 @@ export class EditWorkflowSchedule extends evQueueComponent {
 		super(props);
 		
 		this.state.workflow_schedule = {
-			what: 'workflow',
 			workflow_id: '',
-			workflow_name: '',
-			workflow_group: '',
-			workflow_script: '',
+			workflow_parameters: {},
 			when: 'daily',
 			schedule: false,
 			time: '',
@@ -106,12 +103,12 @@ export class EditWorkflowSchedule extends evQueueComponent {
 				
 				// Parse schedule
 				let schedule_parts = workflow_schedule.schedule.split(';');
-				workflow_schedule.seconds = schedule_parts[0].length==0?['any']:schedule_parts[0].split(',');
-				workflow_schedule.minutes = schedule_parts[1].length==0?['any']:schedule_parts[1].split(',');
-				workflow_schedule.hours = schedule_parts[2].length==0?['any']:schedule_parts[2].split(',');
-				workflow_schedule.days = schedule_parts[3].length==0?['any']:schedule_parts[3].split(',');
-				workflow_schedule.months = schedule_parts[4].length==0?['any']:schedule_parts[4].split(',');
-				workflow_schedule.weekdays = schedule_parts[5].length==0?['any']:schedule_parts[5].split(',');
+				workflow_schedule.seconds = this.loadScheduleLevel(schedule_parts[0]);
+				workflow_schedule.minutes = this.loadScheduleLevel(schedule_parts[1]);
+				workflow_schedule.hours = this.loadScheduleLevel(schedule_parts[2]);
+				workflow_schedule.days = this.loadScheduleLevel(schedule_parts[3]);
+				workflow_schedule.months = this.loadScheduleLevel(schedule_parts[4]);
+				workflow_schedule.weekdays = this.loadScheduleLevel(schedule_parts[5]);
 				
 				if(workflow_schedule.seconds.length==1 && workflow_schedule.seconds[0]!='any'
 				   && workflow_schedule.minutes.length==1 && workflow_schedule.minutes[0]!='any'
@@ -121,7 +118,7 @@ export class EditWorkflowSchedule extends evQueueComponent {
 				   && workflow_schedule.weekdays.length==1 && workflow_schedule.weekdays[0]=='any')
 				{
 					workflow_schedule.when = 'daily';
-					workflow_schedule.time = workflow_schedule.hours+':'+workflow_schedule.minutes;
+					workflow_schedule.time = workflow_schedule.hours[0].padStart(2,'0')+':'+workflow_schedule.minutes[0].padStart(2,'0');
 				}
 				else
 					workflow_schedule.when = 'custom';
@@ -131,13 +128,50 @@ export class EditWorkflowSchedule extends evQueueComponent {
 		}
 	}
 	
+	loadScheduleLevel(level) {
+		if(level=='')
+			return ['any'];
+		
+		level = level.split(',');
+		
+		for(let i=0;i<level.length;i++)
+			level[i] = parseInt(level[i]).toString();
+		
+		return level;
+	}
+	
+	loadWorkflowParameters(id) {
+		// Get parameters and custom attributes of this workflow
+		this.API({
+			group: 'workflow',
+			action: 'get',
+			attributes: {id: id}
+		}).then( (response) => {
+			let names = this.xpath('/response/workflow/workflow/parameters/parameter/@name', response.documentElement);
+			let parameters = {};
+			for(let i=0;i<names.length;i++)
+				parameters[names[i]] = '';
+			
+			let workflow_schedule = this.state.workflow_schedule;
+			workflow_schedule.workflow_parameters = parameters;
+			this.setState({workflow_schedule: workflow_schedule});
+		});
+	}
+	
 	onChange(e) {
 		let name = e.target.name;
 		let value = e.target.value;
 		
 		let workflow_schedule = this.state.workflow_schedule;
-		let old_value = workflow_schedule[name];
-		workflow_schedule[name] = value;
+		
+		if(name.substr(0,10)=='parameter.')
+			workflow_schedule.workflow_parameters[name.substr(10)] = value;
+		else
+			workflow_schedule[name] = value;
+		
+		if(name=='workflow_id')
+			this.loadWorkflowParameters(value);
+		
 		
 		if(name=='seconds' || name=='minutes' || name=='hours' || name=='days' || name=='months' || name=='weekdays')
 		{
@@ -178,13 +212,13 @@ export class EditWorkflowSchedule extends evQueueComponent {
 		}
 		else if(workflow_schedule.when=='daily')
 		{
+			workflow_schedule.schedule = false;
 			if(workflow_schedule.time.match(/^[0-9]+:[0-9]+$/))
 			{
 				let time_parts = workflow_schedule.time.split(':');
-				workflow_schedule.schedule = ';'+time_parts[1]+';'+time_parts[0]+';;;';
+				if(parseInt(time_parts[0])<24 && parseInt(time_parts[1])<60)
+					workflow_schedule.schedule = '0;'+parseInt(time_parts[1])+';'+parseInt(time_parts[0])+';;;';
 			}
-			else
-				workflow_schedule.schedule = false;
 		}
 		
 		this.setState({workflow_schedule: workflow_schedule});
@@ -215,46 +249,36 @@ export class EditWorkflowSchedule extends evQueueComponent {
 		this.simpleAPI({
 			group: 'workflow_schedule',
 			action: action,
-			attributes: attributes
+			attributes: attributes,
+			parameters: workflow_schedule.workflow_parameters
 		}, "Schedule successfully "+action_name).then( () => {
 			this.dlg.current.close();
+		});
+	}
+	
+	renderWorkflowParameters() {
+		return Object.keys(this.state.workflow_schedule.workflow_parameters).map( (name) => {
+			return (
+				<div key={name}>
+					<label>{name}</label>
+					<input type="text" name={"parameter."+name} value={this.state.workflow_schedule.workflow_parameters[name]} onChange={this.onChange} />
+				</div>
+			);
 		});
 	}
 	
 	renderWhat() {
 		let workflow_schedule = this.state.workflow_schedule;
 		
-		if(workflow_schedule.what=='workflow')
-		{
-			return (
-				<div className="formdiv">
-					<div>
-						<label>Workflow</label>
-						<WorkflowSelector name="workflow_id" value={workflow_schedule.workflow_id} onChange={this.onChange} />
-					</div>
+		return (
+			<div className="formdiv">
+				<div>
+					<label>Workflow</label>
+					<WorkflowSelector name="workflow_id" value={workflow_schedule.workflow_id} onChange={this.onChange} />
 				</div>
-			);
-		}
-		
-		if(workflow_schedule.what=='script')
-		{
-			return (
-				<div className="formdiv">
-					<div>
-						<label>Schedule name</label>
-						<input type="text" name="workflow_name" value={workflow_schedule.workflow_name} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>Schedule group</label>
-						<GroupAutocomplete name="workflow_group" value={workflow_schedule.workflow_group} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>Script path</label>
-						<FilesystemAutocomplete name="workflow_script" value={workflow_schedule.workflow_script} onChange={this.onChange} />
-					</div>
-				</div>
-			);
-		}
+				{ this.renderWorkflowParameters() }
+			</div>
+		);
 	}
 	
 	renderWhen() {
@@ -340,13 +364,7 @@ export class EditWorkflowSchedule extends evQueueComponent {
 							</Help>
 						</h2>
 						<fieldset>
-							<legend>
-								<b>What:</b>
-								<Radios name="what" value={workflow_schedule.what} onChange={this.onChange}>
-									<Radio value="workflow" /> Workflow
-									<Radio value="script" /> Script
-								</Radios>
-							</legend>
+							<legend><b>What</b></legend>
 							{ this.renderWhat() }
 						</fieldset>
 						<br />

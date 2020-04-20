@@ -31,7 +31,7 @@ export class WorkflowSchedulesList extends evQueueComponent {
 		
 		this.nodes_status = {};
 		
-		this.state.workflow_schedules = [];
+		this.state.workflow_schedules = {};
 		this.state.status = {};
 		this.state.last_execution = {};
 		
@@ -41,7 +41,7 @@ export class WorkflowSchedulesList extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		let api_list_schedules = {node: '*', group: 'workflow_schedules',action: 'list', ref: 'schedule'};
+		let api_list_schedules = {node: '*', group: 'workflow_schedules',action: 'list', attributes: {display_parameters: 'yes'}, ref: 'schedule'};
 		let api_status = {node: '*', group: 'status', action: 'query', attributes: {type: 'scheduler'}, ref: 'status'};
 		
 		this.Subscribe('WORKFLOWSCHEDULE_MODIFIED',api_list_schedules);
@@ -71,7 +71,19 @@ export class WorkflowSchedulesList extends evQueueComponent {
 			}
 			
 			// Update schedules list
-			this.setState({workflow_schedules: data.response});
+			let schedules = {};
+			for(let i=0;i<data.response.length;i++)
+			{
+				let group = data.response[i].workflow_group?data.response[i].workflow_group:'No group';
+				if(schedules[group]===undefined)
+					schedules[group] = [];
+				
+				let schedule = data.response[i];
+				schedule.parameters = this.xpath('./parameter',data.response[i].domnode);
+				schedules[group].push(schedule);
+			}
+			
+			this.setState({workflow_schedules: schedules});
 		}
 		
 		if(ref=='status')
@@ -135,8 +147,18 @@ export class WorkflowSchedulesList extends evQueueComponent {
 		},"Workflow schedule removed", "Are you sure you want to remove this schedule ?");
 	}
 	
-	renderWorkflowSchedules() {
-		return this.state.workflow_schedules.map( (workflow_schedule) => {
+	renderWorkflowScheduleParameters(parameters) {
+		return parameters.map( (parameter) => {
+			return (
+				<div key={parameter.name}>
+					<span>{parameter.name}: {parameter.value}</span>
+				</div>
+			);
+		});
+	}
+	
+	renderWorkflowSchedules(workflow_schedules) {
+		return workflow_schedules.map( (workflow_schedule) => {
 			let next_execution = '';
 			if(this.state.status[workflow_schedule.id]!==undefined)
 				next_execution = this.state.status[workflow_schedule.id].scheduled_at;
@@ -157,7 +179,8 @@ export class WorkflowSchedulesList extends evQueueComponent {
 				<tr key={workflow_schedule.id}>
 					<td>
 						{workflow_schedule.workflow_name}
-						<span>{workflow_schedule.comment}</span>
+						{workflow_schedule.comment?(<span>{workflow_schedule.comment}</span>):''}
+						{this.renderWorkflowScheduleParameters(workflow_schedule.parameters)}
 					</td>
 					<td>{workflow_schedule.onfailure}</td>
 					<td>{workflow_schedule.node}</td>
@@ -175,6 +198,24 @@ export class WorkflowSchedulesList extends evQueueComponent {
 				</tr>
 			);
 		});
+	}
+	
+	renderGroups() {
+		return Object.keys(this.state.workflow_schedules).map( (group) => {
+			return (
+				<React.Fragment key={"group_"+group}>
+					<tr className="group"><td colSpan="8">{group}</td></tr>
+					{ this.renderWorkflowSchedules(this.state.workflow_schedules[group]) }
+					{ this.renderSpacer(group) }
+				</React.Fragment>
+			);
+		});
+	}
+	
+	renderSpacer(group) {
+		if(Object.keys(this.state.workflow_schedules)[Object.keys(this.state.workflow_schedules).length-1]==group)
+			return;
+		return (<tr className="groupspace"><td colSpan="8"></td></tr>);
 	}
 	
 	render() {
@@ -199,7 +240,7 @@ export class WorkflowSchedulesList extends evQueueComponent {
 							</tr>
 						</thead>
 						<tbody>
-							{ this.renderWorkflowSchedules() }
+							{ this.renderGroups() }
 						</tbody>
 					</table>
 				</Panel>

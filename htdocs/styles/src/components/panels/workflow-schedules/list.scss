@@ -1,5 +1,5 @@
 div.evq-workflow-schedules-list {
-	td:nth-child(1) span {
+	td:nth-child(1) >span {
 		&::before {
 			content: "(";
 		}
@@ -9,6 +9,12 @@ div.evq-workflow-schedules-list {
 		}
 		
 		margin-left: 0.5rem;
+		font-style: italic;
+		color: grey;
+	}
+	
+	td:nth-child(1) >div {
+		margin-left: 2rem;
 		font-style: italic;
 		color: grey;
 	}
