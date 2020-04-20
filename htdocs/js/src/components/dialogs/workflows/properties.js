@@ -61,8 +61,8 @@ export class WorkflowProperties extends evQueueComponent {
 		if(this.props.id)
 		{
 			var api = {node:'*', group:'workflow',action:'list_notifications', attributes: {id: this.props.id}, ref:'wf_notif'};
-			this.Subscribe('WORKFLOW_SUBSCRIBED',api);
-			this.Subscribe('WORKFLOW_UNSUBSCRIBED',api, true);
+			this.Subscribe('WORKFLOW_SUBSCRIBED',api, false, this.props.id);
+			this.Subscribe('WORKFLOW_UNSUBSCRIBED',api, true, this.props.id);
 		}
 	}
 	
