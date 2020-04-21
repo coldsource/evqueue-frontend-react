@@ -58,12 +58,12 @@ export class evQueueCluster
 	
 	GetNodes()
 	{
-		return evQueueCluster.global.nodes_names;
+		return evQueueCluster.global.nodes_names.concat();
 	}
 	
 	GetStates()
 	{
-		return evQueueCluster.global.nodes_states;
+		return evQueueCluster.global.nodes_states.concat();
 	}
 	
 	GetNodeByCnx(cnx) {
