@@ -20,9 +20,9 @@
 'use strict';
 
 import {HeaderMenu} from '../components/menus/header.js';
-import {NotificationLogs} from '../components/panels/logs/notification.js';
+import {APILogs} from '../components/panels/logs/api.js';
 
-export class PageNotificationLogs extends React.Component {
+export class PageAPILogs extends React.Component {
 	constructor(props) {
 		super(props);
 		
@@ -33,7 +33,7 @@ export class PageNotificationLogs extends React.Component {
 		return (
 			<div>
 				<HeaderMenu current="Logging" />
-				<NotificationLogs />
+				<APILogs />
 			</div>
 		);
 	}
