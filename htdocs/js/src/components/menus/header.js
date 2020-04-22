@@ -19,6 +19,8 @@
 
 'use strict';
 
+import {App} from '../base/app.js';
+
 export class HeaderMenu extends React.Component {
 	constructor(props) {
 		super(props);
@@ -76,6 +78,13 @@ export class HeaderMenu extends React.Component {
 		};
 	}
 	
+	logout() {
+		window.localStorage.removeItem('authenticated');
+		window.localStorage.removeItem('user');
+		window.localStorage.removeItem('password');
+		App.changeURL('/auth');
+	}
+	
 	level1() {
 		return this.menu.map((entry, idx) => {
 			return (
@@ -106,6 +115,11 @@ export class HeaderMenu extends React.Component {
 		return (
 			<div className="evq-headermenu">
 				<div><a href="."><img src="images/evQueue-small.svg" title="evQueue" /></a></div>
+				<div className="login-box">
+					<b>{window.localStorage.user}</b>
+					<span className="faicon fa-pencil" title="Edit user properties" />
+					<span className="faicon fa-power-off" title="Logout" onClick={this.logout} />
+				</div>
 				<ul className="level1">
 					{ this.level1() }
 				</ul>
