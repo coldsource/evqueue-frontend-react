@@ -26,6 +26,7 @@ import {PageWorkflows} from '../../pages/workflows.js';
 import {PageRetrySchedules} from '../../pages/retry-schedules.js';
 import {PageWorkflowSchedules} from '../../pages/workflow-schedules.js';
 import {PageQueues} from '../../pages/queues.js';
+import {PageUsers} from '../../pages/users.js';
 import {PageEngineLogs} from '../../pages/engine-logs.js';
 import {PageAPILogs} from '../../pages/api-logs.js';
 import {PageNotificationLogs} from '../../pages/notification-logs.js';
@@ -178,6 +179,8 @@ export class App extends React.Component {
 			return (<PageWorkflowSchedules />);
 		else if(path=='/queues')
 			return (<PageQueues />);
+		else if(path=='/users')
+			return (<PageUsers />);
 		else if(path=='/logs-engine')
 			return (<PageEngineLogs />);
 		else if(path=='/logs-notification')

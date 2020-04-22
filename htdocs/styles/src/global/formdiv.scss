@@ -13,7 +13,7 @@ div.formdiv {
 			vertical-align: middle;
 		}
 		
-		&>input[type='text'] {
+		&>input[type='text'], &>input[type='password'] {
 			width: 21rem;
 			box-sizing: border-box;
 			vertical-align: middle;

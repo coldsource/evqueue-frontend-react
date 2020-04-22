@@ -40,7 +40,8 @@ export class HeaderMenu extends React.Component {
 					{ label: 'Workflows', icon: 'fa-cubes', url: 'workflows' },
 					{ label: 'Workflow schedules', icon: 'fa-calendar', url: 'workflow-schedules' },
 					{ label: 'Retry schedules', icon: 'fa-clock-o', url: 'retry-schedules' },
-					{ label: 'Queues', icon: 'fa-cubes', url: 'queues' }
+					{ label: 'Queues', icon: 'fa-cubes', url: 'queues' },
+					{ label: 'Users', icon: 'fa-user-o', url: 'users' }
 				]
 			},
 			{
