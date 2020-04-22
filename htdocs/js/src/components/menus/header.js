@@ -20,6 +20,8 @@
 'use strict';
 
 import {App} from '../base/app.js';
+import {EditUserPreferences} from '../dialogs/users/preferences.js';
+import {Dialogs} from '../../ui/dialogs.js';
 
 export class HeaderMenu extends React.Component {
 	constructor(props) {
@@ -85,6 +87,10 @@ export class HeaderMenu extends React.Component {
 		App.changeURL('/auth');
 	}
 	
+	editPreferences(e) {
+		Dialogs.open(EditUserPreferences, {});
+	}
+	
 	level1() {
 		return this.menu.map((entry, idx) => {
 			return (
@@ -117,7 +123,7 @@ export class HeaderMenu extends React.Component {
 				<div><a href="."><img src="images/evQueue-small.svg" title="evQueue" /></a></div>
 				<div className="login-box">
 					<b>{window.localStorage.user}</b>
-					<span className="faicon fa-pencil" title="Edit user properties" />
+					<span className="faicon fa-pencil" title="Edit user properties" onClick={this.editPreferences} />
 					<span className="faicon fa-power-off" title="Logout" onClick={this.logout} />
 				</div>
 				<ul className="level1">

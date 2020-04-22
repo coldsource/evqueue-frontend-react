@@ -112,11 +112,11 @@ export class EditUser extends evQueueComponent {
 						<Select name="profile" value={user.profile} values={[{name: 'User', value: 'USER'},{name: 'Admin', value: 'ADMIN'}]} filter={false} onChange={this.onChange} />
 					</div>
 					<div>
-						<label>Passowrd</label>
+						<label>Password</label>
 						<input type="password" name="password" value={user.password} onChange={this.onChange} />
 					</div>
 					<div>
-						<label>Confirm passowrd</label>
+						<label>Confirm password</label>
 						<input type="password" name="password2" value={user.password2} onChange={this.onChange} />
 					</div>
 				</div>

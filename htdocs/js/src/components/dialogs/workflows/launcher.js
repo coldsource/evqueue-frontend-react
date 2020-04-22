@@ -43,6 +43,12 @@ export class WorkflowLauncher extends evQueueComponent {
 		
 		if(this.props.node!==undefined)
 			this.state.api.node = this.props.node;
+		else
+		{
+			let preferences = JSON.parse(window.localStorage.preferences);
+			this.state.api.node = preferences.preferred_node;
+		}
+		
 		if(this.props.id!==undefined)
 			this.state.api.attributes.id = this.props.id;
 		if(this.props.name!==undefined)

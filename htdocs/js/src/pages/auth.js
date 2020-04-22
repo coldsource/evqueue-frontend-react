@@ -48,8 +48,19 @@ export class PageAuth extends React.Component {
 		window.localStorage.user = this.state.user;
 		window.localStorage.password  = CryptoJS.SHA1(this.state.password).toString(CryptoJS.enc.Hex);
 		var evq = new evQueueCluster(App.global.cluster_config);
-		evq.API({group: 'ping'}).then(
-			(data) => {
+		evq.API({group: 'user', action: 'get', attributes: {name: this.state.user}}).then(
+			(response) => {
+				window.localStorage.preferences = response.documentElement.firstChild.getAttribute('preferences');
+				try {
+					this.state.preferences = JSON.parse(window.localStorage.preferences);
+				}
+				catch(err) {
+					// Empty or unreadable properties, falling back to default
+					window.localStorage.preferences = JSON.stringify({
+						preferred_node: ''
+					});
+				}
+				
 				evq.Close();
 				
 				window.localStorage.authenticated = 'true';
