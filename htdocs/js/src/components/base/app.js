@@ -34,6 +34,7 @@ import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
 import {PageNotificationTypes} from '../../pages/notification-types.js';
 import {PageNotification} from '../../pages/notification.js';
 import {PageNodes} from '../../pages/nodes.js';
+import {PageSystemStatistics} from '../../pages/system-statistics.js';
 import {Page404} from '../../pages/404.js';
 import {PageAuth} from '../../pages/auth.js';
 
@@ -195,6 +196,8 @@ export class App extends React.Component {
 			return (<PageNotification />);
 		else if(path=='/nodes')
 			return (<PageNodes />);
+		else if(path=='/statistics-system')
+			return (<PageSystemStatistics />);
 		
 		return (<Page404 />);
 	}

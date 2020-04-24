@@ -57,6 +57,13 @@ export class HeaderMenu extends React.Component {
 				]
 			},
 			{
+				label: 'Statistics',
+				icon: 'fa-area-chart',
+				submenu: [
+					{ label: 'System', icon: 'fa-percent', url: 'statistics-system' }
+				]
+			},
+			{
 				label: 'Logging',
 				icon: 'fa-file-text-o',
 				submenu: [

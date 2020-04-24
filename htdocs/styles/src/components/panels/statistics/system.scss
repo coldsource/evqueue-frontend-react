@@ -1,0 +1,26 @@
+.evq-system-statistics {
+	table {
+		td:nth-child(1) {
+			padding-left: 1rem;
+			width: 15rem;
+		}
+		
+		td:nth-child(n+2) {
+			width: 10rem;
+			text-align: center;
+			font-weight: bold;
+		}
+		
+		tr.category td {
+			margin-top: 1rem;
+			background-color: $evq-background-blue;
+			padding: 0.5rem;
+			font-weight: bold;
+			font-size: 1rem;
+		}
+		
+		tr.spacer {
+			height: 2rem;
+		}
+	}
+}
