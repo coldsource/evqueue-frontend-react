@@ -25,8 +25,6 @@ import {NotificationLogs} from '../components/panels/logs/notification.js';
 export class PageNotificationLogs extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.terminated_instances = React.createRef();
 	}
 	
 	render() {

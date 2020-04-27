@@ -27,8 +27,6 @@ import {EngineLogs} from '../components/panels/logs/engine.js';
 export class PageEngineLogs extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.terminated_instances = React.createRef();
 	}
 	
 	render() {

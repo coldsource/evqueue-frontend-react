@@ -25,8 +25,6 @@ import {QueuesState} from '../components/panels/queues/state.js';
 export class PageSystemState extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.terminated_instances = React.createRef();
 	}
 	
 	render() {

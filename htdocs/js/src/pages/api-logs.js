@@ -25,8 +25,6 @@ import {APILogs} from '../components/panels/logs/api.js';
 export class PageAPILogs extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.terminated_instances = React.createRef();
 	}
 	
 	render() {

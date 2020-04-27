@@ -25,8 +25,6 @@ import {RunningConfiguration} from '../components/panels/status/running-configur
 export class PageRunningConfiguration extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.terminated_instances = React.createRef();
 	}
 	
 	render() {

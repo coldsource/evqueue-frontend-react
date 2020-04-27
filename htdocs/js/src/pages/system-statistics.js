@@ -25,8 +25,6 @@ import {SystemStatistics} from '../components/panels/statistics/system.js';
 export class PageSystemStatistics extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.terminated_instances = React.createRef();
 	}
 	
 	render() {
