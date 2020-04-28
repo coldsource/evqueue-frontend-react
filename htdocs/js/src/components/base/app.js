@@ -35,6 +35,7 @@ import {PageNotificationTypes} from '../../pages/notification-types.js';
 import {PageNotification} from '../../pages/notification.js';
 import {PageNodes} from '../../pages/nodes.js';
 import {PageSystemStatistics} from '../../pages/system-statistics.js';
+import {PageInstancesStatistics} from '../../pages/instances-statistics.js';
 import {Page404} from '../../pages/404.js';
 import {PageAuth} from '../../pages/auth.js';
 
@@ -198,6 +199,8 @@ export class App extends React.Component {
 			return (<PageNodes />);
 		else if(path=='/statistics-system')
 			return (<PageSystemStatistics />);
+		else if(path=='/statistics-instances')
+			return (<PageInstancesStatistics />);
 		
 		return (<Page404 />);
 	}
