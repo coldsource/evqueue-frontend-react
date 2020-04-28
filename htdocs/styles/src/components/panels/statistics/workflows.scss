@@ -1,0 +1,7 @@
+.evq-workflows-statistics {
+	table {
+		td >span:nth-child(n+2)::before {
+			content: ' • ';
+		}
+	}
+}

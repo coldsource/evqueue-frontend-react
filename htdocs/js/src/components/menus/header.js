@@ -60,6 +60,7 @@ export class HeaderMenu extends React.Component {
 				label: 'Statistics',
 				icon: 'fa-area-chart',
 				submenu: [
+					{ label: 'Workflows', icon: 'fa-cubes', url: 'statistics-workflows' },
 					{ label: 'Instances', icon: 'fa-line-chart', url: 'statistics-instances' },
 					{ label: 'System', icon: 'fa-percent', url: 'statistics-system' }
 				]
