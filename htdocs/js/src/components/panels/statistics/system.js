@@ -31,6 +31,7 @@ export class SystemStatistics extends evQueueComponent {
 		this.timerID = false;
 		
 		this.updateStatistics = this.updateStatistics.bind(this);
+		this.clearStatistics = this.clearStatistics.bind(this);
 	}
 	
 	componentDidMount() {
@@ -62,6 +63,17 @@ export class SystemStatistics extends evQueueComponent {
 		});
 	}
 	
+	clearStatistics(e) {
+		this.API({
+			node: '*',
+			group: 'statistics',
+			action: 'reset',
+			attributes: {type: 'global'}
+		}).then( (response) => {
+			this.updateStatistics();
+		});
+	}
+	
 	renderNodesHeader() {
 		return this.state.cluster.nodes_names.map( (name, idx) => {
 			return (<th key={idx}>{name}</th>);
@@ -79,9 +91,12 @@ export class SystemStatistics extends evQueueComponent {
 	render() {
 		let ncols = this.state.cluster.nodes_names.length+2;
 		
+		var actions = [
+			{icon:'fa-remove', title: "Clear statistics", callback:this.clearStatistics}
+		];
 		
 		return (
-			<Panel noborder left="" title="System statistics">
+			<Panel noborder left="" title="System statistics" actions={actions}>
 				<div className="evq-system-statistics">
 					<table>
 						<thead>
