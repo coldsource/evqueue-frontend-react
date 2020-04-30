@@ -84,7 +84,7 @@ export class RunningConfiguration extends evQueueComponent {
 		
 		return (
 			<div>
-				<div className="config-desc"><i>Bold entries differs between nodes</i></div>
+				<div className="config-desc"><i>Bold entries differ between nodes</i></div>
 				<table className="border hover">
 					<tbody>
 						{ this.renderEntries(idx) }
