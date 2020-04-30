@@ -82,6 +82,12 @@ export class App extends React.Component {
 			return true;
 		}, false);
 		
+		// Try getting other tab's local storage
+		if(window.localStorage.length==0)
+			window.localStorage.setItem('getLocalStorage', Date.now());
+		
+		window.addEventListener('storage', this.localStorageTransfer);
+		
 		this.loadClusterConfig();
 		
 		App.notice = this.notice.bind(this);
@@ -100,6 +106,21 @@ export class App extends React.Component {
 			document.querySelector('#content').style.display='block';
 		}
 		xhr.send();
+	}
+	
+	localStorageTransfer(e) {
+		if(e.key=='getLocalStorage')
+		{
+			window.localStorage.setItem('setLocalStorage', JSON.stringify(window.localStorage));
+			window.localStorage.removeItem('setLocalStorage');
+		}
+		
+		if(e.key=='setLocalStorage')
+		{
+			let data = JSON.parse(event.newValue);
+			for(let key in data)
+				window.localStorage.setItem(key, data[key]);
+		}
 	}
 	
 	getParameter(name) {
