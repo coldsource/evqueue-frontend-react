@@ -42,7 +42,10 @@ export class ExecutingInstances extends ListInstances {
 	componentDidMount() {
 		var api = { node:'*', group:'status', action:'query',attributes:{type:'workflows'} };
 		this.Subscribe('INSTANCE_STARTED',api);
-		this.Subscribe('INSTANCE_TERMINATED',api,true);
+		this.Subscribe('INSTANCE_TERMINATED',api);
+		this.Subscribe('TASK_QUEUE',api);
+		this.Subscribe('TASK_EXECUTE',api);
+		this.Subscribe('TASK_TERMINATE',api,true);
 		
 		this.setState({now: this.now()});
 		
