@@ -63,14 +63,9 @@ export class WorkflowEditor extends evQueueComponent {
 		
 		this.objectUpdate = this.objectUpdate.bind(this);
 		this.onDlgChange = this.onDlgChange.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		
-		document.addEventListener('keydown',(e) => {
-			if(e.ctrlKey==true && e.key=='s')
-			{
-				e.preventDefault();
-				this.save();
-			}
-		});
+		document.addEventListener('keydown', this.onKeyDown);
 	}
 	
 	componentDidMount() {
@@ -86,6 +81,20 @@ export class WorkflowEditor extends evQueueComponent {
 		else
 		{
 			this.openDialog('properties',0);
+		}
+	}
+	
+	componentWillUnmount() {
+		super::componentWillUnmount();
+		
+		document.removeEventListener('keydown', this.onKeyDown);
+	}
+	
+	onKeyDown(e) {
+		if(e.ctrlKey==true && e.key=='s')
+		{
+			e.preventDefault();
+			this.save();
 		}
 	}
 	
