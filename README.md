@@ -21,5 +21,5 @@ $ npm run build
 Or if you want to continuously watch changes :
 
 ```
-npm run watch
+$ npm run watch
 ```
