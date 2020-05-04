@@ -1,0 +1,27 @@
+{
+  "name": "evqueue-frontend-react",
+  "version": "1.0.0",
+  "description": "evQueue scheduler frontend, fully written in react JS",
+  "main": "app.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-preset-react": "6.24.1",
+    "sass": "1.26.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/babel-cli/bin/babel.js htdocs/js/src --out-dir htdocs/js/dist --presets react && node_modules/sass/sass.js --no-source-map htdocs/styles/src/ui.scss htdocs/styles/ui.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coldsource/evqueue-frontend-react.git"
+  },
+  "author": "Thibault Kummer",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/coldsource/evqueue-frontend-react/issues"
+  },
+  "homepage": "https://github.com/coldsource/evqueue-frontend-react#readme"
+}
