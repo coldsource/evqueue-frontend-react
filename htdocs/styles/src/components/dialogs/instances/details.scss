@@ -35,11 +35,12 @@ div.workflow {
 	}
 
 	.progressbar {
-		position: absolute;
-		width: 90%;
-		left: 5%;
-		bottom: -2px;
-		height: 2px;
+		height: 0.3rem;
+		
+		&>div {
+			height: 0.3rem;
+			background-color: #5a5ac4;
+		}
 	}
 
 	.taskState {

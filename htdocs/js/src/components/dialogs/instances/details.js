@@ -57,7 +57,8 @@ export class InstanceDetails extends evQueueComponent {
 		var api = { node:this.props.node, group:'instance',action:'query',attributes:{id:this.props.id} };
 		this.Subscribe('TASK_QUEUE',api,false,this.props.id,this.evQueueEventWorkflow);
 		this.Subscribe('TASK_EXECUTE',api,false,this.props.id,this.evQueueEventWorkflow);
-		this.Subscribe('TASK_TERMINATE',api,true,this.props.id,this.evQueueEventWorkflow);
+		this.Subscribe('TASK_TERMINATE',api,false,this.props.id,this.evQueueEventWorkflow);
+		this.Subscribe('TASK_PROGRESS',api,true,this.props.id,this.evQueueEventWorkflow);
 		
 		var api = { node:this.props.node, group:'instances',action:'list',attributes:{filter_id:this.props.id} };
 		this.Subscribe('INSTANCE_TAGGED',api,false,this.props.id,this.evQueueEventWorkflowTags);
@@ -278,6 +279,21 @@ export class InstanceDetails extends evQueueComponent {
 					<span className="taskName">{task.type=='SCRIPT'?task.name:task.path}</span>
 				</span>
 				{task.status=='EXECUTING'?(<span className="faicon fa-bomb" title="Kill this instance" onClick={ () => this.kill(task) }></span>):''}
+				{this.renderTaskProgression(task)}
+			</div>
+		);
+	}
+	
+	renderTaskProgression(task) {
+		if(task.status!='EXECUTING')
+			return;
+		
+		if(!task.progression)
+			return;
+		
+		return (
+			<div className="progressbar">
+				<div style={{width: task.progression+'%'}} />
 			</div>
 		);
 	}
