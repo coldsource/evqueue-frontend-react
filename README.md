@@ -23,3 +23,13 @@ Or if you want to continuously watch changes :
 ```
 $ npm run watch
 ```
+
+### Package for production
+
+```
+$ npm install
+$ npm run build
+$ npm run pack
+```
+
+Edit index.html and switch to production configuration in the bottom of the file.
