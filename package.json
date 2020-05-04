@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "evQueue scheduler frontend, fully written in react JS",
   "main": "app.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-cli": "6.26.0",
     "babel-preset-react": "6.24.1",
