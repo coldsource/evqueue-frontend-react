@@ -19,14 +19,23 @@
 		</div>
 		
 		<div id="content">
-			<script type="module" src="js/dist/components/base/app.js"></script>
 		</div>
 		
 		<div id="footer">
 			Licensed under GPLv3 (<a target="_blank" href="http://www.evqueue.net">evqueue.net</a>)
 		</div>
 		
-		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin="crossorigin"></script>
-		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin="crossorigin"></script>
+		<!-- DEV Settings -->
+		<script src="js/vendor/react/react.development.js"></script>
+		<script src="js/vendor/react/react-dom.development.js"></script>
+		<script src="js/vendor/chart/Chart.bundle.js"></script>
+		<script type="module" src="js/dist/components/base/app.js"></script>
+
+		<!-- PROD Settings
+		<script src="js/vendor/react/react.production.min.js"></script>
+		<script src="js/vendor/react/react-dom.production.min.js"></script>
+		<script src="js/vendor/chart/Chart.bundle.min.js"></script>
+		-->
+		<script src="js/evqueue.js"></script>
 	</body>
 </html>

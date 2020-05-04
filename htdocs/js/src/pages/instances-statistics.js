@@ -25,7 +25,6 @@ import {Checkbox} from '../ui/checkbox.js';
 import {Radios} from '../ui/radios.js';
 import {Radio} from '../ui/radio.js';
 import {InputSpinner} from '../ui/input-spinner.js';
-import '../chart/Chart.bundle.js';
 
 export class PageInstancesStatistics extends evQueueComponent {
 	constructor(props) {
