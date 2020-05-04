@@ -85,7 +85,7 @@ export class WorkflowEditor extends evQueueComponent {
 	}
 	
 	componentWillUnmount() {
-		super::componentWillUnmount();
+		super.componentWillUnmount();
 		
 		document.removeEventListener('keydown', this.onKeyDown);
 	}
