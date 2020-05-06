@@ -7,6 +7,7 @@ div.evq-headermenu {
 		left: 10px;
 		top: 3px;
 		z-index:100;
+		cursor: pointer;
 	}
 	
 	div.login-box {
@@ -57,11 +58,9 @@ div.evq-headermenu {
 		li {
 			display: inline;
 			padding: 10px;
-			
-			a {
-				text-decoration: none;
-				color: $evq-light-blue;
-			}
+			text-decoration: none;
+			color: $evq-light-blue;
+			cursor: pointer;
 		}
 	}
 }

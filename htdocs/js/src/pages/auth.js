@@ -37,6 +37,22 @@ export class PageAuth extends React.Component {
 		this.connect = this.connect.bind(this);
 	}
 	
+	componentDidMount() {
+		// Auto login in browser plugin configuration
+		if(typeof(browser)!='undefined')
+		{
+			browser.storage.local.get().then( (data) => {
+				if(data.login!==undefined && data.password!==undefined)
+				{
+					this.setState(
+						{user: data.login, password: data.password},
+						() => this.connect()
+					);
+				}
+			});
+		}
+	}
+	
 	renderError() {
 		if(!this.state.error)
 			return;
@@ -64,7 +80,7 @@ export class PageAuth extends React.Component {
 				evq.Close();
 				
 				window.localStorage.authenticated = 'true';
-				App.changeURL('/');
+				App.changeURL('?loc=home');
 			},
 			(reason) => this.setState({error: reason})
 		);

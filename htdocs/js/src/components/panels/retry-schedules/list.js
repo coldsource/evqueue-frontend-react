@@ -107,7 +107,7 @@ export class RetrySchedulesList extends evQueueComponent {
 			let title = workflow.tasks==1?"1 task is using this retry schedule":workflow.tasks+" tasks are using this retry schedule";
 			
 			return (
-				<span key={workflow.name} title={title} onClick={ (e) => App.changeURL('/workflow-editor?id='+workflow.id) }>{workflow.name}</span>
+				<span key={workflow.name} title={title} onClick={ (e) => App.changeURL('?loc=workflow-editor&id='+workflow.id) }>{workflow.name}</span>
 			);
 		});
 	}

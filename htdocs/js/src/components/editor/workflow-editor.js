@@ -103,11 +103,11 @@ export class WorkflowEditor extends evQueueComponent {
 		{
 			 Dialogs.open(Confirm, {
 				content: "You have unsaved changes, are you sure you want to exit ?",
-				confirm: () => App.changeURL('/workflows')
+				confirm: () => App.changeURL('?loc=workflows')
 			});
 		}
 		else
-			App.changeURL('/workflows');
+			App.changeURL('?loc=workflows');
 	}
 	
 	save() {
@@ -141,7 +141,7 @@ export class WorkflowEditor extends evQueueComponent {
 			{
 				let id = xml.documentElement.getAttribute('workflow-id');
 				self.setState({id: id});
-				App.changeURL('/workflow-editor?id='+id);
+				App.changeURL('?loc=workflow-editor&id='+id);
 			}
 		});
 	}
