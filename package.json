@@ -15,6 +15,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node_modules/babel-cli/bin/babel.js htdocs/js/src --out-dir htdocs/js/dist --presets react && node_modules/sass/sass.js --no-source-map --style compressed htdocs/styles/src/ui.scss htdocs/styles/dist/ui.css",
+    "build:extension": "zip evqueue-browser-plugin.zip manifest.json browser-plugin/* htdocs/index.html htdocs/fonts/* htdocs/images/* htdocs/styles/dist/ui.css htdocs/styles/vendor/* htdocs/js/dist/evqueue.js htdocs/js/vendor/*/*; zip evqueue-browser-plugin-src.zip -r browser-plugin htdocs manifest.json package.json README.md",
     "watch:js": "node_modules/babel-cli/bin/babel.js --watch htdocs/js/src --out-dir htdocs/js/dist --presets react",
     "watch:css": "node_modules/sass/sass.js --watch htdocs/styles/src/ui.scss htdocs/styles/dist/ui.css",
     "watch": "node_modules/npm-run-all/bin/npm-run-all/index.js --parallel watch:*",
