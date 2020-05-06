@@ -77,15 +77,20 @@ export class PageSettings extends React.Component {
 	
 	save() {
 		let clusters = this.state.clusters;
+		let config_clusters = {};
 		for(let name in clusters)
 		{
-			let cluster = clusters[name];
+			let cluster = Object.assign({},clusters[name]);
 			if(cluster.password_clear!='')
 				cluster.password = CryptoJS.SHA1(cluster.password_clear).toString(CryptoJS.enc.Hex);
 			delete cluster.password_clear;
+			
+			config_clusters[name] = cluster;
+			clusters[name].password_clear = '';
 		}
 		
-		browser.storage.local.set({clusters: clusters});
+		browser.storage.local.set({clusters: config_clusters});
+		this.setState({clusters: clusters});
 	}
 	
 	onChange(e, name) {
