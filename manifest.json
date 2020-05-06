@@ -5,7 +5,7 @@
   "description": "evQueue browser plugin",
   "homepage_url": "https://github.com/coldsource/evqueue-frontend-react",
   "icons": {
-    "48": "htdocs/images/favicon-32x32.png"
+    "48": "htdocs/images/favicon-48x48.png"
   },
 
   "permissions": [
