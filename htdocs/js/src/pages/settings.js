@@ -136,7 +136,7 @@ export class PageSettings extends React.Component {
 	
 	render() {
 		return (
-			<div>
+			<div id="content-settings">
 				<h1>evQueue settings</h1>
 				
 				<Tabs>
@@ -163,5 +163,3 @@ export class PageSettings extends React.Component {
 		);
 	}
 }
-
-ReactDOM.render(<PageSettings />, document.querySelector('#content-settings'));

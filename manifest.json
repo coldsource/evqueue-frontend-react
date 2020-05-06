@@ -27,7 +27,7 @@
   },
   
   "options_ui": {
-    "page": "/browser-plugin/settings.html",
+    "page": "/htdocs/index.html?loc=settings",
     "open_in_tab":true
   }
 } 

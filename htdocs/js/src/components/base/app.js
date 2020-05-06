@@ -39,6 +39,7 @@ import {PageSystemStatistics} from '../../pages/system-statistics.js';
 import {PageInstancesStatistics} from '../../pages/instances-statistics.js';
 import {Page404} from '../../pages/404.js';
 import {PageAuth} from '../../pages/auth.js';
+import {PageSettings} from '../../pages/settings.js';
 
 export class App extends React.Component {
 	constructor(props) {
@@ -271,6 +272,8 @@ export class App extends React.Component {
 			return (<PageSystemStatistics />);
 		else if(path=='statistics-instances')
 			return (<PageInstancesStatistics />);
+		else if(path=='settings')
+			return (<PageSettings/>);
 		
 		return (<Page404 />);
 	}
