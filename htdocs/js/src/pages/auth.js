@@ -40,11 +40,16 @@ export class PageAuth extends React.Component {
 		this.connect = this.connect.bind(this);
 		
 		// Auto login in browser plugin configuration
-		if(typeof(browser)!='undefined')
+		if(typeof(browser)!='undefined' && env!==null)
 		{
 			browser.storage.local.get().then( (data) => {
-				if(data.login!==undefined && data.password!==undefined)
-					this._connect(env, user, password);
+				if(data.clusters!==undefined && data.clusters[env]!==undefined)
+				{
+					let user = data.clusters[env].user;
+					let password = data.clusters[env].password;
+					if(user && password)
+						this._connect(env, user, password);
+				}
 			});
 		}
 		
