@@ -158,7 +158,7 @@ export class App extends React.Component {
 				if(env!==null)
 					App.global.cluster_config = App.global.clusters_config[env].nodes;
 				
-				if(window.localStorage.getItem('env')===null)
+				if(window.localStorage.getItem('env')===null && data.clusters!==undefined)
 					window.localStorage.setItem('env', Object.keys(clusters)[0]);
 				
 				this.setState({ready: true});
@@ -228,7 +228,7 @@ export class App extends React.Component {
 	route() {
 		let path = this.state.get.has('loc')?this.state.get.get('loc'):'';
 		
-		if(this.state.path!='auth' && (window.localStorage.authenticated===undefined || window.localStorage.authenticated!='true'))
+		if(path!='auth' && path!='settings' && (window.localStorage.authenticated===undefined || window.localStorage.authenticated!='true'))
 		{
 			window.history.pushState('','','?loc=auth');
 			path = 'auth';
