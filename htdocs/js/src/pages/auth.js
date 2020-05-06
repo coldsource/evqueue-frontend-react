@@ -51,7 +51,6 @@ export class PageAuth extends React.Component {
 		// Auto login if credentials are already stored
 		if(env!==null)
 		{
-			console.log("ok");
 			let user = window.localStorage.getItem(env+'.user');
 			let password = window.localStorage.getItem(env+'.password');
 			if(user!==null && password!==null)

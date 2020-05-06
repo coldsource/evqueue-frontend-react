@@ -136,11 +136,27 @@ export class App extends React.Component {
 		{
 			// Plugin configuration, load configuration from browser storage
 			browser.storage.local.get().then( (data) => {
-				let cluster = data.cluster.split(',');
-				for(let i=0;i<cluster.length;i++)
-					cluster[i] = cluster[i].trim();
+				let clusters = data.clusters;
+				let clusters_config = {};
+				for(let name in clusters)
+				{
+					let cluster = clusters[name];
+					
+					let nodes = cluster.desc.split(',');
+					for(let i=0;i<nodes.length;i++)
+						nodes[i] = nodes[i].trim();
+					
+					clusters_config[name] = {
+						color: cluster.color,
+						nodes: nodes
+					};
+				}
 				
-				App.global.cluster_config = cluster;
+				App.global.clusters_config = clusters_config;
+				
+				if(env!==null)
+					App.global.cluster_config = App.global.clusters_config[env].nodes;
+				
 				this.setState({ready: true});
 				document.querySelector('#content').style.display='block';
 			});
