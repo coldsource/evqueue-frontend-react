@@ -30,10 +30,13 @@ export class PageAuth extends React.Component {
 		super(props);
 		
 		let env = window.localStorage.getItem('env');
-		if(env===null && App.global.clusters_config.length>0)
-			env = Object.keys(App.global.clusters_config)[0];
-		else
-			env = '';
+		if(env===null)
+		{
+			if(Object.keys(App.global.clusters_config).length>0)
+				env = Object.keys(App.global.clusters_config)[0];
+			else
+				env = '';
+		}
 		
 		this.state = {
 			env: env,
