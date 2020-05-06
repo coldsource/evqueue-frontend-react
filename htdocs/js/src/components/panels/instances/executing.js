@@ -31,8 +31,6 @@ export class ExecutingInstances extends ListInstances {
 	constructor(props) {
 		super(props,'*');
 		
-		this.state.nodes_up = 0;
-		this.state.nodes_down = 0;
 		this.state.now = 0;
 		this.timerID = false;
 		
@@ -150,8 +148,8 @@ export class ExecutingInstances extends ListInstances {
 		}
 		
 		if(nodes_down==0)
-			return (<div id="nodes-status"><a href="/nodes"><span className="success">{nodes_up} node{nodes_up!=1?'s':''} up</span></a></div>);
-		return (<div id="nodes-status"><a href="nodes.php"><span className="success">{nodes_up} node{nodes_up!=1?'s':''} up - <span className="error">{nodes_down} node{nodes_down!=1?'s':''} down</span></span></a></div>);
+			return (<div id="nodes-status"><a href="?loc=nodes"><span className="success">{nodes_up} node{nodes_up!=1?'s':''} up</span></a></div>);
+		return (<div id="nodes-status"><a href="?loc=nodes"><span className="success">{nodes_up} node{nodes_up!=1?'s':''} up - <span className="error">{nodes_down} node{nodes_down!=1?'s':''} down</span></span></a></div>);
 	}
 	
 	renderTitle() {

@@ -20,8 +20,10 @@
 'use strict';
 
 import {App} from '../base/app.js';
+import {evQueueComponent} from '../base/evqueue-component.js';
 import {EditUserPreferences} from '../dialogs/users/preferences.js';
 import {Dialogs} from '../../ui/dialogs.js';
+import {EnvSelector} from '../base/env-selector.js';
 
 export class HeaderMenu extends React.Component {
 	constructor(props) {
@@ -84,16 +86,38 @@ export class HeaderMenu extends React.Component {
 				idx = 0;
 		
 		this.state = {
+			env: window.localStorage.getItem('env'),
 			sel1: idx,
 			sel2: 0
 		};
+		
+		this.logout = this.logout.bind(this);
 	}
 	
 	logout() {
+		let env = this.state.env;
+		
+		// Disconnect engines
+		evQueueComponent.global.event_dispatcher.Close();
+		evQueueComponent.global.evqueue_api.Close();
+		delete evQueueComponent.global;
+		
 		window.localStorage.removeItem('authenticated');
 		window.localStorage.removeItem('user');
 		window.localStorage.removeItem('password');
+		window.localStorage.removeItem(env+'.user');
+		window.localStorage.removeItem(env+'.password');
 		App.changeURL('?loc=auth');
+	}
+	
+	changeEnv(e) {
+		window.localStorage.setItem('env', e.target.value);
+		
+		window.localStorage.removeItem('authenticated');
+		window.localStorage.removeItem('user');
+		window.localStorage.removeItem('password');
+		
+		document.location.href='?loc=auth';
 	}
 	
 	editPreferences(e) {
@@ -132,6 +156,9 @@ export class HeaderMenu extends React.Component {
 					<b>{window.localStorage.user}</b>
 					<span className="faicon fa-pencil" title="Edit user properties" onClick={this.editPreferences} />
 					<span className="faicon fa-power-off" title="Logout" onClick={this.logout} />
+				</div>
+				<div className="env-box">
+					<EnvSelector name="env" value={this.state.env} onChange={this.changeEnv} />
 				</div>
 				<ul className="level1">
 					{ this.level1() }

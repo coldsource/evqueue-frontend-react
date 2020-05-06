@@ -100,8 +100,8 @@ export class evQueueWS
 					var challenge = xmldoc.documentElement.getAttribute("challenge");
 				
 					// Compute challenge response and send to complete authentication
-					var user = window.localStorage.user;
-					var passwd_hash = CryptoJS.enc.Hex.parse(window.localStorage.password);
+					var user = window.localStorage.getItem('user');
+					var passwd_hash = CryptoJS.enc.Hex.parse(window.localStorage.getItem('password'));
 					var response = CryptoJS.HmacSHA1(CryptoJS.enc.Hex.parse(challenge), passwd_hash).toString(CryptoJS.enc.Hex);
 					
 					self.ws.send("<auth response='"+response+"' user='"+user+"' />");

@@ -23,33 +23,39 @@ import {CryptoJS} from '../evqueue/cryptojs/core.js';
 import {App} from '../components/base/app.js';
 import {evQueueCluster} from '../evqueue/evqueue-cluster.js';
 import {HeaderMenu} from '../components/menus/header.js';
+import {EnvSelector} from '../components/base/env-selector.js';
 
 export class PageAuth extends React.Component {
 	constructor(props) {
 		super(props);
 		
+		let env = window.localStorage.getItem('env');
 		this.state = {
+			env: env!==null?env:Object.keys(App.global.clusters_config)[0],
 			user: '',
 			password: '',
 			error: false,
 		};
 		
 		this.connect = this.connect.bind(this);
-	}
-	
-	componentDidMount() {
+		
 		// Auto login in browser plugin configuration
 		if(typeof(browser)!='undefined')
 		{
 			browser.storage.local.get().then( (data) => {
 				if(data.login!==undefined && data.password!==undefined)
-				{
-					this.setState(
-						{user: data.login, password: data.password},
-						() => this.connect()
-					);
-				}
+					this._connect(env, user, password);
 			});
+		}
+		
+		// Auto login if credentials are already stored
+		if(env!==null)
+		{
+			console.log("ok");
+			let user = window.localStorage.getItem(env+'.user');
+			let password = window.localStorage.getItem(env+'.password');
+			if(user!==null && password!==null)
+				this._connect(env, user, password);
 		}
 	}
 	
@@ -61,10 +67,27 @@ export class PageAuth extends React.Component {
 	}
 	
 	connect() {
-		window.localStorage.user = this.state.user;
-		window.localStorage.password  = CryptoJS.SHA1(this.state.password).toString(CryptoJS.enc.Hex);
+		let env = this.state.env;
+		let user = this.state.user;
+		let password = CryptoJS.SHA1(this.state.password).toString(CryptoJS.enc.Hex);
+		
+		this._connect(env, user, password);
+	}
+	
+	_connect(env, user, password) {
+		// Set cluster config according to selected ENV
+		App.global.cluster_config = App.global.clusters_config[env].nodes;
+		
+		// Store credentials for this env
+		window.localStorage.setItem('env',env);
+		window.localStorage.setItem(env+".user",user);
+		window.localStorage.setItem(env+".password",password);
+		window.localStorage.setItem('user',user);
+		window.localStorage.setItem('password',password);
+		
+		// Connect
 		var evq = new evQueueCluster(App.global.cluster_config);
-		evq.API({group: 'user', action: 'get', attributes: {name: this.state.user}}).then(
+		evq.API({group: 'user', action: 'get', attributes: {name: user}}).then(
 			(response) => {
 				window.localStorage.preferences = response.documentElement.firstChild.getAttribute('preferences');
 				try {
@@ -95,6 +118,7 @@ export class PageAuth extends React.Component {
 					</div>
 					<div className="form">
 						{ this.renderError() }
+						<EnvSelector name="env" value={this.state.env} filter={false} onChange={ (e) => this.setState({env: e.target.value}) }/><br/><br/>
 						<input autoFocus type="text" placeholder="User" onChange={ (e) => this.setState({user: e.target.value}) }/><br/><br/>
 						<input type="password" placeholder="Password" onChange={ (e) => this.setState({password: e.target.value}) } /><br/><br/>
 						<button onClick={this.connect}>Log In</button>

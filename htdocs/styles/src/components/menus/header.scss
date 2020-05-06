@@ -17,6 +17,21 @@ div.evq-headermenu {
 		margin: 0.3rem 1rem;
 	}
 	
+	div.env-box {
+		position: fixed;
+		right: 0px;
+		top: 33px;
+		z-index: 100;
+		
+		.evq-select {
+			width: 8rem;
+			
+			.evq-select-value {
+				padding: 0.1rem;
+			}
+		}
+	}
+	
 	ul.level1 {
 		position: fixed;
 		top: 0px;
@@ -50,7 +65,7 @@ div.evq-headermenu {
 		left: 0px;
 		width: 100%;
 		margin: 0px;
-		padding: 3px 0px 3px 160px;
+		padding: 5px 0px 5px 160px;
 		background-color: #EEEEEE;
 		height: 20px;
 		z-index: 99;

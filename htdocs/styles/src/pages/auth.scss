@@ -1,17 +1,19 @@
 div#login {
-	text-align: center;
 	margin: auto;
 	margin-top: 10rem;
 	margin-bottom: 10rem;
+	width: 28rem;
 	
 	fieldset {
 		border-radius: 20px;
 		display: inline-block;
 		padding: 20px;
+		width: 100%;
 		
 		div.logo {
 			display: inline-block;
 			vertical-align: top;
+			margin-top: 2rem;
 			
 			img {
 				width: 200px;
@@ -21,6 +23,15 @@ div#login {
 		div.form {
 			display: inline-block;
 			margin-left: 20px;
+			
+			.evq-select {
+				width: 14rem;
+			}
+			
+			input {
+				width: 14rem;
+				box-sizing: border-box;
+			}
 		}
 	}
 }

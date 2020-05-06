@@ -102,6 +102,16 @@ export class Select extends React.Component {
 		return undefined;
 	}
 	
+	getValueColor(value) {
+		for(var i=0;i<this.props.values.length;i++)
+		{
+			if(this.props.values[i].value==value)
+				return this.props.values[i].color;
+		}
+		
+		return undefined;
+	}
+	
 	renderFilter() {
 		if(this.props.filter!==undefined && !this.props.filter)
 			return;
@@ -124,15 +134,15 @@ export class Select extends React.Component {
 	}
 	
 	renderValues() {
-		var values = this.applyFilter();
+		let values = this.applyFilter();
 		
 		if(values.length==0)
 			return (<div>No results found</div>);
 		
-		var groupped_values = {};
-		for(var i=0;i<values.length;i++)
+		let groupped_values = {};
+		for(let i=0;i<values.length;i++)
 		{
-			var group = values[i].group?values[i].group:'No group';
+			let group = values[i].group?values[i].group:'No group';
 			if(groupped_values[group]===undefined)
 				groupped_values[group] = [];
 			
@@ -143,15 +153,15 @@ export class Select extends React.Component {
 		if(groupped_values['No group'] && groupped_values['No group'].length==values.length)
 			return (<ul>{this.renderGroup(groupped_values['No group'])}</ul>);
 		
-		var ret = [];
+		let ret = [];
 		
-		var groups = Object.keys(groupped_values);
+		let groups = Object.keys(groupped_values);
 		if(this.props.groupsort===undefined || this.props.groupsort===true)
 			groups.sort(function(a,b) { return a.toLowerCase()<=b.toLowerCase()?-1:1});
 		
-		for(var i=0;i<groups.length;i++)
+		for(let i=0;i<groups.length;i++)
 		{
-			var group = groups[i];
+			let group = groups[i];
 			ret.push(<div className="evq-select-group" key={group}><h3 key={'group_'+group}>{groups.length>1?group:''}</h3><ul>{this.renderGroup(groupped_values[group])}</ul></div>);
 		}
 		
@@ -160,7 +170,11 @@ export class Select extends React.Component {
 	
 	renderGroup(group) {
 		return group.map( (value) => {
-			return (<li key={value.value} onClick={ () => {this.changeValue(value.value)} }>{value.name}</li>);
+			let style = {};
+			if(value.color!==undefined)
+				style.color = '#'+value.color;
+			
+			return (<li style={style} key={value.value} onClick={ () => {this.changeValue(value.value)} }>{value.name}</li>);
 		});
 	}
 	
@@ -175,13 +189,17 @@ export class Select extends React.Component {
 	}
 	
 	render() {
-		var className = 'evq-select';
+		let className = 'evq-select';
 		if(this.props.className)
 			className += ' '+this.props.className;
 		
-		var value_style = {
-			borderRadius: this.state.dropdown_opened?'0.4rem 0.4rem 0rem 0rem':'0.4rem 0.4rem 0.4rem 0.4rem'
+		let value_style = {
+			borderRadius: this.state.dropdown_opened?'0.4rem 0.4rem 0rem 0rem':'0.4rem 0.4rem 0.4rem 0.4rem',
+			backgroundColor: ''
 		};
+		
+		if(this.props.value!==undefined && this.getValueColor(this.props.value)!==undefined)
+			value_style.backgroundColor = '#'+this.getValueColor(this.props.value);
 		
 		return (
 			<div ref={this.ref} className={className}>

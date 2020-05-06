@@ -44,7 +44,7 @@ export class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.env = typeof(browser)=='undefined'?'server':'extension';
+		this.context = typeof(browser)=='undefined'?'server':'extension';
 		
 		App.global = {instance: this};
 		
@@ -99,14 +99,34 @@ export class App extends React.Component {
 	}
 	
 	loadClusterConfig() {
-		if(this.env=='server')
+		let env = window.localStorage.getItem('env');
+		
+		if(this.context=='server')
 		{
 			// Classic server configuration, load configuration from json file
 			var xhr = new XMLHttpRequest();
 			xhr.open('GET', 'conf/cluster.json');
 			xhr.setRequestHeader('Content-Type', 'application/json');
 			xhr.onload = () => {
-				App.global.cluster_config = JSON.parse(xhr.responseText);
+				let config = JSON.parse(xhr.responseText);
+				let clusters_config = {};
+				for(let env in config)
+				{
+					let parts = env.split('#');
+					let name = parts[0];
+					let color = parts.length>1?parts[1]:'ffffff';
+						
+					clusters_config[name] = {
+						color: color,
+						nodes: config[env]
+					};
+				}
+				
+				App.global.clusters_config = clusters_config;
+				
+				if(env!==null)
+					App.global.cluster_config = App.global.clusters_config[env].nodes;
+				
 				this.setState({ready: true});
 				document.querySelector('#content').style.display='block';
 			}

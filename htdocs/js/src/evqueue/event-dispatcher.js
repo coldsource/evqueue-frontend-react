@@ -49,6 +49,11 @@ export class EventDispatcher {
 		return this.evqueue_event;
 	}
 	
+	Close()
+	{
+		this.evqueue_event.Close();
+	}
+	
 	SubscribeClusterState(instance, handler)
 	{
 		this.cluster_handlers.push({
