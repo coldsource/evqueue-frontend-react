@@ -157,7 +157,8 @@ export class App extends React.Component {
 				if(env!==null)
 					App.global.cluster_config = App.global.clusters_config[env].nodes;
 				
-				window.localStorage.setItem('env', Object.keys(clusters)[0]);
+				if(window.localStorage.getItem('env')===null)
+					window.localStorage.setItem('env', Object.keys(clusters)[0]);
 				
 				this.setState({ready: true});
 				document.querySelector('#content').style.display='block';
