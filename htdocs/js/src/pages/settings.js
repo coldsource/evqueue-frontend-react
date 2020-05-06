@@ -115,7 +115,7 @@ export class PageSettings extends React.Component {
 							</div>
 							<div>
 								<label>Color</label>
-								<input type="text" name="color" value={cluster.color} onChange={ (e) => this.onChange(e, name) } />
+								<input type="text" placeholder="ebebeb" name="color" value={cluster.color} onChange={ (e) => this.onChange(e, name) } />
 							</div>
 						</div>
 						<div className="center">
