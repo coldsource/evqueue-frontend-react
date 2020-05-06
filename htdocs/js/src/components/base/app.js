@@ -44,13 +44,15 @@ export class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
+		this.env = typeof(browser)=='undefined'?'server':'extension';
+		
 		App.global = {instance: this};
 		
 		let url = new URL(document.location);
 		let get = new URLSearchParams(url.search);
 		
 		this.state = {
-			path: url.pathname,
+			path: url.hash,
 			get: get,
 			ready: false,
 			messages: [],
@@ -60,7 +62,7 @@ export class App extends React.Component {
 		
 		var self = this;
 		window.onpopstate = (e) => {
-			self.changeURL(document.location.pathname);
+			self.changeURL(document.location.search);
 			return true;
 		};
 		
@@ -97,15 +99,32 @@ export class App extends React.Component {
 	}
 	
 	loadClusterConfig() {
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'conf/cluster.json');
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onload = () => {
-			App.global.cluster_config = JSON.parse(xhr.responseText);
-			this.setState({ready: true});
-			document.querySelector('#content').style.display='block';
+		if(this.env=='server')
+		{
+			// Classic server configuration, load configuration from json file
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'conf/cluster.json');
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = () => {
+				App.global.cluster_config = JSON.parse(xhr.responseText);
+				this.setState({ready: true});
+				document.querySelector('#content').style.display='block';
+			}
+			xhr.send();
 		}
-		xhr.send();
+		else
+		{
+			// Plugin configuration, load configuration from browser storage
+			browser.storage.local.get().then( (data) => {
+				let cluster = data.cluster.split(',');
+				for(let i=0;i<cluster.length;i++)
+					cluster[i] = cluster[i].trim();
+				
+				App.global.cluster_config = cluster;
+				this.setState({ready: true});
+				document.querySelector('#content').style.display='block';
+			});
+		}
 	}
 	
 	localStorageTransfer(e) {
@@ -129,19 +148,11 @@ export class App extends React.Component {
 	
 	changeURL(path)
 	{
-		// Use relative path to make everything work even if not on root
-		if(path[0]=='/')
-			path = path.substr(1);
-		
-		if(path=='' || path[0]=='?')
-			path='.'+path;
-		
-		let url = new URL(path, document.location);
-		let get = new URLSearchParams(url.search);
+		let get = new URLSearchParams(path);
 		
 		window.history.pushState('','',path);
+		
 		this.setState({
-			path: url.pathname,
 			get: get
 		});
 	}
@@ -175,55 +186,51 @@ export class App extends React.Component {
 	}
 	
 	route() {
-		var path = this.state.path;
+		let path = this.state.get.has('loc')?this.state.get.get('loc'):'';
 		
-		// Make path work even if we are in subfolder
-		let parts = path.split('/');
-		path = '/'+parts[parts.length-1];
-		
-		if(this.state.path!='/auth' && (window.localStorage.authenticated===undefined || window.localStorage.authenticated!='true'))
+		if(this.state.path!='auth' && (window.localStorage.authenticated===undefined || window.localStorage.authenticated!='true'))
 		{
-			window.history.pushState('','','auth');
-			path = '/auth';
+			window.history.pushState('','','?loc=auth');
+			path = 'auth';
 		}
 		
-		if(path=='/')
+		if(path=='' || path=='home')
 			return (<PageHome />);
-		else if(path=='/auth')
+		else if(path=='auth')
 			return (<PageAuth />);
-		else if(path=='/system-state')
+		else if(path=='system-state')
 			return (<PageSystemState />);
-		else if(path=='/running-configuration')
+		else if(path=='running-configuration')
 			return (<PageRunningConfiguration />);
-		else if(path=='/workflows')
+		else if(path=='workflows')
 			return (<PageWorkflows />);
-		else if(path=='/retry-schedules')
+		else if(path=='retry-schedules')
 			return (<PageRetrySchedules />);
-		else if(path=='/workflow-schedules')
+		else if(path=='workflow-schedules')
 			return (<PageWorkflowSchedules />);
-		else if(path=='/queues')
+		else if(path=='queues')
 			return (<PageQueues />);
-		else if(path=='/users')
+		else if(path=='users')
 			return (<PageUsers />);
-		else if(path=='/logs-engine')
+		else if(path=='logs-engine')
 			return (<PageEngineLogs />);
-		else if(path=='/logs-notification')
+		else if(path=='logs-notification')
 			return (<PageNotificationLogs />);
-		else if(path=='/logs-api')
+		else if(path=='logs-api')
 			return (<PageAPILogs />);
-		else if(path=='/workflow-editor')
+		else if(path=='workflow-editor')
 			return (<PageWorkflowEditor />);
-		else if(path=='/notification-plugins')
+		else if(path=='notification-plugins')
 			return (<PageNotificationTypes />);
-		else if(path=='/notification')
+		else if(path=='notification')
 			return (<PageNotification />);
-		else if(path=='/nodes')
+		else if(path=='nodes')
 			return (<PageNodes />);
-		else if(path=='/statistics-workflows')
+		else if(path=='statistics-workflows')
 			return (<PageWorkflowsStatistics />);
-		else if(path=='/statistics-system')
+		else if(path=='statistics-system')
 			return (<PageSystemStatistics />);
-		else if(path=='/statistics-instances')
+		else if(path=='statistics-instances')
 			return (<PageInstancesStatistics />);
 		
 		return (<Page404 />);

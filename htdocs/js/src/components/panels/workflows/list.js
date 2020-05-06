@@ -115,11 +115,11 @@ export class WorkflowsList extends evQueueComponent {
 	}
 	
 	createWorkflow() {
-		App.changeURL('/workflow-editor');
+		App.changeURL('?loc=workflow-editor');
 	}
 	
 	editWorkflow(id) {
-		App.changeURL('/workflow-editor?id='+id);
+		App.changeURL('?loc=workflow-editor&id='+id);
 	}
 	
 	gitPull() {

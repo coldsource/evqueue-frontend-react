@@ -93,7 +93,7 @@ export class HeaderMenu extends React.Component {
 		window.localStorage.removeItem('authenticated');
 		window.localStorage.removeItem('user');
 		window.localStorage.removeItem('password');
-		App.changeURL('/auth');
+		App.changeURL('?loc=auth');
 	}
 	
 	editPreferences(e) {
@@ -115,12 +115,10 @@ export class HeaderMenu extends React.Component {
 	level2() {
 		return this.menu[this.state.sel1].submenu.map((entry, idx) => {
 			return (
-				<li key={idx}>
-					<a href={entry.url}>
-						<span className={'faicon '+entry.icon}></span>
-						&#160;
-						{entry.label}
-					</a>
+				<li key={idx} onClick={ (e) => App.changeURL('?loc='+entry.url) }>
+					<span className={'faicon '+entry.icon}></span>
+					&#160;
+					{entry.label}
 				</li>
 			);
 		});
@@ -129,7 +127,7 @@ export class HeaderMenu extends React.Component {
 	render() {
 		return (
 			<div className="evq-headermenu">
-				<div><a href="."><img src="images/evQueue-small.svg" title="evQueue" /></a></div>
+				<div><img src="images/evQueue-small.svg" title="evQueue" onClick={ (e) => App.changeURL('?loc=home') } /></div>
 				<div className="login-box">
 					<b>{window.localStorage.user}</b>
 					<span className="faicon fa-pencil" title="Edit user properties" onClick={this.editPreferences} />

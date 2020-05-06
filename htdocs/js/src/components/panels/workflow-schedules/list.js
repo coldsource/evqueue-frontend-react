@@ -188,7 +188,7 @@ export class WorkflowSchedulesList extends evQueueComponent {
 					<td>{last_execution}</td>
 					<td>{next_execution}</td>
 					<td className="tdActions">
-						<span className="faicon fa-eye" title="View launched instances" onClick={ (e) => App.changeURL('/?filter_schedule_id='+workflow_schedule.id) } />
+						<span className="faicon fa-eye" title="View launched instances" onClick={ (e) => App.changeURL('?loc=home&filter_schedule_id='+workflow_schedule.id) } />
 						<span className={lock_icon} title={lock_title} onClick={ (e) => this.toggleLock(workflow_schedule.id, workflow_schedule.active==1) } />
 					</td>
 					<td className="tdActions">
