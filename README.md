@@ -33,3 +33,11 @@ $ npm run pack
 ```
 
 Edit index.html and switch to production configuration in the bottom of the file.
+
+### Build browser plugin
+
+First, build and package application (see above steps). Then use :
+
+```
+$ npm run build:extension
+```
