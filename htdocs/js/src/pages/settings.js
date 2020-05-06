@@ -19,6 +19,7 @@
  
 'use strict';
 
+import {App} from '../components/base/app.js';
 import {CryptoJS} from '../evqueue/cryptojs/core.js';
 import {Tabs} from '../ui/tabs.js';
 import {Tab} from '../ui/tab.js';
@@ -52,10 +53,13 @@ export class PageSettings extends React.Component {
 	addEnv() {
 		let name = this.state.new_name;
 		if(name=='')
-			return;
+			return App.warning("Name cannot be empty");
 		
 		if(this.state.clusters[name]!==undefined)
-			return;
+			return App.warning("Env already exists");
+		
+		if(!this.checkColor(this.state.new_color))
+			return App.warning("Invalid color: « "+this.state.new_color+" »");
 		
 		let clusters = this.state.clusters;
 		clusters[name] = {
@@ -75,12 +79,26 @@ export class PageSettings extends React.Component {
 		this.setState({clusters: clusters});
 	}
 	
+	checkColor(color) {
+		if(color=='')
+			return true;
+		
+		let re = /^[0-9A-Fa-f]{6}$/g;
+		if(!re.test(color))
+			return false;
+		return true;
+	}
+	
 	save() {
 		let clusters = this.state.clusters;
 		let config_clusters = {};
 		for(let name in clusters)
 		{
 			let cluster = Object.assign({},clusters[name]);
+			
+			if(!this.checkColor(cluster.color))
+				return App.warning("Invalid color: « "+cluster.color+" »");
+			
 			if(cluster.password_clear!='')
 				cluster.password = CryptoJS.SHA1(cluster.password_clear).toString(CryptoJS.enc.Hex);
 			delete cluster.password_clear;
@@ -91,6 +109,7 @@ export class PageSettings extends React.Component {
 		
 		browser.storage.local.set({clusters: config_clusters});
 		this.setState({clusters: clusters});
+		App.notice("Configuration saved");
 	}
 	
 	onChange(e, name) {
@@ -116,7 +135,7 @@ export class PageSettings extends React.Component {
 							</div>
 							<div>
 								<label>Password</label>
-								<input type="password" name="password_clear" value={cluster.password_clear} onChange={ (e) => this.onChange(e, name) } />
+								<input type="password" name="password_clear" placeholder="Leave empty to keep old password" value={cluster.password_clear} onChange={ (e) => this.onChange(e, name) } />
 							</div>
 							<div>
 								<label>Color</label>
