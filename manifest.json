@@ -1,11 +1,15 @@
 {
   "manifest_version": 2,
   "name": "evQueue",
-  "version": "1.0",
+  "version": "1.1",
   "description": "evQueue browser plugin",
-  "homepage_url": "https://github.com/coldsource/evqueue-frontend-react",
+  "homepage_url": "http://www.evqueue.net",
+  "author": "Thibault Kummer",
   "icons": {
-    "48": "htdocs/images/favicon-48x48.png"
+    "16": "htdocs/images/favicon-16x16.png",
+    "32": "htdocs/images/favicon-32x32.png",
+    "48": "htdocs/images/favicon-48x48.png",
+    "96": "htdocs/images/favicon-96x96.png"
   },
 
   "permissions": [
