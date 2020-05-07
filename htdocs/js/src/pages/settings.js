@@ -190,7 +190,7 @@ export class PageSettings extends React.Component {
 				</Tabs>
 				<br />
 				<div>
-					<h2>New environement</h2>
+					<h2>New environment</h2>
 					<div className="formdiv">
 						<div>
 							<label>Name</label>
