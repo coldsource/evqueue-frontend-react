@@ -45,7 +45,7 @@ export class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.context = typeof(browser)=='undefined'?'server':'extension';
+		this.wrap_context = typeof(browser)=='undefined'?'server':'extension';
 		
 		App.global = {instance: this};
 		
@@ -56,6 +56,7 @@ export class App extends React.Component {
 			path: url.hash,
 			get: get,
 			ready: false,
+			config_error: '',
 			messages: [],
 		};
 		
@@ -91,7 +92,13 @@ export class App extends React.Component {
 		
 		window.addEventListener('storage', this.localStorageTransfer);
 		
-		this.loadClusterConfig();
+		this.loadClusterConfig().then( (msg) => {
+			document.querySelector('#content').style.display='block';
+			this.setState({ready: true});
+		}, (msg) => {
+			document.querySelector('#content').style.display='block';
+			this.setState({ready: true, config_error: msg});
+		});
 		
 		App.notice = this.notice.bind(this);
 		App.warning = this.warning.bind(this);
@@ -100,71 +107,90 @@ export class App extends React.Component {
 	}
 	
 	loadClusterConfig() {
-		let env = window.localStorage.getItem('env');
-		
-		if(this.context=='server')
-		{
-			// Classic server configuration, load configuration from json file
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', 'conf/cluster.json');
-			xhr.setRequestHeader('Content-Type', 'application/json');
-			xhr.onload = () => {
-				let config = JSON.parse(xhr.responseText);
-				let clusters_config = {};
-				for(let env in config)
-				{
-					let parts = env.split('#');
-					let name = parts[0];
-					let color = parts.length>1?parts[1]:'ffffff';
-						
-					clusters_config[name] = {
-						color: color,
-						nodes: config[env]
-					};
+		return new Promise( (resolve, reject) => {
+			var env = window.localStorage.getItem('env');
+			
+			if(this.wrap_context=='server')
+			{
+				// Classic server configuration, load configuration from json file
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', 'conf/cluster.json');
+				xhr.setRequestHeader('Content-Type', 'application/json');
+				xhr.onerror = () => reject("Could not download cluster.json");
+				xhr.onload = () => {
+					let config;
+					try {
+						config = JSON.parse(xhr.responseText);
+					} catch(error) {
+						return reject(error.message);
+					}
+					
+					if(typeof(config)!='object' || Array.isArray(config))
+						return reject("Configuration must be an object");
+					
+					if(Object.keys(config).length==0)
+						return reject("No environement found in configuration");
+					
+					let clusters_config = {};
+					for(let env in config)
+					{
+						let parts = env.split('#');
+						let name = parts[0];
+						let color = parts.length>1?parts[1]:'ffffff';
+							
+						clusters_config[name] = {
+							color: color,
+							nodes: config[env]
+						};
+					}
+					
+					App.global.clusters_config = clusters_config;
+					
+					if(env!==null)
+						App.global.cluster_config = App.global.clusters_config[env].nodes;
+					
+					return resolve();
 				}
-				
-				App.global.clusters_config = clusters_config;
-				
-				if(env!==null)
-					App.global.cluster_config = App.global.clusters_config[env].nodes;
-				
-				this.setState({ready: true});
-				document.querySelector('#content').style.display='block';
+				xhr.send();
 			}
-			xhr.send();
-		}
-		else
-		{
-			// Plugin configuration, load configuration from browser storage
-			browser.storage.local.get().then( (data) => {
-				let clusters = data.clusters;
-				let clusters_config = {};
-				for(let name in clusters)
-				{
-					let cluster = clusters[name];
+			else
+			{
+				// Plugin configuration, load configuration from browser storage
+				browser.storage.local.get().then( (data) => {
+					if(data.clusters===undefined)
+						return reject("No configuration found");
 					
-					let nodes = cluster.desc.split(',');
-					for(let i=0;i<nodes.length;i++)
-						nodes[i] = nodes[i].trim();
+					let clusters = data.clusters;
+					if(Object.keys(clusters).length==0)
+						return reject("No environement found in configuration");
 					
-					clusters_config[name] = {
-						color: cluster.color,
-						nodes: nodes
-					};
-				}
-				
-				App.global.clusters_config = clusters_config;
-				
-				if(env!==null)
-					App.global.cluster_config = App.global.clusters_config[env].nodes;
-				
-				if(window.localStorage.getItem('env')===null && data.clusters!==undefined)
-					window.localStorage.setItem('env', Object.keys(clusters)[0]);
-				
-				this.setState({ready: true});
-				document.querySelector('#content').style.display='block';
-			});
-		}
+					let clusters_config = {};
+					for(let name in clusters)
+					{
+						let cluster = clusters[name];
+						
+						let nodes = cluster.desc.split(',');
+						for(let i=0;i<nodes.length;i++)
+							nodes[i] = nodes[i].trim();
+						
+						clusters_config[name] = {
+							color: cluster.color,
+							nodes: nodes
+						};
+					}
+					
+					App.global.clusters_config = clusters_config;
+					
+					if(env!==null && App.global.clusters_config[env]!==undefined)
+						App.global.cluster_config = App.global.clusters_config[env].nodes;
+					
+					if(window.localStorage.getItem('env')===null && data.clusters!==undefined)
+						window.localStorage.setItem('env', Object.keys(clusters)[0]);
+					
+					return resolve();
+				});
+			}
+		});
 	}
 	
 	localStorageTransfer(e) {
@@ -234,6 +260,19 @@ export class App extends React.Component {
 			path = 'auth';
 		}
 		
+		if(this.wrap_context=='extension' && this.state.config_error && path!='settings')
+		{
+			return (
+				<div className="center error">
+					<br />
+					Error loading extension configuration, please fill correct configuration from <a href="?loc=settings">extension configuration</a>
+					<br />
+					<br />
+					The following error was encountered : {this.state.config_error}
+				</div>
+			);
+		}
+		
 		if(path=='' || path=='home')
 			return (<PageHome />);
 		else if(path=='auth')
@@ -293,6 +332,22 @@ export class App extends React.Component {
 	render() {
 		if(!this.state.ready)
 			return (<div></div>);
+		
+		if(this.state.config_error)
+		{
+			if(this.wrap_context=='server')
+			{
+				return (
+					<div className="center error">
+						<br />
+						Error loading configuration from confile « conf/cluster.json », please check file content and refresh this page
+						<br />
+						<br />
+						The following error was encountered : {this.state.config_error}
+					</div>
+				);
+			}
+		}
 		
 		return (
 			<div>

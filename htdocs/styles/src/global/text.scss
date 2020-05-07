@@ -12,7 +12,12 @@
 
 .success { color: $evq-success }
 .errorThenSuccess, .warning { color: #e67e22; }
-.error { color: $evq-error; }
+.error {
+	color: $evq-error;
+	a {
+		color: $evq-light-blue;
+	}
+}
 .skipped { color: #95a5a6; }
 
 div.error {

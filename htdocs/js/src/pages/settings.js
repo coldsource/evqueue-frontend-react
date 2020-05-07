@@ -89,12 +89,39 @@ export class PageSettings extends React.Component {
 		return true;
 	}
 	
+	checkClusterConfig(desc) {
+		if(desc=="")
+			return "Empty configuration";
+		
+		let parts = desc.split(',');
+		for(let i=0;i<parts.length;i++)
+		{
+			let part  = parts[i].trim();
+			if(part=='')
+				return "Empty configuration for node "+(i+1);
+			
+			if(part.substr(0,5)!='ws://' && part.substr(0,6)!=='wss://')
+				return "Only ws:// and wss:// schemes are supported";
+			
+			let re = /^wss?:\/\/[^:]+:[0-9]+$/;
+			if(!re.test(part))
+				return "Invalid configuration format : « "+part+" »";
+		}
+		
+		return true;
+	}
+	
 	save() {
 		let clusters = this.state.clusters;
 		let config_clusters = {};
 		for(let name in clusters)
 		{
 			let cluster = Object.assign({},clusters[name]);
+			
+			let msg = this.checkClusterConfig(cluster.desc);
+			if(msg!==true)
+				return App.warning("Error in environement « "+name+" » : "+msg);
+			
 			
 			if(!this.checkColor(cluster.color))
 				return App.warning("Invalid color: « "+cluster.color+" »");
