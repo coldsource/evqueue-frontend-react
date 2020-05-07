@@ -47,8 +47,12 @@ export class WorkflowLauncher extends evQueueComponent {
 		{
 			let preferences = JSON.parse(window.localStorage.preferences);
 			this.state.api.node = preferences.preferred_node;
+			
+			if(this.state.api.node=='') // Preference not set, so pick random node
+				this.state.api.node = this.state.cluster.nodes_names[0];
 		}
 		
+		// When relaunching a workflow we get old parameters as props, init state with these values
 		if(this.props.id!==undefined)
 			this.state.api.attributes.id = this.props.id;
 		if(this.props.name!==undefined)
@@ -114,6 +118,10 @@ export class WorkflowLauncher extends evQueueComponent {
 	}
 	
 	launch() {
+		// Check node exists (can happen on old workflows)
+		if(this.state.cluster.nodes_names.indexOf(this.state.api.node)==-1)
+			return App.warning("Unknown node : « "+this.state.api.node+" »");
+		
 		var self = this;
 		this.API(this.state.api).then( (data) => {
 			var instance_id = data.documentElement.getAttribute('workflow-instance-id');
