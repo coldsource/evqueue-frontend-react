@@ -61,11 +61,13 @@ export class ExecutingInstances extends ListInstances {
 	}
 	
 	workflowDuration(wf) {
+		if(wf.start_time===undefined)
+			return ''; // Workflow not started yet
 		return this.humanTime((this.state.now-Date.parse(wf.start_time))/1000);
 	}
 	
 	workflowInfos(wf) {
-		return ( <span className="faicon fa-info"></span> );
+		return;
 	}
 	
 	renderActions(wf) {

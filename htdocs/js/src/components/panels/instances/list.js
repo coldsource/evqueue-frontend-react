@@ -93,20 +93,12 @@ export class ListInstances extends evQueueComponent {
 			ret = ret.concat(this.state.workflows[node].response.map((wf) => {
 				wf.wf_status = wf.status;  // .status seems to be reserved by react, in any case it is replaced by a boolean in the rendered HTML
 				return (
-						<tr key={wf.id}
-							data-id={wf.id}
-							data-node={wf.node_name}
-							data-running_tasks={wf.running_tasks}
-							data-retrying_tasks={wf.retrying_tasks}
-							data-queued_tasks={wf.queued_tasks}
-							data-error_tasks={wf.error_tasks}
-							data-waiting_conditions={wf.waiting_conditions}
-							>
+						<tr key={wf.id}>
 							<td className="center">
 								{ this.WorkflowStatus(wf) }
 							</td>
 							<td>
-								<span className="action" data-id={wf.id} data-node-name={wf.node_name} data-status={wf.wf_status} onClick={() => { Dialogs.open(InstanceDetails,{id: wf.id, node: wf.node_name, width:300})}}>
+								<span className="action" onClick={() => { Dialogs.open(InstanceDetails,{id: wf.id, node: wf.node_name, width:300})}}>
 									{wf.id} – {wf.name} { this.workflowInfos(wf) } ({this.workflowDuration(wf)})
 								</span>
 								&#160;
@@ -114,7 +106,7 @@ export class ListInstances extends evQueueComponent {
 							<td className="center">{wf.node_name}</td>
 							<td className="center">{wf.host?wf.host:'localhost'}</td>
 							<td className="tdStarted">
-								{this.timeSpan(wf.start_time,wf.end_time)}
+								{wf.start_time!==undefined?this.timeSpan(wf.start_time,wf.end_time):''}
 							</td>
 							{ this.renderActions(wf) }
 						</tr>

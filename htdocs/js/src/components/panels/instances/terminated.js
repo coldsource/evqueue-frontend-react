@@ -58,6 +58,9 @@ export class TerminatedInstances extends ListInstances {
 	}
 	
 	workflowInfos(wf) {
+		if(!wf.comment)
+			return;
+		
 		return ( <span className="faicon fa-comment-o" title={"Comment : " + wf.comment}></span> );
 	}
 	
