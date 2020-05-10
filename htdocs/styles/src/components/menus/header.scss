@@ -74,8 +74,11 @@ div.evq-headermenu {
 			display: inline;
 			padding: 10px;
 			text-decoration: none;
-			color: $evq-light-blue;
 			cursor: pointer;
+			
+			a {
+				color: $evq-light-blue;
+			}
 		}
 	}
 }

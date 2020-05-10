@@ -139,10 +139,12 @@ export class HeaderMenu extends React.Component {
 	level2() {
 		return this.menu[this.state.sel1].submenu.map((entry, idx) => {
 			return (
-				<li key={idx} onClick={ (e) => App.changeURL('?loc='+entry.url) }>
-					<span className={'faicon '+entry.icon}></span>
-					&#160;
-					{entry.label}
+				<li key={idx}>
+					<a href={'?loc='+entry.url}>
+						<span className={'faicon '+entry.icon}></span>
+						&#160;
+						{entry.label}
+					</a>
 				</li>
 			);
 		});
