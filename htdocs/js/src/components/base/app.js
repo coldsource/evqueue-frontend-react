@@ -86,26 +86,13 @@ export class App extends React.Component {
 			return true;
 		}, false);
 		
-		this.init_done = false;
-		let path = this.getPath();
-		if(window.localStorage.getItem('env')!==null || path=='auth' || path=='settings')
-			this.init(); // We must have ENV to init correctly
-		
 		// Try getting other tab's local storage, if ENV was not ready yet we will do init after data transfer
 		this.localStorageTransfer = this.localStorageTransfer.bind(this);
 		window.addEventListener('storage', this.localStorageTransfer);
 		if(window.localStorage.length==0)
 			window.localStorage.setItem('getLocalStorage', Date.now());
 		
-		App.notice = this.notice.bind(this);
-		App.warning = this.warning.bind(this);
-		App.changeURL = this.changeURL.bind(this);
-		App.getParameter = this.getParameter.bind(this);
-	}
-	
-	init() {
-		this.init_done = true;
-		
+		// Load cluster configuration
 		this.loadClusterConfig().then( (msg) => {
 			document.querySelector('#content').style.display='block';
 			this.setState({ready: true});
@@ -113,12 +100,15 @@ export class App extends React.Component {
 			document.querySelector('#content').style.display='block';
 			this.setState({ready: true, config_error: msg});
 		});
+		
+		App.notice = this.notice.bind(this);
+		App.warning = this.warning.bind(this);
+		App.changeURL = this.changeURL.bind(this);
+		App.getParameter = this.getParameter.bind(this);
 	}
 	
 	loadClusterConfig() {
 		return new Promise( (resolve, reject) => {
-			var env = window.localStorage.getItem('env');
-			
 			if(this.wrap_context=='server')
 			{
 				// Classic server configuration, load configuration from json file
@@ -155,6 +145,8 @@ export class App extends React.Component {
 					
 					App.global.clusters_config = clusters_config;
 					
+					// Lately read localStorage to wait for state transfer
+					let env = window.localStorage.getItem('env');
 					if(env!==null)
 						App.global.cluster_config = App.global.clusters_config[env].nodes;
 					
@@ -190,6 +182,8 @@ export class App extends React.Component {
 					
 					App.global.clusters_config = clusters_config;
 					
+					// Lately read localStorage to wait for state transfer
+					let env = window.localStorage.getItem('env');
 					if(env!==null && App.global.clusters_config[env]!==undefined)
 						App.global.cluster_config = App.global.clusters_config[env].nodes;
 					
@@ -214,9 +208,6 @@ export class App extends React.Component {
 			let data = JSON.parse(event.newValue);
 			for(let key in data)
 				window.localStorage.setItem(key, data[key]);
-			
-			if(!this.init_done)
-				this.init();
 		}
 	}
 	
@@ -267,10 +258,14 @@ export class App extends React.Component {
 		return this.state.get.has('loc')?this.state.get.get('loc'):'';
 	}
 	
+	isAuthenticated() {
+		return (window.localStorage.authenticated!==undefined && window.localStorage.authenticated=='true');
+	}
+	
 	route() {
 		let path = this.getPath();
 		
-		if(path!='auth' && path!='settings' && (window.localStorage.authenticated===undefined || window.localStorage.authenticated!='true'))
+		if(path!='auth' && path!='settings' && !this.isAuthenticated())
 		{
 			window.history.pushState('','','?loc=auth');
 			path = 'auth';
