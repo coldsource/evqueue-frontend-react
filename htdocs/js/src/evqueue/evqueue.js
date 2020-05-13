@@ -122,16 +122,25 @@ export class evQueueWS
 				}
 				else if(self.state=='READY')
 				{
+					let xmldoc = new DOMParser().parseFromString(event.data, "text/xml");
 					if(mode=='event')
 					{
 						// Event protocol, notify callback
-						self.callback(new DOMParser().parseFromString(event.data, "text/xml"));
+						self.callback(xmldoc);
+						
+						if(xmldoc.documentElement.hasAttribute('event-id'))
+						{
+							// Acknowledge event
+							let event_id = xmldoc.documentElement.getAttribute('event-id');
+						
+							self.API({group: 'event', action: 'ack', attributes: {event_id: event_id}});
+						}
 					}
 					else
 					{
 						// API protocol, resolve our promise to send response
 						self.state = 'READY';
-						self.promise.resolve(new DOMParser().parseFromString(event.data, "text/xml"));
+						self.promise.resolve(xmldoc);
 					}
 				}
 			}
