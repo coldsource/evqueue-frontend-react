@@ -204,10 +204,19 @@ export class TaskDetails extends React.Component {
 									</div>
 									):''
 							}
-							<div>
-								<div>Return value</div>
-								<div>{task.output.length!=0?task.output[execution].retval:'∅'}</div>
-							</div>
+							{
+								task.status=='EXECUTING'?(
+									<div>
+										<div>PID</div>
+										<div>{task.pid}</div>
+									</div>
+								):(
+									<div>
+										<div>Return value</div>
+										<div>{task.output.length!=0?task.output[execution].retval:'∅'}</div>
+									</div>
+								)
+							}
 							<div>
 								<div>Started at</div>
 								<div>{task.output.length!=0?task.output[execution].execution_time:task.execution_time}</div>
