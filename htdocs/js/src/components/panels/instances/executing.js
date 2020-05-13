@@ -38,7 +38,7 @@ export class ExecutingInstances extends ListInstances {
 	}
 	
 	componentDidMount() {
-		var api = { node:'*', group:'status', action:'query',attributes:{type:'workflows'} };
+		var api = { node:'*', group:'status', action:'query',attributes:{type:'workflows', limit: 100} };
 		this.Subscribe('INSTANCE_STARTED',api);
 		this.Subscribe('INSTANCE_TERMINATED',api);
 		this.Subscribe('TASK_QUEUE',api);
@@ -157,7 +157,7 @@ export class ExecutingInstances extends ListInstances {
 	renderTitle() {
 		var n = 0;
 		for(var node in this.state.workflows)
-			n += this.state.workflows[node].response.length;
+			n += parseInt(this.state.workflows[node].count);
 		
 		var actions = [
 			{icon: 'fa-clock-o',callback:this.retry},
