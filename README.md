@@ -7,14 +7,19 @@ It allows you to create workflows (a chain of tasks), schedule tasks and workflo
 
 For documentation and download, visit [the official website](http://www.evqueue.net/)!
 
-### Packages
-
-If you are looking for pre-compiled packages, see [our debian repository](https://packagecloud.io/coldsource/evqueue).
+This technical documentation is only needed if you want to contribute to the project. If you just want to use the frontend, you should download [Firefox Addon](https://addons.mozilla.org/fr/firefox/addon/evqueue/) or [pre-built zip files](http://www.evqueue.net/downloads).
 
 ### Build
 
+First, install dependencies :
+
 ```
 $ npm install
+```
+
+Then build the project :
+
+```
 $ npm run build
 ```
 
@@ -26,18 +31,15 @@ $ npm run watch
 
 ### Package for production
 
+This will pack :
+
+* Browser extension
+* Browser extension source ZIP
+* Frontend dist ZIP
+
 ```
 $ npm install
-$ npm run build
 $ npm run pack
 ```
 
-Edit index.html and switch to production configuration in the bottom of the file.
-
-### Build browser plugin
-
-First, build and package application (see above steps). Then use :
-
-```
-$ npm run build:extension
-```
+You should then find 3 zip files, namely **evqueue-browser-plugin.zip**, **evqueue-browser-plugin-src.zip** and **evqueue.zip**.
