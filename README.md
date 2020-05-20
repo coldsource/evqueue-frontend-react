@@ -29,6 +29,12 @@ Or if you want to continuously watch changes :
 $ npm run watch
 ```
 
+### Configure
+
+If needed, edit configuration file in **htdocs/conf/cluster.json**.
+
+You can now access interface using default account : admin / admin.
+
 ### Package for production
 
 This will pack :
