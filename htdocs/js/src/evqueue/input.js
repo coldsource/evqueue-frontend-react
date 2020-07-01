@@ -103,6 +103,9 @@ export class input {
 	toXML(xmldoc) {
 		let input_node = xmldoc.createElement('input');
 		
+		if(this.name!='')
+			input_node.setAttribute('name', this.name);
+		
 		for(let i=0;i<this.parts.length;i++)
 			input_node.appendChild(this.parts[i].toXML(xmldoc));
 		
