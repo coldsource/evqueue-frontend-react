@@ -4,9 +4,18 @@ div.evq-value-selector {
 		margin-bottom: 0.8rem;
 	}
 	
+	
+	.evq-select {
+		width: 4rem;
+	}
+	
 	input[name="simple_value"], div.evq-xpath-input {
 		width: 100%;
 		box-sizing: border-box;
 		margin-bottom: 0.3rem;
+	}
+	
+	input[name="simple_value"] {
+		margin-top: 0.8rem;
 	}
 }
