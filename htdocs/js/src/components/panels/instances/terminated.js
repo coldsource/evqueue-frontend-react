@@ -132,6 +132,7 @@ export class TerminatedInstances extends ListInstances {
 		this.Unsubscribe('INSTANCE_TERMINATED');
 		
 		let api = {
+			node: '*',
 			group: 'instances',
 			action: 'list',
 			attributes: search_filters
