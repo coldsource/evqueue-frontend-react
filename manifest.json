@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "evQueue",
-  "version": "1.4",
+  "version": "1.5",
   "description": "evQueue browser plugin",
   "homepage_url": "http://www.evqueue.net",
   "author": "Thibault Kummer",
