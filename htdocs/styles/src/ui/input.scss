@@ -6,6 +6,7 @@ input[type='text'], input[type='password'] {
 	
 	&:focus {
 		border-color: $evq-focus;
+		outline: none;
 	}
 }
 
