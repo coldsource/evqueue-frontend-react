@@ -178,13 +178,13 @@ export class workflow {
 	_restore_subjobs(jobobj) {
 		jobobj._workflow = this;
 		
-		for(var i=0;i<jobobj.subjobs.length;i++)
+		for(let i=0;i<jobobj.subjobs.length;i++)
 		{
 			jobobj.subjobs[i] = this._restore_subjobs(jobobj.subjobs[i]);
 			jobobj.subjobs[i]._parent = jobobj;
 		}
 		
-		for(var i=0;i<jobobj.tasks.length;i++)
+		for(let i=0;i<jobobj.tasks.length;i++)
 		{
 			jobobj.tasks[i] = Object.setPrototypeOf(jobobj.tasks[i], task.prototype);
 			jobobj.tasks[i]._workflow = this;
@@ -193,14 +193,20 @@ export class workflow {
 			jobobj.tasks[i].stdin = Object.setPrototypeOf(jobobj.tasks[i].stdin, input.prototype);
 			jobobj.tasks[i].stdin._workflow = this;
 			jobobj.tasks[i].stdin._parent = jobobj.tasks[i];
+			for(let k=0;k<jobobj.tasks[i].stdin.parts.length;k++)
+			{
+				jobobj.tasks[i].stdin.parts[k] = Object.setPrototypeOf(jobobj.tasks[i].stdin.parts[k], input_part.prototype);
+				jobobj.tasks[i].stdin.parts[k]._workflow = this;
+				jobobj.tasks[i].stdin.parts[k]._parent = jobobj.tasks[i].stdin;
+			}
 			
-			for(var j=0;j<jobobj.tasks[i].inputs.length;j++)
+			for(let j=0;j<jobobj.tasks[i].inputs.length;j++)
 			{
 				jobobj.tasks[i].inputs[j] = Object.setPrototypeOf(jobobj.tasks[i].inputs[j], input.prototype);
 				jobobj.tasks[i].inputs[j]._workflow = this;
 				jobobj.tasks[i].inputs[j]._parent = jobobj.tasks[i];
 				
-				for(var k=0;k<jobobj.tasks[i].inputs[j].parts.length;k++)
+				for(let k=0;k<jobobj.tasks[i].inputs[j].parts.length;k++)
 				{
 					jobobj.tasks[i].inputs[j].parts[k] = Object.setPrototypeOf(jobobj.tasks[i].inputs[j].parts[k], input_part.prototype);
 					jobobj.tasks[i].inputs[j].parts[k]._workflow = this;
