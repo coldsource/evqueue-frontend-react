@@ -7,8 +7,8 @@
 @import 'global/fonts.scss';
 @import 'global/text.scss';
 @import 'global/footer.scss';
-@import 'global/button.scss';
 
+@import 'ui/button.scss';
 @import 'ui/help.scss';
 @import 'ui/dialog.scss';
 @import 'ui/confirm.scss';
@@ -23,6 +23,7 @@
 @import 'ui/input.scss';
 @import 'ui/fieldset.scss';
 @import 'ui/input-spinner.scss';
+@import 'ui/file-upload.scss';
 
 @import 'components/base/app.scss';
 @import 'components/base/xpath-helper.scss';

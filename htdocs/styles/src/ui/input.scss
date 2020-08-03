@@ -17,6 +17,7 @@ textarea {
 	
 	&:focus {
 		border-color: $evq-focus;
+		outline: none;
 	}
 }
 
@@ -29,5 +30,6 @@ input[type='number'] {
 	
 	&:focus {
 		border-color: $evq-focus;
+		outline: none;
 	}
 }
