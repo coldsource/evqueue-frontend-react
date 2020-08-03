@@ -86,10 +86,20 @@ export class workflow {
 			});
 	}
 	
-	saveXML() {
+	saveXML(mode_export) {
 		let xmldoc = new Document();
+		let workflow_node;
 		
-		let workflow_node = xmldoc.appendChild(xmldoc.createElement('workflow'));
+		if(mode_export)
+		{
+			let wrapping_node = xmldoc.appendChild(xmldoc.createElement('workflow'));
+			wrapping_node.setAttribute('name', this.properties.name);
+			wrapping_node.setAttribute('group', this.properties.group);
+			wrapping_node.setAttribute('comment', this.properties.comment);
+			workflow_node = wrapping_node.appendChild(xmldoc.createElement('workflow'));
+		}
+		else
+			workflow_node = xmldoc.appendChild(xmldoc.createElement('workflow'));
 		
 		if(this.properties.parameters.length>0)
 		{
