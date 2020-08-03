@@ -1,0 +1,14 @@
+div.evq-file-upload {
+	border: 1px dotted $evq-grey;
+	padding: 1rem;
+	display: inline-block;
+	border-radius: 0.4rem;
+	
+	input[type=file] {
+		display: none;
+	}
+	
+	button {
+		margin-right: 1rem;
+	}
+}
