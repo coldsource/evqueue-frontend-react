@@ -119,7 +119,7 @@ export class TaskDetails extends React.Component {
 		
 		
 		if(task['output-method']=='XML' && output.retval==0)
-			return (<XML xml={output.domnode}/>);
+			return (<XML xml={output.domnode.firstChild}/>);
 		return (<pre>{output.domnode.textContent}</pre>);
 	}
 	
