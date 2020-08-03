@@ -33,6 +33,7 @@ import {TaskInputEditor} from '../dialogs/tasks/input-editor.js';
 import {ValueSelector} from '../dialogs/workflows/value-selector.js';
 import {CustomAttributeSelector} from '../dialogs/workflows/custom-attribute-selector.js';
 import {WorkflowProperties} from '../dialogs/workflows/properties.js';
+import {WorkflowUpload} from '../dialogs/workflows/upload.js';
 
 export class WorkflowEditor extends evQueueComponent {
 	constructor(props) {
@@ -112,7 +113,7 @@ export class WorkflowEditor extends evQueueComponent {
 	
 	save() {
 		let workflow = this.state.workflow;
-		let xml = workflow.saveXML();
+		let xml = workflow.saveXML(false);
 		
 		let cmd = {
 			group: 'workflow',
@@ -158,7 +159,7 @@ export class WorkflowEditor extends evQueueComponent {
 	
 	download() {
 		var element = document.createElement('a');
-		element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(this.state.workflow.saveXML()));
+		element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(this.state.workflow.saveXML(true)));
 		element.setAttribute('download', 'workflow.xml');
 		
 		element.style.display = 'none';
@@ -167,6 +168,18 @@ export class WorkflowEditor extends evQueueComponent {
 		element.click();
 		
 		document.body.removeChild(element);
+	}
+	
+	upload() {
+		Dialogs.open(WorkflowUpload, {onUpload: (content) => {
+			this.state.workflow.backup();
+			
+			let parser = new DOMParser();
+			let xmldoc = parser.parseFromString(content,"text/xml");
+			
+			this.state.workflow.loadXML(xmldoc.documentElement);
+			this.setState({workflow:this.state.workflow});
+		}});
 	}
 	
 	onTaskDragStart(e, task) {

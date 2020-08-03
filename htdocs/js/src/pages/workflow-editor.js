@@ -39,6 +39,7 @@ export class PageWorkflowEditor extends React.Component {
 					onRedo={ () => this.editor.current.redo() }
 					onExit={ () => this.editor.current.exit() }
 					onDownload={ () => this.editor.current.download() }
+					onUpload={ () => this.editor.current.upload() }
 				/>
 				<WorkflowEditor ref={this.editor} />
 			</div>
