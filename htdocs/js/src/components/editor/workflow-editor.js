@@ -160,7 +160,7 @@ export class WorkflowEditor extends evQueueComponent {
 	download() {
 		var element = document.createElement('a');
 		element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(this.state.workflow.saveXML(true)));
-		element.setAttribute('download', 'workflow.xml');
+		element.setAttribute('download', this.state.workflow.properties.name!=''?this.state.workflow.properties.name+'.xml':'workflow.xml');
 		
 		element.style.display = 'none';
 		document.body.appendChild(element);
