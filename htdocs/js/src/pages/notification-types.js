@@ -23,6 +23,7 @@ import {HeaderMenu} from '../components/menus/header.js';
 import {App} from '../components/base/app.js';
 import {evQueueComponent} from '../components/base/evqueue-component.js';
 import {ListNotificationPlugins} from '../components/panels/notifications/list-plugins.js';
+import {FileUpload} from '../ui/file-upload.js';
 
 export class PageNotificationTypes extends evQueueComponent {
 	constructor(props) {
@@ -33,32 +34,28 @@ export class PageNotificationTypes extends evQueueComponent {
 		this.uploaded = this.uploaded.bind(this);
 	}
 	
-	uploaded(e) {
+	uploaded(content, filename) {
 		var self = this;
 		
-		let filename = e.target.value;
 		if(filename.substr(filename.length-4).toLowerCase()!='.zip')
 			return App.warning("Plugin must be a .zip file");
 		
-		var freader = new FileReader();
-		freader.onload = function(){
-			self.simpleAPI({
-				group: 'notification_type',
-				action: 'register',
-				attributes: {zip: btoa(freader.result)}
-			}, "Successfully added plugin");
-			
-			self.setState({plugin_file: ''});
-		};
+		self.simpleAPI({
+			group: 'notification_type',
+			action: 'register',
+			attributes: {zip: btoa(content)}
+		}, "Successfully added plugin");
 		
-		freader.readAsBinaryString(e.target.files[0]);
+		self.setState({plugin_file: ''});
 	}
 	
 	render() {
 		return (
 			<div className="evq-notification-types">
 				<HeaderMenu current="Notifications"/>
-				<input type="file" value={this.state.plugin_file} onChange={this.uploaded} />
+				<div className="upload">
+					<FileUpload type="binary" onUpload={this.uploaded} />
+				</div>
 				<div className="plugin-help">Drag-and-drop or browse for a zip file to add a new notification plugin.</div>
 				<ListNotificationPlugins />
 			</div>

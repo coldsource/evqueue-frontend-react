@@ -54,11 +54,11 @@ export class FileUpload extends React.Component {
 		let reader = new FileReader();
 		
 		reader.onload = (event) => {
-			this.props.onUpload(reader.result);
+			this.props.onUpload(reader.result, file.name);
 		};
 		
 		if(this.props.type!==undefined && this.props.type=='binary')
-			reader.freader.readAsBinaryString(file);
+			reader.readAsBinaryString(file);
 		else
 			reader.readAsText(file);
 	}
