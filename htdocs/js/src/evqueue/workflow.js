@@ -342,7 +342,7 @@ export class workflow {
 	}
 	
 	getObject(type, id, subjobs, path) {
-		for(var i=0;i<subjobs.length;i++)
+		for(let i=0;i<subjobs.length;i++)
 		{
 			if(type=='job' && subjobs[i]._id==id)
 			{
@@ -355,17 +355,14 @@ export class workflow {
 			}
 			else if(type=='task' || type=='input' || type=='input-part')
 			{
-				for(var j=0;j<subjobs[i].tasks.length;j++)
+				for(let j=0;j<subjobs[i].tasks.length;j++)
 				{
 					if(type=='task' && subjobs[i].tasks[j]._id==id)
 					{
 						if(path!==undefined && subjobs[i].tasks[j].loop)
-						{
 							path.push({group: 'Current task', value: '.', name: 'Loop context'});
-							
-							if(subjobs[i].loop)
-								path.push({group: 'Current job', value: 'evqGetCurrentJob()/evqGetContext()', name: 'Loop context'});
-						}
+						if(path!==undefined && subjobs[i].loop)
+							path.push({group: 'Current job', value: 'evqGetCurrentJob()/evqGetContext()', name: 'Loop context'});
 						return subjobs[i].tasks[j];
 					}
 					else if(type=='input' || type=='input-part')
@@ -375,21 +372,21 @@ export class workflow {
 						
 						if(type=='input-part')
 						{
-							for(var l=0;l<subjobs[i].tasks[j].stdin.parts.length;l++)
+							for(let l=0;l<subjobs[i].tasks[j].stdin.parts.length;l++)
 							{
 								if(subjobs[i].tasks[j].stdin.parts[l]._id==id)
 									return subjobs[i].tasks[j].stdin.parts[l];
 							}
 						}
 						
-						for(var k=0;k<subjobs[i].tasks[j].inputs.length;k++)
+						for(let k=0;k<subjobs[i].tasks[j].inputs.length;k++)
 						{
 							if(type=='input' && subjobs[i].tasks[j].inputs[k]._id==id)
 								return subjobs[i].tasks[j].inputs[k];
 							
 							if(type=='input-part')
 							{
-								for(var l=0;l<subjobs[i].tasks[j].inputs[k].parts.length;l++)
+								for(let l=0;l<subjobs[i].tasks[j].inputs[k].parts.length;l++)
 								{
 									if(subjobs[i].tasks[j].inputs[k].parts[l]._id==id)
 										return subjobs[i].tasks[j].inputs[k].parts[l];
@@ -405,11 +402,11 @@ export class workflow {
 			{
 				if(path!==undefined)
 				{
-					var group = 'Parent job '+(this.parent_depth+1);
+					let group = 'Parent job '+(this.parent_depth+1);
 					if(subjobs[i].loop)
 						path.push({group: group, value: 'evqGetParentJob('+(this.parent_depth)+'/evqGetContext()', name: 'Loop context'});
 					
-					for(var j=0;j<subjobs[i].tasks.length;j++)
+					for(let j=0;j<subjobs[i].tasks.length;j++)
 						path.push({group: group, value: "evqGetParentJob("+(this.parent_depth)+")/evqGetOutput('"+subjobs[i].tasks[j].getPath()+"')", name:"Task: "+subjobs[i].tasks[j].getPath(), path: subjobs[i].tasks[j].getPath()});
 					
 					this.parent_depth++;
