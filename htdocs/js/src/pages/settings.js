@@ -23,6 +23,7 @@ import {App} from '../components/base/app.js';
 import {CryptoJS} from '../evqueue/cryptojs/core.js';
 import {Tabs} from '../ui/tabs.js';
 import {Tab} from '../ui/tab.js';
+import {LS} from '../utils/local-storage.js';
 
 export class PageSettings extends React.Component {
 	constructor(props) {
@@ -37,7 +38,7 @@ export class PageSettings extends React.Component {
 		this.save = this.save.bind(this);
 		this.onChange = this.onChange.bind(this);
 		
-		browser.storage.local.get().then( (data) => {
+		LS.get().then( (data) => {
 			if(data.clusters!==undefined)
 			{
 				for(let name in data.clusters)
@@ -134,7 +135,7 @@ export class PageSettings extends React.Component {
 			clusters[name].password_clear = '';
 		}
 		
-		browser.storage.local.set({clusters: config_clusters});
+		LS.set({clusters: config_clusters});
 		this.setState({clusters: clusters});
 		App.notice("Configuration saved");
 	}

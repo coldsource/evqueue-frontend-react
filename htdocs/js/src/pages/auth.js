@@ -24,6 +24,7 @@ import {App} from '../components/base/app.js';
 import {evQueueCluster} from '../evqueue/evqueue-cluster.js';
 import {HeaderMenu} from '../components/menus/header.js';
 import {EnvSelector} from '../components/base/env-selector.js';
+import {LS} from '../utils/local-storage.js';
 
 export class PageAuth extends React.Component {
 	constructor(props) {
@@ -48,9 +49,9 @@ export class PageAuth extends React.Component {
 		this.connect = this.connect.bind(this);
 		
 		// Auto login in browser plugin configuration
-		if(typeof(browser)!='undefined' && env!==null)
+		if(App.wrap_context=='extension' && env!==null)
 		{
-			browser.storage.local.get().then( (data) => {
+			LS.get().then( (data) => {
 				if(data.clusters!==undefined && data.clusters[env]!==undefined)
 				{
 					let user = data.clusters[env].user;

@@ -40,12 +40,27 @@ import {PageInstancesStatistics} from '../../pages/instances-statistics.js';
 import {Page404} from '../../pages/404.js';
 import {PageAuth} from '../../pages/auth.js';
 import {PageSettings} from '../../pages/settings.js';
+import {LS} from '../../utils/local-storage.js';
 
 export class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.wrap_context = typeof(browser)=='undefined'?'server':'extension';
+		this.wrap_context = 'server';
+		if(typeof(chrome)!='undefined')
+		{
+			// Chrome
+			if(chrome.storage!==undefined)
+				this.wrap_context = 'extension';
+		}
+		else
+		{
+			// Firefrox
+			if(typeof(browser)!='undefined' && browser.storage!==undefined)
+				this.wrap_context = 'extension';
+		}
+		
+		App.wrap_context = this.wrap_context;
 		
 		App.global = {instance: this};
 		
@@ -157,7 +172,7 @@ export class App extends React.Component {
 			else
 			{
 				// Plugin configuration, load configuration from browser storage
-				browser.storage.local.get().then( (data) => {
+				LS.get().then( (data) => {
 					if(data.clusters===undefined)
 						return reject("No configuration found");
 					
