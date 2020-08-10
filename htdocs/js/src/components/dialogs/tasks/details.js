@@ -60,6 +60,7 @@ export class TaskDetails extends React.Component {
 				<div key={idx}>
 					<div>{input.name}</div>
 					<div>{input.domnode.textContent}</div>
+					{ input.error!==undefined && input.error?(<div className="error">{input.error}</div>):'' }
 				</div>
 			);
 		});
