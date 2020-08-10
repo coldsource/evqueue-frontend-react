@@ -208,9 +208,11 @@ export class evQueueCluster
 	Unsubscribe(event, external_id, object_id = 0)
 	{
 		var attributes = {
-			type: event,
-			external_id: external_id
+			type: event
 		};
+		
+		if(external_id)
+			attributes.external_id = external_id;
 		
 		if(object_id)
 			attributes.object_id = object_id;
@@ -220,6 +222,15 @@ export class evQueueCluster
 			group: 'event',
 			action: 'unsubscribe',
 			attributes: attributes
+		});
+	}
+	
+	UnsubscribeAll()
+	{
+		return this.API({
+			node:'*',
+			group: 'event',
+			action: 'unsubscribeall'
 		});
 	}
 }
