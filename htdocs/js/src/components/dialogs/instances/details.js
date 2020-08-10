@@ -229,9 +229,9 @@ export class InstanceDetails extends evQueueComponent {
 		if(job.status=='SKIPPED')
 			return (<div className="jobStatus skipped"><span className="faicon fa-remove" title={job.details+" "+job.condition}></span> job skipped</div>);
 		else if(job.status=='ABORTED')
-			return (<div class="jobStatus error"><span class="faicon fa-exclamation-circle" title={job.details}></span> job aborted</div>);
+			return (<div className="jobStatus error"><span className="faicon fa-exclamation-circle" title={job.details}></span> job aborted</div>);
 		else if(job.details)
-			return (<div class="jobStatus"><span class="faicon fa-question-circle-o" title={job.details}></span></div>);
+			return (<div className="jobStatus"><span className="faicon fa-question-circle-o" title={job.details}></span></div>);
 	}
 	
 	renderJob(job) {
