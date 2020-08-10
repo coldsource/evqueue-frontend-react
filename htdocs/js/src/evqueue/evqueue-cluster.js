@@ -188,9 +188,11 @@ export class evQueueCluster
 		var attributes = {
 			type: event,
 			api_cmd: api_cmd_b64,
-			send_now: (send_now?'yes':'no'),
-			external_id: external_id
+			send_now: (send_now?'yes':'no')
 		};
+		
+		if(external_id)
+			attributes.external_id = external_id;
 		
 		if(object_id)
 			attributes.object_id = object_id;
