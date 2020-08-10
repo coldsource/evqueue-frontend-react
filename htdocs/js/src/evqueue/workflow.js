@@ -404,7 +404,7 @@ export class workflow {
 				{
 					let group = 'Parent job '+(this.parent_depth+1);
 					if(subjobs[i].loop)
-						path.push({group: group, value: 'evqGetParentJob('+(this.parent_depth)+'/evqGetContext()', name: 'Loop context'});
+						path.push({group: group, value: 'evqGetParentJob('+(this.parent_depth)+')/evqGetContext()', name: 'Loop context'});
 					
 					for(let j=0;j<subjobs[i].tasks.length;j++)
 						path.push({group: group, value: "evqGetParentJob("+(this.parent_depth)+")/evqGetOutput('"+subjobs[i].tasks[j].getPath()+"')", name:"Task: "+subjobs[i].tasks[j].getPath(), path: subjobs[i].tasks[j].getPath()});
