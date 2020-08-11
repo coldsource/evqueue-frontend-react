@@ -21,6 +21,13 @@ import {evQueueWS} from './evqueue.js';
 
 export class evQueueCluster
 {
+	/*
+	 * Creates a new evQueue cluster
+	 *
+	 * nodes_desc: an array of connection descriptors, e.g. ['ws://localhost:5000']
+	 * eventCallback: if omitted, connection will be made in API mode. If present, connection will be made in Events mode and this function will be called when an event occurs
+	 * stateChange: a callback function that can be used to monitor the cluster status (nodes becoming up or down)
+	 */
 	constructor(nodes_desc, eventCallback, stateChange)
 	{
 		this.stateChangeCallback = stateChange;
@@ -56,16 +63,25 @@ export class evQueueCluster
 		}
 	}
 	
+	/*
+	 * Returns the name of the nodes of the cluster. Some nodes can have 'offline' name if not yet connected
+	 */
 	GetNodes()
 	{
 		return evQueueCluster.global.nodes_names.concat();
 	}
 	
+	/*
+	 * Returns the state of the cluster nodes
+	 */
 	GetStates()
 	{
 		return evQueueCluster.global.nodes_states.concat();
 	}
 	
+	/*
+	 * Returns the index of the node that has a specific connection descriptor
+	 */
 	GetNodeByCnx(cnx) {
 		for(var i=0;i<this.nodes_desc.length;i++)
 			if(this.nodes_desc[i]==cnx)
@@ -74,6 +90,9 @@ export class evQueueCluster
 		return -1;
 	}
 	
+	/*
+	 * Returns a node's index from its name
+	 */
 	GetNodeByName(name)
 	{
 		if(name=='*')
@@ -86,6 +105,9 @@ export class evQueueCluster
 		return -1;
 	}
 	
+	/*
+	 * Returns the index of the first connected (Up) node found in the cluster or -1 of no node is found
+	 */
 	GetUpNode()
 	{
 		for(var i=0;i<this.nodes.length;i++)
@@ -152,6 +174,9 @@ export class evQueueCluster
 		}
 	}
 	
+	/*
+	 * Performs an API query and returns a promise that can be used to get the result once available
+	 */
 	API(api)
 	{
 		var self = this;
@@ -161,11 +186,17 @@ export class evQueueCluster
 		});
 	}
 	
+	/*
+	 * Creates an XML query from an object
+	 */
 	BuildAPI(api)
 	{
 		return this.nodes[0].build_api_xml(api);
 	}
 	
+	/*
+	 * Closes all connection to nodes in the cluster
+	 */
 	Close()
 	{
 		for(var i=0;i<this.nodes.length;i++)
@@ -181,6 +212,14 @@ export class evQueueCluster
 			this.stateChangeCallback(node, name, state);
 	}
 	
+	/*
+	 * Subscribes a new event to the cluster
+	 * event: the type of the event, as a string
+	 * api: the API command whose result must be sent when the event occurs
+	 * send_now: a boolean specifiying whether the result of the api command should be sent immediatly for initialization purpose
+	 * object_id: a filter that can be used to monitor only events of this object
+	 * external_id: a numerical ID that will be sent back when the event occurs
+	 */
 	Subscribe(event,api,send_now,object_id,external_id)
 	{
 		var api_cmd_b64 = btoa(this.BuildAPI(api));
@@ -205,6 +244,10 @@ export class evQueueCluster
 		});
 	}
 	
+	/*
+	 * Unsubscribes an event
+	 * event, external_id and object_id are the same parameters as in Subscribes(). They are used to filter which event to unsubscribe
+	 */
 	Unsubscribe(event, external_id, object_id = 0)
 	{
 		var attributes = {
@@ -225,6 +268,9 @@ export class evQueueCluster
 		});
 	}
 	
+	/*
+	 * Unsubscribes all events for this connection
+	 */
 	UnsubscribeAll()
 	{
 		return this.API({
