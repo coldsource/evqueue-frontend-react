@@ -7,7 +7,7 @@ It allows you to create workflows (a chain of tasks), schedule tasks and workflo
 
 For documentation and download, visit [the official website](http://www.evqueue.net/)!
 
-This technical documentation is only needed if you want to contribute to the project. If you just want to use the frontend, you should download [Firefox Addon](https://addons.mozilla.org/fr/firefox/addon/evqueue/) or [pre-built zip files](http://www.evqueue.net/downloads).
+This technical documentation is only needed if you want to contribute to the project. If you just want to use the frontend, you should download [Firefox](https://addons.mozilla.org/fr/firefox/addon/evqueue/) / [Chrome](https://chrome.google.com/webstore/detail/evqueue/ioioafegonjmpfegmccmoaehhgddimij) extensions or [pre-built zip files](http://www.evqueue.net/downloads).
 
 ### Build
 
