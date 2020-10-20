@@ -19,32 +19,66 @@
 
 'use strict';
 
+import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Dialog} from '../../../ui/dialog.js';
 import {Tabs} from '../../../ui/tabs.js';
 import {Tab} from '../../../ui/tab.js';
 import {XML} from '../../../ui/xml.js';
 
-export class TaskDetails extends React.Component {
+export class TaskDetails extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
-		this.state = {
-			execution: props.task.output.length-1,
-			task: this.props.task,
-			now: Date.now()
-		}
+		this.state.execution = props.task.output.length-1;
+		this.state.task = this.props.task;
+		this.state.now = Date.now();
+		this.state.stdout = '';
+		this.state.stderr = '';
+		this.state.log = '';
 		
 		this.changeExecution = this.changeExecution.bind(this);
 	}
 	
 	componentDidMount() {
-		if(this.state.task.status=='EXECUTING')
-			this.timerID = setInterval(() => { this.setState({now: this.now()}) },1000);
+		if(this.state.task.status=='EXECUTING') {
+			this.tailOutput('stdout');
+			this.tailOutput('stderr');
+			this.tailOutput('log');
+			
+			this.timerID = setInterval(() => {
+				if(this.state.task.status!='EXECUTING') {
+					clearInterval(this.timerID);
+					this.thimerID = undefined;
+					return;
+				}
+				
+				this.tailOutput('stdout');
+				this.tailOutput('stderr');
+				this.tailOutput('log');
+				
+				this.setState({now: this.now()})
+				
+			},1000);
+		}
 	}
 	
 	componentWillUnmount() {
 		if(this.timerID!==undefined)
 			clearInterval(this.timerID);
+	}
+	
+	tailOutput(type) {
+		this.API({
+			node: this.props.node,
+			group: 'processmanager',
+			action: 'tail',
+			attributes: {tid: this.state.task.tid, type: type}
+		}).then((xml) => {
+			let out = xml.evaluate('string(/response)',xml.documentElement);
+			let st = {};
+			st[type] = out.stringValue;
+			this.setState(st);
+		});
 	}
 	
 	now() {
@@ -90,18 +124,11 @@ export class TaskDetails extends React.Component {
 	}
 	
 	renderOutput(task,output,type) {
-		if(!output)
-			return;
-		
 		if(task.status=='EXECUTING')
 		{
 			return (
 				<div>
-					<br />
-					This task is currently running.
-					<br />You can view it's live output :
-					&#160;
-					<a target="_blank" className="action" href={"ajax/datastore.php?node="+this.props.node+"&tid="+task.tid+"&type="+type}>here</a>
+					<pre>{this.state[type]}</pre>
 				</div>
 			);
 		}
@@ -251,10 +278,10 @@ export class TaskDetails extends React.Component {
 						{this.renderOutput(task,task.output.length!=0?task.output[execution]:'','stdout')}
 					</Tab>
 					<Tab title="stderr">
-						{this.renderOutput(task,task.output.length!=0?task.stderr[execution]:'','stderr')}
+						{this.renderOutput(task,task.stderr.length!=0?task.stderr[execution]:'','stderr')}
 					</Tab>
 					<Tab title="log">
-						{this.renderOutput(task,task.output.length!=0?task.log[execution]:'','log')}
+						{this.renderOutput(task,task.log.length!=0?task.log[execution]:'','log')}
 					</Tab>
 				</Tabs>
 			</Dialog>
