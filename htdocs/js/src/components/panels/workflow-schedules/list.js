@@ -53,7 +53,7 @@ export class WorkflowSchedulesList extends evQueueComponent {
 		this.Subscribe('WORKFLOWSCHEDULE_CREATED',api_status);
 		
 		this.Subscribe('WORKFLOWSCHEDULE_STARTED',api_status);
-		this.Subscribe('WORKFLOWSCHEDULE_STOPPED',api_status);
+		this.Subscribe('WORKFLOWSCHEDULE_STOPPED',api_status, true);
 	}
 	
 	evQueueEvent(response, ref) {
