@@ -110,6 +110,13 @@ export class EditWorkflowSchedule extends evQueueComponent {
 				workflow_schedule.months = this.loadScheduleLevel(schedule_parts[4]);
 				workflow_schedule.weekdays = this.loadScheduleLevel(schedule_parts[5]);
 				
+				if(workflow_schedule.weekdays.length>0 && workflow_schedule.weekdays[0]!='any')
+				{
+					// Convert weekdays integer to strings (ie week days)
+					for(let i=0;i<workflow_schedule.weekdays.length;i++)
+						workflow_schedule.weekdays[i] = this.weekdays[(parseInt(workflow_schedule.weekdays[i])+6)%7];
+				}
+				
 				if(workflow_schedule.seconds.length==1 && workflow_schedule.seconds[0]!='any'
 				   && workflow_schedule.minutes.length==1 && workflow_schedule.minutes[0]!='any'
 				   && workflow_schedule.hours.length==1 && workflow_schedule.hours[0]!='any'
