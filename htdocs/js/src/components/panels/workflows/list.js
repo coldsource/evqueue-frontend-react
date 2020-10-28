@@ -234,7 +234,7 @@ export class WorkflowsList extends evQueueComponent {
 					<td>{workflow.comment}</td>
 					<td className="tdActions">
 						{ !is_in_git || git_status=='needpush' || git_status=='conflict' ? (<span className="faicon fa-cloud-upload" title="Commit this workflow to Git" onClick={() => this.gitSave(workflow.name) }></span>): '' }
-						{ is_in_git && (git_status=='needpull' || git_status=='conflict') ? (<span className="faicon fa-cloud-upload" title="Load Git version" onClick={() => this.gitLoad(workflow.name) }></span>):''}
+						{ is_in_git && (git_status=='needpull' || git_status=='conflict') ? (<span className="faicon fa-cloud-download" title="Load Git version" onClick={() => this.gitLoad(workflow.name) }></span>):''}
 					</td>
 					<td className="tdActions">
 						<span className="faicon fa-edit" title="Edit this instance" onClick={() => { this.editWorkflow(workflow.id); }}></span>
