@@ -85,6 +85,27 @@ export class TaskDetails extends evQueueComponent {
 		return Date.now();
 	}
 	
+	downloadFromDatastore(id) {
+		this.API({group: 'datastore', action: 'get', attributes: { id: id }}).then((xml) => {
+			let gzip = xml.documentElement.hasAttribute('gzip') && xml.documentElement.getAttribute('gzip')=='yes';
+			let data = xml.documentElement.textContent;
+			
+			let element = document.createElement('a');
+			element.setAttribute('href', 'data:text/plain;base64,' + encodeURIComponent(data));
+			if(gzip)
+				element.setAttribute('download', 'output.txt.gz');
+			else
+				element.setAttribute('download', 'output.txt');
+
+			element.style.display = 'none';
+			document.body.appendChild(element);
+
+			element.click();
+
+			document.body.removeChild(element);
+		});
+	}
+	
 	renderInputs(task) {
 		if(task.input.length==0)
 			return (<div>This task has no inputs</div>);
@@ -139,8 +160,7 @@ export class TaskDetails extends evQueueComponent {
 				<div>
 					<div><i>The output of this task is too big and has been stored in the datastore.</i></div>
 					<br />
-					<div><a href="ajax/datastore.php?id={@datastore-id}&amp;download"><span className="faicon fa-download"></span>Download from datastore</a></div>
-					<div><a target="_blank" href="ajax/datastore.php?id={@datastore-id}"><span className="faicon fa-eye"></span>View in browser</a></div>
+					<div><span className="faicon fa-download" onClick={ () => this.downloadFromDatastore(output['datastore-id']) }></span>&#160;Download from datastore</div>
 				</div>
 			);
 		}
