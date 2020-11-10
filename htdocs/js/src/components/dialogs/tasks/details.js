@@ -65,6 +65,8 @@ export class TaskDetails extends evQueueComponent {
 	componentWillUnmount() {
 		if(this.timerID!==undefined)
 			clearInterval(this.timerID);
+		
+		super.componentWillUnmount();
 	}
 	
 	tailOutput(type) {
