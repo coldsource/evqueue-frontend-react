@@ -23,6 +23,7 @@ import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Dialog} from '../../../ui/dialog.js';
 import {Tabs} from '../../../ui/tabs.js';
 import {Tab} from '../../../ui/tab.js';
+import {TruncatedText} from '../../../ui/truncated-text.js';
 import {XML} from '../../../ui/xml.js';
 
 export class TaskDetails extends evQueueComponent {
@@ -96,6 +97,17 @@ export class TaskDetails extends evQueueComponent {
 					<div>{input.domnode.textContent}</div>
 					{ input.error!==undefined && input.error?(<div className="error">{input.error}</div>):'' }
 				</div>
+			);
+		});
+	}
+
+	renderStdin(task) {
+		if(task.stdin.length==0)
+			return (<div>This task has no Stdin</div>);
+
+		return task.stdin.map( (stdin, idx) => {
+			return (
+					<TruncatedText maxlength='50' >{stdin.domnode.textContent}</TruncatedText>
 			);
 		});
 	}
@@ -210,6 +222,11 @@ export class TaskDetails extends evQueueComponent {
 							{this.renderInputs(task)}
 						</fieldset>
 						
+						<fieldset className="tabbed">
+							<legend>Stdin</legend>
+							{this.renderStdin(task)}
+						</fieldset>
+
 						<fieldset className="tabbed">
 							<legend>Execution</legend>
 							<div>

@@ -303,6 +303,7 @@ export class InstanceDetails extends evQueueComponent {
 		task.input = this.xpath('input',task.domnode,true);
 		task.output = this.xpath('output',task.domnode,true);
 		task.stderr = this.xpath('stderr',task.domnode);
+		task.stdin = this.xpath('stdin',task.domnode,true);
 		task.log = this.xpath('log',task.domnode);
 		return task;
 	}
