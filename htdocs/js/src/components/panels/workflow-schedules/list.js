@@ -32,6 +32,8 @@ export class WorkflowSchedulesList extends evQueueComponent {
 		this.nodes_status = {};
 		
 		this.state.workflow_schedules = {};
+		this.state.workflow_schedules_count_actif = 0;
+		this.state.workflow_schedules_count_all = 0;
 		this.state.status = {};
 		this.state.last_execution = {};
 		
@@ -72,8 +74,16 @@ export class WorkflowSchedulesList extends evQueueComponent {
 			
 			// Update schedules list
 			let schedules = {};
+			let workflow_schedules_count_actif = 0;
+			let workflow_schedules_count_all = 0;
+
 			for(let i=0;i<data.response.length;i++)
 			{
+				workflow_schedules_count_all++;
+
+				if(data.response[i].active == 1)
+					workflow_schedules_count_actif++;
+
 				let group = data.response[i].workflow_group?data.response[i].workflow_group:'No group';
 				if(schedules[group]===undefined)
 					schedules[group] = [];
@@ -83,7 +93,10 @@ export class WorkflowSchedulesList extends evQueueComponent {
 				schedules[group].push(schedule);
 			}
 			
+
 			this.setState({workflow_schedules: schedules});
+			this.setState({workflow_schedules_count_actif: workflow_schedules_count_actif});
+			this.setState({workflow_schedules_count_all: workflow_schedules_count_all});
 		}
 		
 		if(ref=='status')
@@ -218,14 +231,19 @@ export class WorkflowSchedulesList extends evQueueComponent {
 		return (<tr className="groupspace"><td colSpan="8"></td></tr>);
 	}
 	
+	renderTitle()
+	{
+		return (<span>Workflow schedules ({this.state.workflow_schedules_count_actif} actives on {this.state.workflow_schedules_count_all})</span>);
+	}
+
 	render() {
 		var actions = [
 			{icon:'fa-file-o', title: "Create new workflow schedule", callback:this.editWorkflowSchedule}
 		];
-		
+		console.log(this.state.workflow_schedules_count_actif);
 		return (
 			<div className="evq-workflow-schedules-list">
-				<Panel noborder left="" title="Workflow schedules" actions={actions}>
+				<Panel noborder left="" title={ this.renderTitle() } actions={actions}>
 					<table className="border">
 						<thead>
 							<tr>
