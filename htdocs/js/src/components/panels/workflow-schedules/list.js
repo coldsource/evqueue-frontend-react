@@ -240,7 +240,6 @@ export class WorkflowSchedulesList extends evQueueComponent {
 		var actions = [
 			{icon:'fa-file-o', title: "Create new workflow schedule", callback:this.editWorkflowSchedule}
 		];
-		console.log(this.state.workflow_schedules_count_actif);
 		return (
 			<div className="evq-workflow-schedules-list">
 				<Panel noborder left="" title={ this.renderTitle() } actions={actions}>
