@@ -31,7 +31,7 @@ import {Help} from '../../../ui/help.js';
 export class WorkflowLauncher extends evQueueComponent {
 	constructor(props) {
 		super(props);
-
+		
 		this.state.workflows = [];
 		
 		this.state.api = {
@@ -63,8 +63,8 @@ export class WorkflowLauncher extends evQueueComponent {
 			this.state.api.attributes.host = this.props.host;
 		if(this.props.parameters!==undefined)
 			this.state.api.parameters = this.props.parameters;
-		if(this.props.comment!==undefined)
-			this.state.api.attributes.comment = this.props.parameters.comment;
+		if(this.props.instance_parent_id!==undefined )
+			this.state.api.attributes.comment = "Relaunch by " + window.localStorage.getItem('user') + " from instance " + this.props.instance_parent_id;
 		else
 			this.state.api.attributes.comment = "Launch by " + window.localStorage.getItem('user');
 		

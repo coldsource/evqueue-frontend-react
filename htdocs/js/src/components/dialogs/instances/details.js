@@ -108,7 +108,8 @@ export class InstanceDetails extends evQueueComponent {
 			name: name,
 			user: user?user:'',
 			host: host?host:'',
-			parameters: parameters_obj
+			parameters: parameters_obj,
+			instance_parent_id: this.props.id,
 		});
 	}
 	
