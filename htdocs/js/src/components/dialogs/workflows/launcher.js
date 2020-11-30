@@ -31,7 +31,7 @@ import {Help} from '../../../ui/help.js';
 export class WorkflowLauncher extends evQueueComponent {
 	constructor(props) {
 		super(props);
-		
+
 		this.state.workflows = [];
 		
 		this.state.api = {
@@ -52,7 +52,7 @@ export class WorkflowLauncher extends evQueueComponent {
 				this.state.api.node = this.state.cluster.nodes_names[0];
 		}
 		
-		// When relaunching a workflow we get old parameters as props, init state with these values
+		// When relaunching a workflow we get old or default parameters as props, init state with these values
 		if(this.props.id!==undefined)
 			this.state.api.attributes.id = this.props.id;
 		if(this.props.name!==undefined)
@@ -63,6 +63,10 @@ export class WorkflowLauncher extends evQueueComponent {
 			this.state.api.attributes.host = this.props.host;
 		if(this.props.parameters!==undefined)
 			this.state.api.parameters = this.props.parameters;
+		if(this.props.comment!==undefined)
+			this.state.api.attributes.comment = this.props.parameters.comment;
+		else
+			this.state.api.attributes.comment = "Launch by " + window.localStorage.getItem('user');
 		
 		this.dlg = React.createRef();
 		
@@ -151,7 +155,7 @@ export class WorkflowLauncher extends evQueueComponent {
 							{this.renderParameters()}
 							<div>
 								<label>Comment</label>
-								<input type="text" name="comment" onChange={this.prepareAPI} />
+								<input type="text" name="comment" value={this.state.api.attributes.comment} onChange={this.prepareAPI} />
 							</div>
 						</div>
 					</Tab>
@@ -163,11 +167,11 @@ export class WorkflowLauncher extends evQueueComponent {
 						<div className="formdiv">
 							<div>
 								<label>User</label>
-								<input name="user" onChange={this.prepareAPI} />
+								<input name="user" value={this.state.api.attributes.user} onChange={this.prepareAPI} />
 							</div>
 							<div>
 								<label>Host</label>
-								<input name="host" onChange={this.prepareAPI} />
+								<input name="host" value={this.state.api.attributes.host} onChange={this.prepareAPI} />
 							</div>
 						</div>
 					</Tab>
