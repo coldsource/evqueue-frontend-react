@@ -37,6 +37,12 @@ You can now access interface using default account : admin / admin.
 
 ### Package for production
 
+Dependency : zip command
+
+```
+$ apt-get install zip
+```
+
 This will pack :
 
 * Browser extension
