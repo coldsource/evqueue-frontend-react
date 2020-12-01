@@ -104,7 +104,7 @@ export class PageSettings extends React.Component {
 			if(part.substr(0,5)!='ws://' && part.substr(0,6)!=='wss://')
 				return "Only ws:// and wss:// schemes are supported";
 			
-			let re = /^wss?:\/\/[^:]+:[0-9]+$/;
+			let re = /^wss?:\/\/[^:]+(:[0-9]+)?(\/.*)?$/;
 			if(!re.test(part))
 				return "Invalid configuration format : « "+part+" »";
 		}
