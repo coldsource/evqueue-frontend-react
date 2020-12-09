@@ -52,7 +52,6 @@ export class DatePicker extends React.Component {
   }
 	
 	changeDate(event) {
-		console.log(event);
 		if(this.props.onChange)
 			this.props.onChange(event);
 	}

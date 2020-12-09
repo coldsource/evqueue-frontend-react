@@ -105,7 +105,6 @@ export class ListInstances extends evQueueComponent {
 		for(var node in this.state.workflows)
 		{
 			ret = ret.concat(this.state.workflows[node].response.map((wf) => {
-				console.log(wf);
 				wf.wf_status = wf.status;  // .status seems to be reserved by react, in any case it is replaced by a boolean in the rendered HTML
 				return (
 						<tr key={wf.id}>
