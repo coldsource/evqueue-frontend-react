@@ -95,7 +95,7 @@ export class ListInstances extends evQueueComponent {
 	
 	renderTags(tags) {
 		return tags.map( (tag) => {
-			return (<li className="tag">{tag}</li>);
+			return (<li key={tag} className="tag">{tag}</li>);
 		});
 	}
 	
