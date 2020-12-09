@@ -35,10 +35,13 @@ export class XPathSelector extends React.Component {
 	}
 	
 	render() {
+		let path;
 		if(this.props.task)
-			var path = this.props.task.getWorkflow().getTaskPath(this.props.task._id);
+			path = this.props.task.getWorkflow().getTaskPath(this.props.task._id);
 		else if(this.props.job)
-			var path = this.props.job.getWorkflow().getJobPath(this.props.job._id);
+			path = this.props.job.getWorkflow().getJobPath(this.props.job._id);
+		else if(this.props.path)
+			path = this.props.path;
 		
 		return (
 			<Dialog dlgid={this.props.dlgid} ref={this.dlg} title="Value selector helper" width="650" onClose={this.props.onClose}>

@@ -31,4 +31,24 @@ div.evq-workflow-properties {
 			}
 		}
 	}
+	
+	div.automatic-tags {
+		div.automatic-tag {
+			margin-bottom: 0.4rem;
+			
+			div.automatic-tag-name {
+				display: inline-block;
+				min-width: 15rem;
+				margin-right: 1rem;
+			}
+			
+			div.automatic-tag-value {
+				display: inline-block;
+				
+				input {
+					width: 28rem;
+				}
+			}
+		}
+	}
 }

@@ -30,7 +30,7 @@ export class MagicWand extends React.Component {
 	}
 	
 	change(value) {
-		var event = {
+		let event = {
 			target: {
 				name: this.props.name,
 				value: value
@@ -41,13 +41,15 @@ export class MagicWand extends React.Component {
 	}
 	
 	render() {
-		var props = {
+		let props = {
 			onSubmit: this.change
 		};
 		if(this.props.task)
 			props.task = this.props.task;
 		else if(this.props.job)
 			props.job = this.props.job;
+		else if(this.props.path)
+			props.path = this.props.path;
 		
 		return (
 			<span className="faicon fa-magic" onClick={ (e) => Dialogs.open(XPathSelector, props)}/>

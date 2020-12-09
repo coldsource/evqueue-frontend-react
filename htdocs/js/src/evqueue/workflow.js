@@ -34,7 +34,8 @@ export class workflow {
 			group: '',
 			comment: '',
 			parameters: [],
-			custom_attributes: []
+			custom_attributes: [],
+			automatic_tags: []
 		}
 		
 		this.wf_pre_undo = undefined;
@@ -84,6 +85,14 @@ export class workflow {
 				name: custom_attribute_node.getAttribute('name'),
 				value: custom_attribute_node.getAttribute('select')
 			});
+		
+		let automatic_tags_ite = workflow.ownerDocument.evaluate('workflow/automatic-tags/automatic-tag',workflow);
+		let automatic_tag_node;
+		while(automatic_tag_node = automatic_tags_ite.iterateNext())
+			this.properties.automatic_tags.push({
+				name: automatic_tag_node.getAttribute('name'),
+				condition: automatic_tag_node.getAttribute('condition')
+			});
 	}
 	
 	saveXML(mode_export) {
@@ -111,6 +120,7 @@ export class workflow {
 			}
 		}
 		
+		// Save custom attributes
 		if(this.properties.custom_attributes.length>0)
 		{
 			let custom_attributes_node = workflow_node.appendChild(xmldoc.createElement('custom-attributes'));
@@ -119,6 +129,18 @@ export class workflow {
 				let custom_attribute_node = custom_attributes_node.appendChild(xmldoc.createElement('custom-attribute'));
 				custom_attribute_node.setAttribute('name',this.properties.custom_attributes[i].name);
 				custom_attribute_node.setAttribute('select',this.properties.custom_attributes[i].value);
+			}
+		}
+		
+		// Save automatic tags
+		if(this.properties.automatic_tags.length>0)
+		{
+			let automatic_tags_node = workflow_node.appendChild(xmldoc.createElement('automatic-tags'));
+			for(let i=0;i<this.properties.automatic_tags.length;i++)
+			{
+				let automatic_tag_node = automatic_tags_node.appendChild(xmldoc.createElement('automatic-tag'));
+				automatic_tag_node.setAttribute('name',this.properties.automatic_tags[i].name);
+				automatic_tag_node.setAttribute('condition',this.properties.automatic_tags[i].condition);
 			}
 		}
 		

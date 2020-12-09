@@ -31,6 +31,7 @@ import {Prompt} from '../../../ui/prompt.js';
 import {EventsUtils} from '../../../utils/events.js';
 import {GroupAutocomplete} from '../../base/group-autocomplete.js';
 import {XPathHelper} from '../../base/xpath-helper.js';
+import {MagicWand} from '../../base/magic-wand.js';
 
 export class WorkflowProperties extends evQueueComponent {
 	constructor(props) {
@@ -42,8 +43,10 @@ export class WorkflowProperties extends evQueueComponent {
 		
 		this.addParameter = this.addParameter.bind(this);
 		this.removeParameter = this.removeParameter.bind(this);
-		this.addCustomAttribute= this.addCustomAttribute.bind(this);
-		this.removeCustomAttribute= this.removeCustomAttribute.bind(this);
+		this.addCustomAttribute = this.addCustomAttribute.bind(this);
+		this.removeCustomAttribute = this.removeCustomAttribute.bind(this);
+		this.addAutomaticTag = this.addAutomaticTag.bind(this);
+		this.removeAutomaticTag = this.removeAutomaticTag.bind(this);
 		
 		this.changeSubscription = this.changeSubscription.bind(this);
 	}
@@ -167,6 +170,37 @@ export class WorkflowProperties extends evQueueComponent {
 		this.triggerCustomAttributesChange(custom_attributes);
 	}
 	
+	triggerAutomaticTagsChange(value) {
+		this.props.onChange(EventsUtils.createEvent('automatic_tags', value));
+	}
+	
+	addAutomaticTag(e) {
+		Dialogs.open(Prompt,{
+			content: "Please enter your tag's name",
+			placeholder: "Tag name",
+			width: 500,
+			confirm: (name) => {
+				let automatic_tags = this.props.properties.automatic_tags.concat();
+				for(let i=0;i<automatic_tags.length;i++)
+				{
+					if(automatic_tags[i].name==name)
+					{
+						App.warning("Tag name must be unique");
+						return false;
+					}
+				}
+				automatic_tags.push({name: name, condition: ''});
+				this.triggerAutomaticTagsChange(automatic_tags);
+			}
+		});
+	}
+	
+	removeAutomaticTag(e, idx) {
+		let automatic_tags = this.props.properties.automatic_tags.concat();
+		automatic_tags.splice(idx, 1);
+		this.triggerAutomaticTagsChange(automatic_tags);
+	}
+	
 	renderTabProperties() {
 		let properties = this.props.properties;
 		
@@ -288,7 +322,7 @@ export class WorkflowProperties extends evQueueComponent {
 				</h2>
 				<div className="custom-attributes">
 					{ this.renderCustomAttributes() }
-					<span className="faicon fa-plus" title="Add a new custm attribute" onClick={ (e) => this.addCustomAttribute(e) } />
+					<span className="faicon fa-plus" title="Add a new custom attribute" onClick={ (e) => this.addCustomAttribute(e) } />
 				</div>
 			</div>
 		);
@@ -315,6 +349,46 @@ export class WorkflowProperties extends evQueueComponent {
 		});
 	}
 	
+	renderTabAutomaticTags() {
+		return (
+			<div>
+				<h2>
+					Automatic tags
+					<Help>
+						Automatic tags are very similar to custom attributes, but instead of adding custom attribute, they will tag the workflow. XPath expression must return a boolean, indicating whether the instance should be tagged or not.
+						<br /><br />
+						Ony jobs with a name are eligible and will appear in the below selects. Please name your job first with a unique name if you want to use it here.
+					</Help>
+				</h2>
+				<div className="automatic-tags">
+					{ this.renderAutomaticTags() }
+					<span className="faicon fa-plus" title="Add a new automatic tag" onClick={ (e) => this.addAutomaticTag(e) } />
+				</div>
+			</div>
+		);
+	}
+	
+	renderAutomaticTags() {
+		let automatic_tags = this.props.properties.automatic_tags;
+		let path = this.props.workflow.getTasksPath();
+		
+		return automatic_tags.map( (automatic_tag, idx) => {
+			let name = XPathHelper.renderValue(automatic_tag.condition, path);
+			return (
+				<div key={idx} className="automatic-tag">
+					<div className="automatic-tag-name">
+						<span className="faicon fa-remove" title="Remove this automatic tag" onClick={ (e) => this.removeAutomaticTag(e, idx) } />
+						&#160;
+						{automatic_tag.name}
+					</div>
+					<div className="automatic-tag-value">
+						<input type="text" name="condition" value={automatic_tag.condition} onChange={(e) => {automatic_tag.condition = e.target.value; this.triggerAutomaticTagsChange(automatic_tags)}}/> <MagicWand name="condition" path={path} onChange={ (e) => {automatic_tag.condition = e.target.value; this.triggerAutomaticTagsChange(automatic_tags)} } />
+					</div>
+				</div>
+			);
+		});
+	}
+	
 	render() {
 		return (
 			<Dialog title="Edit workflow" width="800" onClose={this.props.onClose}>
@@ -331,6 +405,9 @@ export class WorkflowProperties extends evQueueComponent {
 						</Tab>
 						<Tab title="Custom attributes">
 							{ this.renderTabCustomAttributes() }
+						</Tab>
+						<Tab title="Automatic tags">
+							{ this.renderTabAutomaticTags() }
 						</Tab>
 					</Tabs>
 				</div>
