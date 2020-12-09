@@ -1,0 +1,18 @@
+div.workflow-list {
+	ul.tags {
+		display: inline;
+		padding: 0rem;
+		margin: 0rem 0rem 0rem 0.5rem;
+		
+		li.tag {
+			font-size: 0.8rem;
+			color: $evq-light-blue;
+			border: 1px solid $evq-light-grey;
+			border-radius: 0.5rem;
+			padding: 0.1rem;
+			margin-left: 0.15rem;
+			margin-right: 0.15rem;
+			display: inline;
+		}
+	}
+}

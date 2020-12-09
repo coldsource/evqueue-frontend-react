@@ -85,12 +85,27 @@ export class ListInstances extends evQueueComponent {
 		return dts[1] ? dts[0] + ' → ' + dts[1] : dts[0];
 	}
 	
+	renderTagsList(wf) {
+		let tags = this.xpath('tags/tag/@label',wf.domnode);
+		if(tags.length==0)
+			return;
+		
+		return (<ul className="tags">{ this.renderTags(tags)}</ul>);
+	}
+	
+	renderTags(tags) {
+		return tags.map( (tag) => {
+			return (<li className="tag">{tag}</li>);
+		});
+	}
+	
 	renderWorkflowsList() {
 		var ret = [];
 		
 		for(var node in this.state.workflows)
 		{
 			ret = ret.concat(this.state.workflows[node].response.map((wf) => {
+				console.log(wf);
 				wf.wf_status = wf.status;  // .status seems to be reserved by react, in any case it is replaced by a boolean in the rendered HTML
 				return (
 						<tr key={wf.id}>
@@ -100,6 +115,7 @@ export class ListInstances extends evQueueComponent {
 							<td>
 								<span className="action" onClick={() => { Dialogs.open(InstanceDetails,{id: wf.id, node: wf.node_name, width:300})}}>
 									{wf.id} – {wf.name} { this.workflowInfos(wf) } ({this.workflowDuration(wf)})
+									{ this.renderTagsList(wf) }
 								</span>
 								&#160;
 							</td>
