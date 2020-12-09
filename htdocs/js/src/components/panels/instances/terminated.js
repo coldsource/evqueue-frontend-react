@@ -49,6 +49,8 @@ export class TerminatedInstances extends ListInstances {
 	
 	componentDidMount() {
 		var api = { node:'*',group:'instances',action:'list',attributes: this.state.search_filters };
+		this.Subscribe('INSTANCE_TAGGED',api);
+		this.Subscribe('INSTANCE_UNTAGGED',api);
 		this.Subscribe('INSTANCE_REMOVED',api);
 		this.Subscribe('INSTANCE_TERMINATED',api,true);
 	}
