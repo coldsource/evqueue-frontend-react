@@ -413,7 +413,7 @@ export class EditWorkflowSchedule extends evQueueComponent {
 						<h2>
 							Cluster node
 							<Help>
-								If you are using evQueue in a clustered environement, specify here the node on which the workflow will be launched.
+								If you are using evQueue in a clustered environment, specify here the node on which the workflow will be launched.
 								<br /><br />
 								Two special nodes can be used. 'All' will launch the instance on all clustered nodes. 'Any' will launch the instance on a node elected amongst the online nodes, thus guaranteeing high availability.
 							</Help>

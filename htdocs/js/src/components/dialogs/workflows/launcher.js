@@ -178,7 +178,7 @@ export class WorkflowLauncher extends evQueueComponent {
 					<Tab title="Node">
 						<h2>
 							Cluster node
-							<Help>If you are using evQueue in a clustered environement, specify here the node on which the workflow will be launched.</Help>
+							<Help>If you are using evQueue in a clustered environment, specify here the node on which the workflow will be launched.</Help>
 						</h2>
 						<div className="formdiv">
 							<div>

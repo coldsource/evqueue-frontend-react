@@ -121,7 +121,7 @@ export class PageSettings extends React.Component {
 			
 			let msg = this.checkClusterConfig(cluster.desc);
 			if(msg!==true)
-				return App.warning("Error in environement « "+name+" » : "+msg);
+				return App.warning("Error in environment « "+name+" » : "+msg);
 			
 			
 			if(!this.checkColor(cluster.color))
@@ -171,7 +171,7 @@ export class PageSettings extends React.Component {
 							</div>
 						</div>
 						<div className="center">
-							<button onClick={ (e) => this.removeEnv(name) }>Remove environement</button>
+							<button onClick={ (e) => this.removeEnv(name) }>Remove environment</button>
 							&#160;&#160;&#160;
 							<button onClick={this.save}>Save settings</button>
 						</div>
