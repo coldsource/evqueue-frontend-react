@@ -33,7 +33,7 @@ export class TaskInputEditor extends React.Component {
 				<h2>
 					Input properties
 					<Help>
-						Input name is used when passing inputs as environement variables.
+						Input name is used when passing inputs as environment variables.
 						<br /><br />Input condition can be used to optionally pass a flag to the task. The flag will be passed to the task if the condition evaluates to true, otherwise the input will be ignored.
 						<br /><br />Loops are used to pass a list of inputs based on a preceding task output. This could be a list of files, databases...
 					</Help>

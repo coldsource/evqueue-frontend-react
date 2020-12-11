@@ -46,7 +46,7 @@ export class task {
 		this.iteration_condition = '';
 		this.retry_schedule = '';
 		this.retry_retval = '';
-		this.parametersmode = 'CMDLINE';
+		this.parameters_mode = 'CMDLINE';
 		this.queue = 'default';
 		this.queue_host = '';
 		this.user = '';
@@ -194,7 +194,7 @@ export class task {
 			task_node.setAttribute('retry_schedule', this.retry_schedule);
 		if(this.retry_retval)
 			task_node.setAttribute('retry_retval', this.retry_retval);
-		task_node.setAttribute('parameters-mode', this.parametersmode);
+		task_node.setAttribute('parameters-mode', this.parameters_mode);
 		if(this.queue)
 			task_node.setAttribute('queue', this.queue);
 		if(this.queue_host)

@@ -143,7 +143,7 @@ export class App extends React.Component {
 						return reject("Configuration must be an object");
 					
 					if(Object.keys(config).length==0)
-						return reject("No environement found in configuration");
+						return reject("No environment found in configuration");
 					
 					let clusters_config = {};
 					for(let env in config)
@@ -178,7 +178,7 @@ export class App extends React.Component {
 					
 					let clusters = data.clusters;
 					if(Object.keys(clusters).length==0)
-						return reject("No environement found in configuration");
+						return reject("No environment found in configuration");
 					
 					let clusters_config = {};
 					for(let name in clusters)

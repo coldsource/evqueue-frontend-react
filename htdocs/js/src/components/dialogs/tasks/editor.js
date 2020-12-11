@@ -185,7 +185,7 @@ export class TaskEditor extends React.Component {
 				<div className="formdiv">
 					<div>
 						<label>Parameters mode</label>
-						<Select name="parametersmode" value={task.parametersmode} values={[{name: 'Command line', value: 'CMDLINE'}, {name: 'Environement variables', value: 'ENV'}]} filter={false} onChange={this.props.onChange} />
+						<Select name="parameters_mode" value={task.parameters_mode} values={[{name: 'Command line', value: 'CMDLINE'}, {name: 'Environment variables', value: 'ENV'}]} filter={false} onChange={this.props.onChange} />
 					</div>
 				</div>
 				<div className="inputs">
