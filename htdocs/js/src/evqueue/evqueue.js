@@ -94,6 +94,9 @@ export class evQueueWS
 				var parser = new DOMParser();
 				var xmldoc = parser.parseFromString(event.data, "text/xml");
 				
+				if(self.state=='CONNECTING' && xmldoc.documentElement.nodeName=='ready')
+					self.state = 'AUTHENTICATING'; // Auth disabled
+				
 				if(self.state == 'CONNECTING')
 				{
 					// We are connecting, first message sent by engine is challeng for authentication

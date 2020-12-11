@@ -102,15 +102,18 @@ export class PageAuth extends React.Component {
 		var evq = new evQueueCluster(App.global.cluster_config);
 		evq.API({group: 'user', action: 'get', attributes: {name: user}}).then(
 			(response) => {
-				window.localStorage.preferences = response.documentElement.firstChild.getAttribute('preferences');
-				try {
-					this.state.preferences = JSON.parse(window.localStorage.preferences);
-				}
-				catch(err) {
-					// Empty or unreadable properties, falling back to default
-					window.localStorage.preferences = JSON.stringify({
-						preferred_node: ''
-					});
+				if(!response.documentElement.hasAttribute('error'))
+				{
+					window.localStorage.preferences = response.documentElement.firstChild.getAttribute('preferences');
+					try {
+						this.state.preferences = JSON.parse(window.localStorage.preferences);
+					}
+					catch(err) {
+						// Empty or unreadable properties, falling back to default
+						window.localStorage.preferences = JSON.stringify({
+							preferred_node: ''
+						});
+					}
 				}
 				
 				evq.Close();
