@@ -50,7 +50,7 @@ export class TruncatedText extends React.Component {
 
 	render() {
 		return (
-			<div class="evq-truncated-text">
+			<div className="evq-truncated-text">
 				{this.renderValues()}
 			</div>
 		);
