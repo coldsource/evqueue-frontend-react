@@ -48,11 +48,8 @@ export class TerminatedInstances extends ListInstances {
 	}
 	
 	componentDidMount() {
-		var api = { node:'*',group:'instances',action:'list',attributes: this.state.search_filters };
-		this.Subscribe('INSTANCE_TAGGED',api);
-		this.Subscribe('INSTANCE_UNTAGGED',api);
-		this.Subscribe('INSTANCE_REMOVED',api);
-		this.Subscribe('INSTANCE_TERMINATED',api,true);
+		// Subscribe to events
+		this.updateFilters({});
 	}
 	
 	workflowDuration(wf) {
@@ -131,6 +128,9 @@ export class TerminatedInstances extends ListInstances {
 		search_filters.offset = (this.state.current_page-1)*this.items_per_page;
 		this.setState({search_filters: search_filters});
 		
+		this.Unsubscribe('INSTANCE_TAGGED');
+		this.Unsubscribe('INSTANCE_UNTAGGED');
+		this.Unsubscribe('INSTANCE_REMOVED');
 		this.Unsubscribe('INSTANCE_TERMINATED');
 		
 		let api = {
@@ -140,6 +140,9 @@ export class TerminatedInstances extends ListInstances {
 			attributes: search_filters
 		};
 		
+		this.Subscribe('INSTANCE_TAGGED',api);
+		this.Subscribe('INSTANCE_UNTAGGED',api);
+		this.Subscribe('INSTANCE_REMOVED',api);
 		this.Subscribe('INSTANCE_TERMINATED',api,true);
 	}
 	
