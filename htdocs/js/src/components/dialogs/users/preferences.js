@@ -102,7 +102,7 @@ export class EditUserPreferences extends evQueueComponent {
 				<div className="formdiv">
 					<div>
 						<label>Password</label>
-						<input type="password" name="password" value={this.state.password} onChange={ (e) => this.setState({password: e.target.value}) } />
+						<input type="password" name="password" placeholder="Leave empty to keep current password" value={this.state.password} onChange={ (e) => this.setState({password: e.target.value}) } />
 					</div>
 					<div>
 						<label>Confirm password</label>

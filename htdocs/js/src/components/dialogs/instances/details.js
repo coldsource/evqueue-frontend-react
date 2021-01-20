@@ -275,7 +275,7 @@ export class InstanceDetails extends evQueueComponent {
 	renderTask(task) {
 		return (
 			<div key={task.evqid}>
-				<span className="task" data-evqid={task.evqid} onClick={() => { this.taskDetail(task.evqid) }}>
+				<span className="task" data-evqid={task.evqid} onClick={() => { task.status!='SKIPPED'? this.taskDetail(task.evqid) : ''}}>
 					<span className="taskState">{this.taskStatus(task)}</span>
 					<span className="taskName">{task.type=='SCRIPT'?task.name:task.path}</span>
 				</span>
