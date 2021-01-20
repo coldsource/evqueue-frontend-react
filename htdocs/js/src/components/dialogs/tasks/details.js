@@ -130,7 +130,7 @@ export class TaskDetails extends evQueueComponent {
 
 		return task.stdin.map( (stdin, idx) => {
 			return (
-					<TruncatedText maxlength='50' >{stdin.domnode.textContent}</TruncatedText>
+					<TruncatedText key={idx} maxlength='50' >{stdin.domnode.textContent}</TruncatedText>
 			);
 		});
 	}
@@ -179,6 +179,8 @@ export class TaskDetails extends evQueueComponent {
 			);
 		}
 		
+		if(!output.domnode)
+			return;
 		
 		if(task['output-method']=='XML' && output.retval==0)
 			return (<XML xml={output.domnode.firstChild}/>);
