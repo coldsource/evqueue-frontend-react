@@ -49,7 +49,7 @@ export class TerminatedInstances extends ListInstances {
 	
 	componentDidMount() {
 		// Subscribe to events
-		this.updateFilters({});
+		this.updateFilters(this.state.search_filters);
 	}
 	
 	workflowDuration(wf) {
