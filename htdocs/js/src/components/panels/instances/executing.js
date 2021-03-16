@@ -108,7 +108,8 @@ export class ExecutingInstances extends ListInstances {
 				this.API({
 					group: 'instance',
 					action: 'query',
-					attributes: { id:wf.id }
+					attributes: { id:wf.id },
+					node: wf.node_name
 				}).then( (data) => {
 					var tasks = self.xpath("//task[@status='EXECUTING']",data.documentElement);
 					for(var i=0;i<tasks.length;i++)
