@@ -61,6 +61,9 @@ export class RunningConfiguration extends evQueueComponent {
 	}
 	
 	renderEntries(config_idx) {
+		if(this.state.configs[config_idx]===undefined)
+			return;
+		
 		return this.state.configs[config_idx].map( (entry, idx) => {
 			let diff = false;
 			for(let i=0;i<this.state.configs.length;i++)
