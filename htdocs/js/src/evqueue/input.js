@@ -105,6 +105,10 @@ export class input {
 		
 		if(this.name!='')
 			input_node.setAttribute('name', this.name);
+		if(this.condition)
+			input_node.setAttribute('condition', this.condition);
+		if(this.loop)
+			input_node.setAttribute('loop', this.loop);
 		
 		for(let i=0;i<this.parts.length;i++)
 			input_node.appendChild(this.parts[i].toXML(xmldoc));
