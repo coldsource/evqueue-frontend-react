@@ -33,3 +33,11 @@ input[type='number'] {
 		outline: none;
 	}
 }
+
+input[type='color'] {
+	border-radius: 0.4rem;
+	border: 1px solid grey;
+	height: 1.7rem;
+	padding-left: 0.4rem;
+	background-color: white;
+}

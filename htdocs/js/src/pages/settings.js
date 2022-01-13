@@ -31,7 +31,7 @@ export class PageSettings extends React.Component {
 		
 		this.state = {
 			new_name: '',
-			new_color: '',
+			new_color: '#f0f0f0',
 			clusters: {}
 		};
 		
@@ -59,8 +59,9 @@ export class PageSettings extends React.Component {
 		if(this.state.clusters[name]!==undefined)
 			return App.warning("Env already exists");
 		
-		if(!this.checkColor(this.state.new_color))
-			return App.warning("Invalid color: « "+this.state.new_color+" »");
+		let color = this.state.new_color.substr(1);
+		if(!this.checkColor(color))
+			return App.warning("Invalid color: « "+color+" »");
 		
 		let clusters = this.state.clusters;
 		clusters[name] = {
@@ -68,7 +69,7 @@ export class PageSettings extends React.Component {
 			user: '',
 			password: '',
 			password_clear: '',
-			color: this.state.new_color
+			color: color
 		};
 		
 		this.setState({clusters: clusters, new_name: '', new_color:''});
@@ -123,7 +124,6 @@ export class PageSettings extends React.Component {
 			if(msg!==true)
 				return App.warning("Error in environment « "+name+" » : "+msg);
 			
-			
 			if(!this.checkColor(cluster.color))
 				return App.warning("Invalid color: « "+cluster.color+" »");
 			
@@ -142,7 +142,10 @@ export class PageSettings extends React.Component {
 	
 	onChange(e, name) {
 		let clusters = this.state.clusters;
-		clusters[name][e.target.name] = e.target.value;
+		if(e.target.name=='color')
+			clusters[name][e.target.name] = e.target.value.substr(1);
+		else
+			clusters[name][e.target.name] = e.target.value;
 		this.setState({clusters: clusters});
 	}
 	
@@ -167,7 +170,7 @@ export class PageSettings extends React.Component {
 							</div>
 							<div>
 								<label>Color</label>
-								<input type="text" placeholder="ebebeb" name="color" value={cluster.color} onChange={ (e) => this.onChange(e, name) } />
+								<input type="color" name="color" value={"#"+cluster.color} onChange={ (e) => this.onChange(e, name) } />
 							</div>
 						</div>
 						<div className="center">
@@ -199,7 +202,7 @@ export class PageSettings extends React.Component {
 						</div>
 						<div>
 							<label>Color</label>
-							<input type="text" placeholder="ebebeb" name="new_color" value={this.state.new_color} onChange={ (e) => this.setState({new_color: e.target.value}) } />
+							<input type="color" name="new_color" value={this.state.new_color} onChange={ (e) => this.setState({new_color: e.target.value}) } />
 						</div>
 					</div>
 					<div className="center">
