@@ -39,4 +39,14 @@ div.formdiv {
 			width: 21rem;
 		}
 	}
+	
+	div.inline-error {
+		margin-left:16rem;
+		position: absolute;
+		border: 1px dotted;
+		background-color: white;
+		padding: 0.3rem;
+		z-index: 1000;
+		margin-top: 3px;
+	}
 }
