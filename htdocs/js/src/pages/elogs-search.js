@@ -20,18 +20,24 @@
 'use strict';
 
 import {HeaderMenu} from '../components/menus/header.js';
-import {Channels} from '../components/panels/logs/channels.js';
+import {ELogs} from '../components/panels/logs/elogs.js';
+import {ELogsFilters} from '../components/panels/logs/elogs-filters.js';
 
-export class PageELogsChannels extends React.Component {
+export class PageELogsSearch extends React.Component {
 	constructor(props) {
 		super(props);
+		
+		this.logs = React.createRef();
+		this.filters = React.createRef();
 	}
 	
 	render() {
 		return (
 			<div>
 				<HeaderMenu current="External Logs" />
-				<Channels />
+				<ELogsFilters ref={this.filters} onChange={this.logs} />
+				<br />
+				<ELogs ref={this.logs} filters={this.filters} />
 			</div>
 		);
 	}

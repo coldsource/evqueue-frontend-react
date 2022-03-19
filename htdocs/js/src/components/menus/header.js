@@ -73,8 +73,15 @@ export class HeaderMenu extends React.Component {
 				submenu: [
 					{ label: 'Engine logs', icon: 'fa-file-text-o', url: 'logs-engine' },
 					{ label: 'API logs', icon: 'fa-file-text-o', url: 'logs-api' },
-					{ label: 'Notification logs', icon: 'fa-file-text-o', url: 'logs-notification' },
-					{ label: 'Channels', icon: 'fa-road', url: 'elogs-channels' }
+					{ label: 'Notification logs', icon: 'fa-file-text-o', url: 'logs-notification' }
+				]
+			},
+			{
+				label: 'External Logs',
+				icon: 'fa-file-text-o',
+				submenu: [
+					{ label: 'Channels', icon: 'fa-road', url: 'elogs-channels' },
+					{ label: 'Logs', icon: 'fa-file-text-o', url: 'elogs-search' }
 				]
 			}
 		];

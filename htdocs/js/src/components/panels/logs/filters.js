@@ -111,11 +111,6 @@ export class LogsFilters extends evQueueComponent {
 	}
 	
 	render() {
-		var actions = [
-			{icon:'fa-cloud', title: "Pull git repository", callback:this.gitPull},
-			{icon:'fa-file-o', title: "Create new repository", callback:this.createWorkflow}
-		];
-		
 		return (
 			<div className="evq-logs-filters">
 				<a className="action" onClick={this.toggleFilters}>Engine filters</a><span></span>
