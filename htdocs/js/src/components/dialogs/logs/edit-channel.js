@@ -27,6 +27,9 @@ import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
 
+
+import {CheckConfig} from './check-config.js';
+
 export class EditChannel extends evQueueComponent {
 	constructor(props) {
 		super(props);
@@ -45,8 +48,10 @@ export class EditChannel extends evQueueComponent {
 		}
 		
 		this.state.regex_error = '';
+		this.state.config_checker = false;
 		
 		this.dlg = React.createRef();
+		this.dlg_checker = undefined;
 		
 		this.onChange = this.onChange.bind(this);
 		this.save = this.save.bind(this);
@@ -54,6 +59,8 @@ export class EditChannel extends evQueueComponent {
 		this.renderCustomFields = this.renderCustomFields.bind(this);
 		this.addCustomField = this.addCustomField.bind(this);
 		this.removeCustomField = this.removeCustomField.bind(this);
+		this.toggleConfigCheck = this.toggleConfigCheck.bind(this);
+		this.dlgClose = this.dlgClose.bind(this);
 	}
 	
 	componentDidMount() {
@@ -100,6 +107,10 @@ export class EditChannel extends evQueueComponent {
 			channel[name] = value;
 		
 		this.setState({channel: channel});
+		
+		console.log(this.dlg_checker.current.setConfig);
+		if(this.state.config_checker)
+			this.dlg_checker.current.setConfig(channel);
 	}
 	
 	save() {
@@ -180,10 +191,25 @@ export class EditChannel extends evQueueComponent {
 		});
 	}
 	
+	dlgClose() {
+		this.setState({config_checker: false});
+		return true;
+	}
+	
+	toggleConfigCheck() {
+		if(!this.state.config_checker)
+			this.dlg_checker = Dialogs.open(CheckConfig, {onClose: this.dlgClose, config: this.state.channel});
+		else
+			this.dlg_checker.current.close();
+		
+		this.setState({config_checker: !this.state.config_checker});
+	}
+	
 	render() {
 		let channel = this.state.channel;
 		let title = this.props.id?"Edit channel « "+channel.name+" »":"Create new channel";
 		let submit = this.props.id?"Edit channel":"Create channel";
+		let config_checker_label = this.state.config_checker?'Close config checker':'Open config checker';
 		
 		let crit_values = [
 			{name: 'Emergency', value: 'LOG_EMERG'},
@@ -208,6 +234,7 @@ export class EditChannel extends evQueueComponent {
 						Logging channels are used for external logging purpose. Each channel can have its own custom fields. A regular expression is used to extract data from the raw logged line.
 					</Help>
 				</h2>
+				<button onClick={this.toggleConfigCheck}>{config_checker_label}</button>
 				<div className="formdiv">
 					<div>
 						<label>Name</label>

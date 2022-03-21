@@ -31,10 +31,14 @@ export class CheckConfig extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
-		this.state.valid = 'yes'
-		this.state.details = ''
+		this.state.config = this.props.config;
+		this.state.valid = 'yes';
+		this.state.details = '';
 		this.state.fields = {};
 		this.state.log = '';
+		
+		if(this.props.config)
+			this.config = this.props.config;
 		
 		this.dlg = React.createRef();
 		
@@ -42,13 +46,29 @@ export class CheckConfig extends evQueueComponent {
 		this.onChange = this.onChange.bind(this);
 	}
 	
+	setConfig(config) {
+		this.config = config;
+		
+		this.onChange({target: {value: this.state.log}});
+	}
+	
+	close() {
+		this.dlg.current.close();
+	}
+	
 	onChange(e) {
 		this.setState({log: e.target.value});
+		
+		let attributes = {log: e.target.value};
+		if(this.props.id)
+			attributes.id = this.props.id;
+		else if(this.config)
+			attributes.config = JSON.stringify(this.props.config);
 		
 		this.API({
 			group: 'channel',
 			action: 'testlog',
-			attributes: {id: this.props.id, log: e.target.value}
+			attributes: attributes
 		}).then( (response) => {
 			let status = this.parseResponse(response);
 			if(status.valid=='no')
@@ -95,7 +115,7 @@ export class CheckConfig extends evQueueComponent {
 	
 	render() {
 		return (
-			<Dialog ref={this.dlg} title="Config check" width="700">
+			<Dialog ref={this.dlg} onClose={this.props.onClose} title="Config check" width="700">
 				<h2>
 					Channel config check
 					<Help>
