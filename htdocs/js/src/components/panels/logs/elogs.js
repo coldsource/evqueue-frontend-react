@@ -85,6 +85,7 @@ export class ELogs extends evQueueComponent {
 			return (
 				<React.Fragment key={idx}>
 					<tr>
+						<td className="left">{log.channel}</td>
 						<td className="center">{log.date}</td>
 						<td className="center" className={"center bold "+log.crit}>{log.crit}</td>
 						<td className="center">{log.machine}</td>
@@ -110,6 +111,7 @@ export class ELogs extends evQueueComponent {
 					<table className="evenodd4">
 						<thead>
 							<tr>
+								<th style={{width: '10rem'}}>Channel</th>
 								<th style={{width: '10rem'}}>Date</th>
 								<th style={{width: '10rem'}}>Crit</th>
 								<th>Machine</th>

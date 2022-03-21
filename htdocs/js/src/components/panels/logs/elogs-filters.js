@@ -21,6 +21,7 @@
 
 import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Select} from '../../../ui/select.js';
+import {InputSpinner} from '../../../ui/input-spinner.js';
 import {DatePicker} from '../../../ui/datepicker.js';
 import {Autocomplete} from '../../../ui/autocomplete.js';
 
@@ -36,10 +37,16 @@ export class ELogsFilters extends evQueueComponent {
 			dt_sup: '',
 			hr_sup: '',
 			filter_emitted_until: '',
-			filter_ip: ''
+			filter_ip: '',
+			filter_channel: '',
+			filter_uid: '',
+			filter_status: '',
+			filter_domain: '',
+			filter_machine: ''
 		};
 		
 		this.state.filters = Object.assign({}, this.empty_filters);
+		this.state.channels = [];
 		
 		
 		this.state.opened = false;
@@ -55,6 +62,20 @@ export class ELogsFilters extends evQueueComponent {
 		this.toggleFilters = this.toggleFilters.bind(this);
 		this.filterChange = this.filterChange.bind(this);
 		this.cleanFilters = this.cleanFilters.bind(this);
+	}
+	
+	componentDidMount() {
+		this.API({
+				group: 'channels',
+				action: 'list',
+		}).then( (response) => {
+				let data = this.parseResponse(response);
+				
+				let channels = [{name: 'All channels', value: ''}];
+				for(let i=0;i<data.response.length;i++)
+					channels.push({name: data.response[i].name, value: data.response[i].name});
+				this.setState({channels: channels});
+		});
 	}
 	
 	toggleFilters() {
@@ -123,18 +144,26 @@ export class ELogsFilters extends evQueueComponent {
 		else if(this.state.filters.filter_emitted_until)
 			explain_date += ' emitted before '+this.state.filters.filter_emitted_until;
 		
+		let explain_channel = '';
+		if(this.state.filters.filter_channel)
+			explain_channel = ' on channel '+this.state.filters.filter_channel+' ';
+		
 		let explain_parts = [];
 		if(this.state.filters.filter_crit)
 			explain_parts.push(' criticality '+this.state.filters.filter_crit);
 		if(this.state.filters.filter_ip)
 			explain_parts.push(' ip address '+this.state.filters.filter_ip);
+		if(this.state.filters.filter_status)
+			explain_parts.push(' status equals to '+this.state.filters.filter_status);
 		
-		if(explain_date=='' && explain_parts.length==0)
+		if(explain_date=='' && explain_channel=='' && explain_parts.length==0)
 			return 'Showing all logs';
 		
 		let explain = 'Showing logs';
 		if(explain_date)
 			explain += explain_date;
+		if(explain_channel)
+			explain += explain_channel;
 		if(explain_parts.length>0)
 			explain += ' with '+explain_parts.join(' and ');
 		return explain;
@@ -159,12 +188,32 @@ export class ELogsFilters extends evQueueComponent {
 		return (
 			<div className="formdiv log_filters">
 				<div>
+					<label>Channel</label>
+					<Select name="filter_channel" value={this.state.filters.filter_channel} values={this.state.channels} onChange={this.filterChange} />
+				</div>
+				<div>
 					<label>Criticality</label>
 					<Select name="filter_crit" value={this.state.filters.filter_crit} values={crit_values} filter={false} onChange={this.filterChange} />
 				</div>
 				<div>
 					<label>IP</label>
 					<input type="text" name="filter_ip" value={this.state.filters.filter_ip} onChange={this.filterChange} />
+				</div>
+				<div>
+					<label>UID</label>
+					<input type="text" name="filter_uid" value={this.state.filters.filter_uid} onChange={this.filterChange} />
+				</div>
+				<div>
+					<label>Domain</label>
+					<input type="text" name="filter_domain" value={this.state.filters.filter_domain} onChange={this.filterChange} />
+				</div>
+				<div>
+					<label>Machine</label>
+					<input type="text" name="filter_machine" value={this.state.filters.filter_machine} onChange={this.filterChange} />
+				</div>
+				<div>
+					<label>Status</label>
+					<InputSpinner name="filter_status" value={this.state.filters.filter_status} onChange={this.filterChange} />
 				</div>
 				<div>
 					<label>Launched between</label>
