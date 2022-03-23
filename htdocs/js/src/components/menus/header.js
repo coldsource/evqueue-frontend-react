@@ -81,7 +81,8 @@ export class HeaderMenu extends React.Component {
 				icon: 'fa-file-text-o',
 				submenu: [
 					{ label: 'Channels', icon: 'fa-road', url: 'elogs-channels' },
-					{ label: 'Logs', icon: 'fa-file-text-o', url: 'elogs-search' }
+					{ label: 'Logs', icon: 'fa-file-text-o', url: 'elogs-search' },
+					{ label: 'Statistics', icon: 'fa-area-chart', url: 'elogs-stats' }
 				]
 			}
 		];

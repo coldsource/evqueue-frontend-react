@@ -32,6 +32,7 @@ import {PageAPILogs} from '../../pages/api-logs.js';
 import {PageNotificationLogs} from '../../pages/notification-logs.js';
 import {PageELogsChannels} from '../../pages/elogs-channels.js';
 import {PageELogsSearch} from '../../pages/elogs-search.js';
+import {PageELogsStatistics} from '../../pages/elogs-statistics.js';
 import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
 import {PageNotificationTypes} from '../../pages/notification-types.js';
 import {PageNotification} from '../../pages/notification.js';
@@ -329,6 +330,8 @@ export class App extends React.Component {
 			return (<PageELogsChannels />);
 		else if(path=='elogs-search')
 			return (<PageELogsSearch />);
+		else if(path=='elogs-stats')
+			return (<PageELogsStatistics />);
 		else if(path=='workflow-editor')
 			return (<PageWorkflowEditor />);
 		else if(path=='notification-plugins')
