@@ -21,6 +21,7 @@
 
 import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Panel} from '../../../ui/panel.js';
+import {EventsUtils} from '../../../utils/events.js';
 
 export class ELogs extends evQueueComponent {
 	constructor(props) {
@@ -52,6 +53,11 @@ export class ELogs extends evQueueComponent {
 		this.Subscribe('LOG_ELOG',api, true);
 	}
 	
+	setFilter(name, value) {
+		let e = EventsUtils.createEvent(name,value);
+		this.props.filters.current.filterChange(e);
+	}
+	
 	evQueueEvent(response) {
 		var data = this.parseResponse(response,'/response/*');
 		this.setState({logs: data.response});
@@ -71,7 +77,7 @@ export class ELogs extends evQueueComponent {
 		
 		return (
 			<tr>
-				<td colSpan="7">
+				<td colSpan="8">
 					<ul>
 						{this.renderCustomFields(custom_fields)}
 					</ul>
@@ -88,10 +94,10 @@ export class ELogs extends evQueueComponent {
 						<td className="left">{log.channel}</td>
 						<td className="center">{log.date}</td>
 						<td className="center" className={"center bold "+log.crit}>{log.crit}</td>
-						<td className="center">{log.machine}</td>
-						<td className="center">{log.domain}</td>
-						<td className="center">{log.ip}</td>
-						<td className="center">{log.uid}</td>
+						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_machine', log.machine)}>{log.machine}</span></td>
+						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_domain', log.domain)}>{log.domain}</span></td>
+						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_ip', log.ip)}>{log.ip}</span></td>
+						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_uid', log.uid)}>{log.uid}</span></td>
 						<td className="center">{log.status}</td>
 					</tr>
 					{this.renderCustomFieldsRow(log.custom_fields)}

@@ -155,6 +155,12 @@ export class ELogsFilters extends evQueueComponent {
 			explain_parts.push(' ip address '+this.state.filters.filter_ip);
 		if(this.state.filters.filter_status)
 			explain_parts.push(' status equals to '+this.state.filters.filter_status);
+		if(this.state.filters.filter_uid)
+			explain_parts.push(' unique ID «'+this.state.filters.filter_uid+'» ');
+		if(this.state.filters.filter_domain)
+			explain_parts.push(' domain «'+this.state.filters.filter_domain+'» ');
+		if(this.state.filters.filter_machine)
+			explain_parts.push(' machine «'+this.state.filters.filter_machine+'» ');
 		
 		if(explain_date=='' && explain_channel=='' && explain_parts.length==0)
 			return 'Showing all logs';
