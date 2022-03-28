@@ -24,7 +24,10 @@ import {Dialog} from '../../../ui/dialog.js';
 import {Dialogs} from '../../../ui/dialogs.js';
 import {Prompt} from '../../../ui/prompt.js';
 import {Help} from '../../../ui/help.js';
+import {Tabs} from '../../../ui/tabs.js';
+import {Tab} from '../../../ui/tab.js';
 import {Select} from '../../../ui/select.js';
+import {FieldTypeSelector} from '../../base/field-type-selector.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
 
 
@@ -40,10 +43,13 @@ export class EditChannel extends evQueueComponent {
 			regex: '',
 			date: '',
 			crit: 'LOG_NOTICE',
-			fields: {}
-		}
+			fields: {},
+			group_matches: {},
+			matches: {}
+		};
 		
 		this.state.groups = [];
+		this.state.group_fields = {};
 		this.state.regex_error = '';
 		this.state.config_checker = false;
 		
@@ -53,8 +59,7 @@ export class EditChannel extends evQueueComponent {
 		this.onChange = this.onChange.bind(this);
 		this.save = this.save.bind(this);
 		this.renderRegexError = this.renderRegexError.bind(this);
-		this.renderFields = this.renderFields.bind(this);
-		this.addCustomField = this.addCustomField.bind(this);
+		this.addField = this.addField.bind(this);
 		this.removeField = this.removeField.bind(this);
 		this.toggleConfigCheck = this.toggleConfigCheck.bind(this);
 		this.dlgClose = this.dlgClose.bind(this);
@@ -79,12 +84,25 @@ export class EditChannel extends evQueueComponent {
 				group: 'channel',
 				action: 'get',
 				attributes: {id: this.props.id}
-			}).then( (response) => {
+			}).then(response=> {
 				let resp = this.parseResponse(response).response[0];
 				let channel = this.state.channel;
+				channel.group_id = resp.group_id;
 				channel.name = resp.name;
 				Object.assign(channel, JSON.parse(resp.config));
 				this.setState({channel: channel});
+				
+				this.API({
+					group: 'channel_group',
+					action: 'get',
+					attributes: {id: channel.group_id}
+				}).then(response => {
+					let data = this.parseResponse(response);
+					let group_fields = {};
+					for(let i=0;i<data.response.length;i++)
+						group_fields[data.response[i].name] = data.response[i].type;
+					this.setState({group_fields: group_fields});
+				});
 			});
 		}
 	}
@@ -110,8 +128,12 @@ export class EditChannel extends evQueueComponent {
 		
 		let channel = this.state.channel;
 		
-		if(name.substr(0,7)=='custom_')
-			channel.fields[name.substr(7)] = value;
+		if(name.substr(0,6)=='field_')
+			channel.fields[name.substr(6)].type = value;
+		else if(name.substr(0,11)=='groupmatch_')
+			channel.group_matches[name.substr(11)] = value;
+		else if(name.substr(0,6)=='match_')
+			channel.matches[name.substr(6)] = value;
 		else
 			channel[name] = value;
 		
@@ -129,6 +151,7 @@ export class EditChannel extends evQueueComponent {
 		Object.assign(config, this.state.channel);
 		
 		delete config.name;
+		delete config.group_id;
 		
 		// Delete empty fields of config
 		for(name in config)
@@ -139,7 +162,7 @@ export class EditChannel extends evQueueComponent {
 		
 		let attributes = {
 			name: this.state.channel.name,
-			
+			group_id: this.state.channel.group_id,
 			config: JSON.stringify(config)
 		};
 		
@@ -168,14 +191,14 @@ export class EditChannel extends evQueueComponent {
 		return (<div className="light-error inline-error">{this.state.regex_error}</div>);
 	}
 	
-	addCustomField() {
+	addField() {
 		Dialogs.open(Prompt,{
 			content: "Please enter your custom field's name",
 			placeholder: "Cusrtom field name",
 			width: 500,
 			confirm: (name) => {
 				let channel = this.state.channel;
-				channel.fields[name] = 1;
+				channel.fields[name] = {type: 'CHAR'};
 				this.setState({channel: channel});
 			}
 		});
@@ -187,14 +210,40 @@ export class EditChannel extends evQueueComponent {
 		this.setState({channel: channel});
 	}
 	
-	renderFields() {
+	renderFieldsType() {
 		let regex_values = this.addRegexValues();
 		
 		return Object.keys(this.state.channel.fields).map(name => {
 			return (
 				<div key={name}>
 					<label>{name} <span title="Remove this custom field" className="faicon fa-remove" onClick={() => this.removeField(name)}></span></label>
-					<Select name={"field_"+name} value={this.state.channel.fields[name]} values={regex_values} filter={false} onChange={this.onChange} />
+					<FieldTypeSelector name={"field_"+name} value={this.state.channel.fields[name].type} values={regex_values} filter={false} onChange={this.onChange} />
+				</div>
+			);
+		});
+	}
+	
+	renderFieldsGroupMatch() {
+		let regex_values = this.addRegexValues();
+		
+		return Object.keys(this.state.group_fields).map(name => {
+			return (
+				<div key={name}>
+					<label>{name}</label>
+					<Select name={"groupmatch_"+name} value={this.state.channel.group_matches[name]} values={regex_values} filter={false} onChange={this.onChange} />
+				</div>
+			);
+		});
+	}
+	
+	renderFieldsMatch() {
+		let regex_values = this.addRegexValues();
+		
+		return Object.keys(this.state.channel.fields).map(name => {
+			return (
+				<div key={name}>
+					<label>{name}</label>
+					<Select name={"match_"+name} value={this.state.channel.matches[name]} values={regex_values} filter={false} onChange={this.onChange} />
 				</div>
 			);
 		});
@@ -243,30 +292,40 @@ export class EditChannel extends evQueueComponent {
 						Logging channels are used for external logging purpose. Each channel can have its own custom fields. A regular expression is used to extract data from the raw logged line.
 					</Help>
 				</h2>
-				<button onClick={this.toggleConfigCheck}>{config_checker_label}</button>
-				<div className="formdiv">
-					<div>
-						<label>Name</label>
-						<input type="text" name="name" value={channel.name} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>Group</label>
-						<Select name="group_id" value={this.state.channel.group_id} values={this.state.groups} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>Regex</label>
-						<input type="text" name="regex" value={channel.regex} onChange={this.onChange} />
-						{this.renderRegexError()}
-					</div>
-					<div>
-						<label>Criticality</label>
-						<Select name="crit" value={channel.crit} values={crit_values} filter={false} onChange={this.onChange} />
-					</div>
-					{this.renderFields()}
-					<div>
-						<label><span title="Add custom field" className="faicon fa-plus" onClick={this.addCustomField}></span></label>
-					</div>
-				</div>
+				<Tabs>
+					<Tab title="Fields">
+						<div className="formdiv">
+							<div>
+								<label>Name</label>
+								<input type="text" name="name" value={channel.name} onChange={this.onChange} />
+							</div>
+							<div>
+								<label>Group</label>
+								<Select name="group_id" value={this.state.channel.group_id} values={this.state.groups} onChange={this.onChange} />
+							</div>
+							<div>
+								<label>Criticality</label>
+								<Select name="crit" value={channel.crit} values={crit_values} filter={false} onChange={this.onChange} />
+							</div>
+							{this.renderFieldsType()}
+							<div>
+								<label><span title="Add custom field" className="faicon fa-plus" onClick={this.addField}></span></label>
+							</div>
+						</div>
+					</Tab>
+					<Tab title="Matching">
+						<button onClick={this.toggleConfigCheck}>{config_checker_label}</button>
+						<div className="formdiv">
+							<div>
+								<label>Regex</label>
+								<input type="text" name="regex" value={channel.regex} onChange={this.onChange} />
+								{this.renderRegexError()}
+							</div>
+							{this.renderFieldsGroupMatch()}
+							{this.renderFieldsMatch()}
+						</div>
+					</Tab>
+				</Tabs>
 				<button className="submit" onClick={this.save}>{submit}</button>
 			</Dialog>
 		);

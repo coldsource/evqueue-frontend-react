@@ -63,7 +63,7 @@ export class CheckConfig extends evQueueComponent {
 		if(this.props.id)
 			attributes.id = this.props.id;
 		else if(this.config)
-			attributes.config = JSON.stringify(this.props.config);
+			attributes.config = JSON.stringify(this.config);
 		
 		this.API({
 			group: 'channel',

@@ -75,7 +75,12 @@ export class EditChannelGroup extends evQueueComponent {
 				
 				let fields = {};
 				for(let i=0;i<resp.response.length;i++)
-					fields[resp.response[i].name] = resp.response[i].type;
+				{
+					fields[resp.response[i].name] = {
+						id: parseInt(resp.response[i].id),
+						type: resp.response[i].type
+					}
+				}
 				
 				let channelgroup = {name: resp.name, fields: fields};
 				this.setState({channelgroup: channelgroup});
@@ -90,7 +95,7 @@ export class EditChannelGroup extends evQueueComponent {
 		let channelgroup = this.state.channelgroup;
 		
 		if(name.substr(0,6)=='field_')
-			channelgroup.fields[name.substr(6)] = value;
+			channelgroup.fields[name.substr(6)].type = value;
 		else
 			channelgroup[name] = value;
 		
@@ -137,7 +142,7 @@ export class EditChannelGroup extends evQueueComponent {
 			width: 500,
 			confirm: (name) => {
 				let channelgroup = this.state.channelgroup;
-				channelgroup.fields[name] = 1;
+				channelgroup.fields[name] = {type: 'CHAR'};
 				this.setState({channelgroup: channelgroup});
 			}
 		});
@@ -153,10 +158,11 @@ export class EditChannelGroup extends evQueueComponent {
 		let regex_values = this.addRegexValues();
 		
 		return Object.keys(this.state.channelgroup.fields).map(name => {
+			let field = this.state.channelgroup.fields[name];
 			return (
 				<div key={name}>
 					<label>{name} <span title="Remove this custom field" className="faicon fa-remove" onClick={() => this.removeField(name)}></span></label>
-					<Select name={"field_"+name} value={this.state.channelgroup.fields[name]} values={this.types} filter={false} onChange={this.onChange} />
+					<Select name={"field_"+name} value={field.type} values={this.types} filter={false} onChange={this.onChange} />
 				</div>
 			);
 		});
