@@ -80,6 +80,7 @@ export class HeaderMenu extends React.Component {
 				label: 'External Logs',
 				icon: 'fa-file-text-o',
 				submenu: [
+					{ label: 'Channel groups', icon: 'fa-road', url: 'elogs-channel-groups' },
 					{ label: 'Channels', icon: 'fa-road', url: 'elogs-channels' },
 					{ label: 'Logs', icon: 'fa-file-text-o', url: 'elogs-search' },
 					{ label: 'Statistics', icon: 'fa-area-chart', url: 'elogs-stats' }

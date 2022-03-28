@@ -36,17 +36,14 @@ export class EditChannel extends evQueueComponent {
 		
 		this.state.channel = {
 			name: '',
+			group_id: '',
 			regex: '',
 			date: '',
 			crit: 'LOG_NOTICE',
-			machine: '',
-			domain: '',
-			ip: '',
-			uid: '',
-			status: '',
-			custom_fields: {}
+			fields: {}
 		}
 		
+		this.state.groups = [];
 		this.state.regex_error = '';
 		this.state.config_checker = false;
 		
@@ -56,14 +53,26 @@ export class EditChannel extends evQueueComponent {
 		this.onChange = this.onChange.bind(this);
 		this.save = this.save.bind(this);
 		this.renderRegexError = this.renderRegexError.bind(this);
-		this.renderCustomFields = this.renderCustomFields.bind(this);
+		this.renderFields = this.renderFields.bind(this);
 		this.addCustomField = this.addCustomField.bind(this);
-		this.removeCustomField = this.removeCustomField.bind(this);
+		this.removeField = this.removeField.bind(this);
 		this.toggleConfigCheck = this.toggleConfigCheck.bind(this);
 		this.dlgClose = this.dlgClose.bind(this);
 	}
 	
 	componentDidMount() {
+		this.API({
+			group: 'channel_groups',
+			action: 'list',
+		}).then( (response) => {
+			let data = this.parseResponse(response);
+			
+			let groups = [];
+			for(let i=0;i<data.response.length;i++)
+				groups.push({name: data.response[i].name, value: data.response[i].id});
+			this.setState({groups: groups});
+		});
+		
 		if(this.props.id)
 		{
 			this.API({
@@ -102,13 +111,12 @@ export class EditChannel extends evQueueComponent {
 		let channel = this.state.channel;
 		
 		if(name.substr(0,7)=='custom_')
-			channel.custom_fields[name.substr(7)] = value;
+			channel.fields[name.substr(7)] = value;
 		else
 			channel[name] = value;
 		
 		this.setState({channel: channel});
 		
-		console.log(this.dlg_checker.current.setConfig);
 		if(this.state.config_checker)
 			this.dlg_checker.current.setConfig(channel);
 	}
@@ -131,6 +139,7 @@ export class EditChannel extends evQueueComponent {
 		
 		let attributes = {
 			name: this.state.channel.name,
+			
 			config: JSON.stringify(config)
 		};
 		
@@ -166,26 +175,26 @@ export class EditChannel extends evQueueComponent {
 			width: 500,
 			confirm: (name) => {
 				let channel = this.state.channel;
-				channel.custom_fields[name] = 1;
+				channel.fields[name] = 1;
 				this.setState({channel: channel});
 			}
 		});
 	}
 	
-	removeCustomField(name) {
+	removeField(name) {
 		let channel = this.state.channel;
-		delete channel.custom_fields[name];
+		delete channel.fields[name];
 		this.setState({channel: channel});
 	}
 	
-	renderCustomFields() {
+	renderFields() {
 		let regex_values = this.addRegexValues();
 		
-		return Object.keys(this.state.channel.custom_fields).map(name => {
+		return Object.keys(this.state.channel.fields).map(name => {
 			return (
 				<div key={name}>
-					<label>{name} <span title="Remove this custom field" className="faicon fa-remove" onClick={() => this.removeCustomField(name)}></span></label>
-					<Select name={"custom_"+name} value={this.state.channel.custom_fields[name]} values={regex_values} filter={false} onChange={this.onChange} />
+					<label>{name} <span title="Remove this custom field" className="faicon fa-remove" onClick={() => this.removeField(name)}></span></label>
+					<Select name={"field_"+name} value={this.state.channel.fields[name]} values={regex_values} filter={false} onChange={this.onChange} />
 				</div>
 			);
 		});
@@ -241,6 +250,10 @@ export class EditChannel extends evQueueComponent {
 						<input type="text" name="name" value={channel.name} onChange={this.onChange} />
 					</div>
 					<div>
+						<label>Group</label>
+						<Select name="group_id" value={this.state.channel.group_id} values={this.state.groups} onChange={this.onChange} />
+					</div>
+					<div>
 						<label>Regex</label>
 						<input type="text" name="regex" value={channel.regex} onChange={this.onChange} />
 						{this.renderRegexError()}
@@ -249,27 +262,7 @@ export class EditChannel extends evQueueComponent {
 						<label>Criticality</label>
 						<Select name="crit" value={channel.crit} values={crit_values} filter={false} onChange={this.onChange} />
 					</div>
-					<div>
-						<label>Machine</label>
-						<Select name="machine" value={channel.machine} values={regex_values} filter={false} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>Domain</label>
-						<Select name="domain" value={channel.domain} values={regex_values} filter={false} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>IP</label>
-						<Select name="ip" value={channel.ip} values={regex_values} filter={false} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>UID</label>
-						<Select name="uid" value={channel.uid} values={regex_values} filter={false} onChange={this.onChange} />
-					</div>
-					<div>
-						<label>Status</label>
-						<Select name="status" value={channel.status} values={regex_values} filter={false} onChange={this.onChange} />
-					</div>
-					{this.renderCustomFields()}
+					{this.renderFields()}
 					<div>
 						<label><span title="Add custom field" className="faicon fa-plus" onClick={this.addCustomField}></span></label>
 					</div>
