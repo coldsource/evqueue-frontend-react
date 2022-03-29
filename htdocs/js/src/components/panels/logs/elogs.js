@@ -34,7 +34,7 @@ export class ELogs extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		let api = {node:'*', group:'elogs',action:'list'};
+		let api = {node:'*', group:'elogs',action:'list',attributes: {group_id: 1}};
 		this.Subscribe('LOG_ELOG',api,true);
 	}
 	
