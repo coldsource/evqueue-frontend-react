@@ -25,6 +25,7 @@ import {Dialogs} from '../../../ui/dialogs.js';
 import {Prompt} from '../../../ui/prompt.js';
 import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
+import {FieldTypeSelector} from '../../base/field-type-selector.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
 
 
@@ -38,14 +39,6 @@ export class EditChannelGroup extends evQueueComponent {
 			name: '',
 			fields: {}
 		}
-		
-		this.types = [
-			{name: 'Indexed char', value: 'CHAR'},
-			{name: 'Integer', value: 'INT'},
-			{name: 'IP', value: 'IP'},
-			{name: 'Paked value', value: 'PACK'},
-			{name: 'Full text', value: 'TEXT'}
-		];
 		
 		this.state.regex_error = '';
 		this.state.config_checker = false;
@@ -162,7 +155,7 @@ export class EditChannelGroup extends evQueueComponent {
 			return (
 				<div key={name}>
 					<label>{name} <span title="Remove this custom field" className="faicon fa-remove" onClick={() => this.removeField(name)}></span></label>
-					<Select name={"field_"+name} value={field.type} values={this.types} filter={false} onChange={this.onChange} />
+					<FieldTypeSelector name={"field_"+name} value={field.type} filter={false} onChange={this.onChange} />
 				</div>
 			);
 		});

@@ -29,12 +29,25 @@ export class ELogs extends evQueueComponent {
 		
 		this.state.logs = [];
 		this.state.filter = {};
+		this.state.group_fields = [];
+		this.state.channel_fields = [];
+		this.state.details = {};
 		
 		this.updateFilters = this.updateFilters.bind(this);
+		this.toggleDetails = this.toggleDetails.bind(this);
 	}
 	
 	componentDidMount() {
-		let api = {node:'*', group:'elogs',action:'list',attributes: {group_id: 1}};
+		this.API({
+			group: 'channel_group',
+			action: 'get',
+			attributes: {id: this.props.group}
+		}).then( (response) => {
+			let data = this.parseResponse(response);
+			this.setState({group_fields: data.response});
+		});
+		
+		let api = {node:'*', group:'elogs',action:'list',attributes: {group_id: this.props.group}};
 		this.Subscribe('LOG_ELOG',api,true);
 	}
 	
@@ -43,14 +56,30 @@ export class ELogs extends evQueueComponent {
 		
 		this.Unsubscribe('LOG_ELOG');
 		
+		let attributes = Object.assign({group_id: this.props.group}, filters);
+		
 		let api = {
 			node: '*',
 			group: 'elogs',
 			action: 'list',
-			attributes: filters
+			attributes: attributes
 		};
 		
 		this.Subscribe('LOG_ELOG',api, true);
+		
+		if(filters.filter_channel!=0)
+		{
+			this.API({
+				group: 'channel',
+				action: 'get',
+				attributes: {id: this.props.group}
+			}).then( (response) => {
+				let data = this.parseResponse(response);
+				this.setState({channel_fields: data.response});
+			});
+		}
+		else
+			this.setState({channel_fields: []});
 	}
 	
 	setFilter(name, value) {
@@ -58,32 +87,80 @@ export class ELogs extends evQueueComponent {
 		this.props.filters.current.filterChange(e);
 	}
 	
-	evQueueEvent(response) {
-		var data = this.parseResponse(response,'/response/*');
-		this.setState({logs: data.response});
-	}
-	
-	renderCustomFields(custom_fields) {
-		return Object.keys(custom_fields).map(name => {
-			return (<li key={name}><span className="label">{name}</span> {custom_fields[name]}</li>);
+	toggleDetails(id) {
+		let details = this.state.details;
+		
+		if(details[id]!==undefined)
+		{
+			delete details[id];
+			this.setState({details: details});
+			return;
+		}
+		
+		this.API({
+			group: 'elog',
+			action: 'get',
+			attributes: {id: id}
+		}).then( (response) => {
+			details[id] = this.parseResponse(response, "/response/channel").response[0];
+			this.setState({details: details});
 		});
 	}
 	
-	renderCustomFieldsRow(custom_fields_str) {
-		if(!custom_fields_str)
-			return;
+	evQueueEvent(response) {
+		let data = this.parseResponse(response,'/response/*');
+		this.setState({logs: data.response});
+	}
+	
+	renderGroupFieldsHeader() {
+		return this.state.group_fields.map(field => {
+			return (
+				<th key={field.name}>{field.name}</th>
+			);
+		});
+	}
+	
+	renderChannelFieldsHeader() {
+		return this.state.channel_fields.map(field => {
+			return (
+				<th key={field.name}>{field.name}</th>
+			);
+		});
+	}
+	
+	renderGroupFields(log) {
+		return this.state.group_fields.map(field => {
+			if(field.type!='TEXT')
+				return (<td key={field.name} className="center"><span className="action" onClick={(e) => this.setFilter('filter_group_'+field.name, log[field.name])}>{log[field.name]}</span></td>);
+			else
+				return (<td key={field.name} className="center"><span>{log[field.name]}</span></td>);
+		});
+	}
+	
+	renderChannelFields(log) {
+		return this.state.channel_fields.map(field => {
+			if(field.type!='TEXT')
+				return (<td key={field.name} className="center"><span className="action" onClick={(e) => this.setFilter('filter_channel_'+field.name, log['channel_'+field.name])}>{log['channel_'+field.name]}</span></td>);
+			else
+				return (<td key={field.name} className="center"><span>{log['channel_'+field.name]}</span></td>);
+		});
+	}
+	
+	renderChannelLogs(log) {
+		if(this.state.details[log.id]===undefined)
+			return (<tr><td colSpan={3 + this.state.group_fields.length}></td></tr>);
 		
-		let custom_fields = JSON.parse(custom_fields_str);
-		
-		return (
-			<tr>
-				<td colSpan="8">
-					<ul>
-						{this.renderCustomFields(custom_fields)}
-					</ul>
-				</td>
-			</tr>
-		);
+		return (<tr><td colSpan={3 + this.state.group_fields.length}><ul>{this.renderChannelLogsValues(this.state.details[log.id])}</ul></td></tr>);
+	}
+	
+	renderChannelLogsValues(values) {
+		return Object.keys(values).map(name => {
+			if(name=="domnode")
+				return;
+			return (
+				<li key={name}><b>{name} :</b> {values[name]}</li>
+			);
+		});
 	}
 	
 	renderLogs() {
@@ -91,16 +168,13 @@ export class ELogs extends evQueueComponent {
 			return (
 				<React.Fragment key={idx}>
 					<tr>
-						<td className="left">{log.channel}</td>
+						<td className="left"><span className={this.state.details[log.id]===undefined?"faicon fa-plus":"faicon fa-minus"} onClick={e => this.toggleDetails(log.id)}></span> {log.channel}</td>
 						<td className="center">{log.date}</td>
 						<td className="center" className={"center bold "+log.crit}>{log.crit}</td>
-						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_machine', log.machine)}>{log.machine}</span></td>
-						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_domain', log.domain)}>{log.domain}</span></td>
-						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_ip', log.ip)}>{log.ip}</span></td>
-						<td className="center"><span className="action" onClick={(e) => this.setFilter('filter_uid', log.uid)}>{log.uid}</span></td>
-						<td className="center">{log.status}</td>
+						{this.renderGroupFields(log)}
+						{this.renderChannelFields(log)}
 					</tr>
-					{this.renderCustomFieldsRow(log.custom_fields)}
+					{this.renderChannelLogs(log)}
 				</React.Fragment>
 			);
 		});
@@ -120,11 +194,8 @@ export class ELogs extends evQueueComponent {
 								<th style={{width: '10rem'}}>Channel</th>
 								<th style={{width: '10rem'}}>Date</th>
 								<th style={{width: '10rem'}}>Crit</th>
-								<th>Machine</th>
-								<th>Domain</th>
-								<th>IP</th>
-								<th>UID</th>
-								<th style={{width: '3rem'}}>Status</th>
+								{this.renderGroupFieldsHeader()}
+								{this.renderChannelFieldsHeader()}
 							</tr>
 						</thead>
 						<tbody>

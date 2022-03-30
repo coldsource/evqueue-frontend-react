@@ -85,26 +85,30 @@ export class EditChannel extends evQueueComponent {
 				action: 'get',
 				attributes: {id: this.props.id}
 			}).then(response=> {
-				let resp = this.parseResponse(response).response[0];
+				let resp = this.parseResponse(response);
 				let channel = this.state.channel;
 				channel.group_id = resp.group_id;
 				channel.name = resp.name;
 				Object.assign(channel, JSON.parse(resp.config));
 				this.setState({channel: channel});
 				
-				this.API({
-					group: 'channel_group',
-					action: 'get',
-					attributes: {id: channel.group_id}
-				}).then(response => {
-					let data = this.parseResponse(response);
-					let group_fields = {};
-					for(let i=0;i<data.response.length;i++)
-						group_fields[data.response[i].name] = data.response[i].type;
-					this.setState({group_fields: group_fields});
-				});
+				this.updateGroupFields(channel.group_id);
 			});
 		}
+	}
+	
+	updateGroupFields(id) {
+		this.API({
+			group: 'channel_group',
+			action: 'get',
+			attributes: {id: id}
+		}).then(response => {
+			let data = this.parseResponse(response);
+			let group_fields = {};
+			for(let i=0;i<data.response.length;i++)
+				group_fields[data.response[i].name] = data.response[i].type;
+			this.setState({group_fields: group_fields});
+		});
 	}
 	
 	onChange(e) {
@@ -125,6 +129,9 @@ export class EditChannel extends evQueueComponent {
 					this.setState({regex_error: ''});
 			});
 		}
+		
+		if(name=='group_id')
+			this.updateGroupFields(value);
 		
 		let channel = this.state.channel;
 		

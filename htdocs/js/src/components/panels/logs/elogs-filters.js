@@ -20,6 +20,7 @@
 'use strict';
 
 import {evQueueComponent} from '../../base/evqueue-component.js';
+import {ChannelSelector} from '../../base/channel-selector.js';
 import {Select} from '../../../ui/select.js';
 import {InputSpinner} from '../../../ui/input-spinner.js';
 import {DatePicker} from '../../../ui/datepicker.js';
@@ -37,16 +38,12 @@ export class ELogsFilters extends evQueueComponent {
 			dt_sup: '',
 			hr_sup: '',
 			filter_emitted_until: '',
-			filter_ip: '',
-			filter_channel: '',
-			filter_uid: '',
-			filter_status: '',
-			filter_domain: '',
-			filter_machine: ''
+			filter_channel: 0,
 		};
 		
 		this.state.filters = Object.assign({}, this.empty_filters);
-		this.state.channels = [];
+		this.state.group_fields = {};
+		this.state.channel_fields = {};
 		
 		
 		this.state.opened = false;
@@ -66,15 +63,21 @@ export class ELogsFilters extends evQueueComponent {
 	
 	componentDidMount() {
 		this.API({
-				group: 'channels',
-				action: 'list',
+				group: 'channel_group',
+				action: 'get',
+				attributes: {id: this.props.group}
 		}).then( (response) => {
 				let data = this.parseResponse(response);
 				
-				let channels = [{name: 'All channels', value: ''}];
+				let group_fields = {};
+				let filters = this.state.filters;
 				for(let i=0;i<data.response.length;i++)
-					channels.push({name: data.response[i].name, value: data.response[i].name});
-				this.setState({channels: channels});
+				{
+					group_fields[data.response[i].name] = data.response[i].type;
+					filters["filter_group_"+data.response[i].name] = '';
+				}
+				
+				this.setState({group_fields: group_fields, filters: filters});
 		});
 	}
 	
@@ -106,6 +109,27 @@ export class ELogsFilters extends evQueueComponent {
 		
 		if(this.props.onChange.current)
 			this.props.onChange.current.updateFilters(this.state.filters);
+		
+		
+		if(event.target.name=='filter_channel') {
+			this.API({
+					group: 'channel',
+					action: 'get',
+					attributes: {id: this.props.group}
+			}).then( (response) => {
+					let data = this.parseResponse(response);
+					
+					let channel_fields = {};
+					let filters = this.state.filters;
+					for(let i=0;i<data.response.length;i++)
+					{
+						channel_fields[data.response[i].name] = data.response[i].type;
+						filters["filter_channel_"+data.response[i].name] = '';
+					}
+					
+					this.setState({channel_fields: channel_fields, filters: filters});
+			});
+		}
 	}
 	
 	setFilter(name,value) {
@@ -115,7 +139,7 @@ export class ELogsFilters extends evQueueComponent {
 	}
 	
 	cleanFilters() {
-		this.setState({filters:Object.assign({}, this.empty_filters), opened:false});
+		this.setState({filters:Object.assign({}, this.empty_filters), opened:false, channel_fields: {}});
 		
 		if(this.props.onChange.current)
 			this.props.onChange.current.updateFilters(this.empty_filters);
@@ -131,48 +155,36 @@ export class ELogsFilters extends evQueueComponent {
 		return false;
 	}
 	
-	renderExplain() {
-		if(Object.keys(this.state.filters).length==0)
-			return 'Showing all logs';
-		
-		let explain_date = '';
-
-		if(this.state.filters.filter_emitted_from && this.state.filters.filter_emitted_until)
-			explain_date += ' emitted between '+this.state.filters.filter_emitted_from+' and '+this.state.filters.filter_emitted_until;
-		else if(this.state.filters.filter_emitted_from)
-			explain_date += ' emitted since '+this.state.filters.filter_emitted_from;
-		else if(this.state.filters.filter_emitted_until)
-			explain_date += ' emitted before '+this.state.filters.filter_emitted_until;
-		
-		let explain_channel = '';
-		if(this.state.filters.filter_channel)
-			explain_channel = ' on channel '+this.state.filters.filter_channel+' ';
-		
-		let explain_parts = [];
-		if(this.state.filters.filter_crit)
-			explain_parts.push(' criticality '+this.state.filters.filter_crit);
-		if(this.state.filters.filter_ip)
-			explain_parts.push(' ip address '+this.state.filters.filter_ip);
-		if(this.state.filters.filter_status)
-			explain_parts.push(' status equals to '+this.state.filters.filter_status);
-		if(this.state.filters.filter_uid)
-			explain_parts.push(' unique ID «'+this.state.filters.filter_uid+'» ');
-		if(this.state.filters.filter_domain)
-			explain_parts.push(' domain «'+this.state.filters.filter_domain+'» ');
-		if(this.state.filters.filter_machine)
-			explain_parts.push(' machine «'+this.state.filters.filter_machine+'» ');
-		
-		if(explain_date=='' && explain_channel=='' && explain_parts.length==0)
-			return 'Showing all logs';
-		
-		let explain = 'Showing logs';
-		if(explain_date)
-			explain += explain_date;
-		if(explain_channel)
-			explain += explain_channel;
-		if(explain_parts.length>0)
-			explain += ' with '+explain_parts.join(' and ');
-		return explain;
+	renderGroupFilters() {
+		return Object.keys(this.state.group_fields).map(name => {
+			let type = this.state.group_fields[name];
+			
+			if(type=="TEXT")
+				return; // Text fields are not indexed
+			
+			return (
+				<div key={name}>
+					<label>{name}</label>
+					<input type="text" name={"filter_group_"+name} value={this.state.filters["filter_group_"+name]} onChange={this.filterChange} />
+				</div>
+			);
+		});
+	}
+	
+	renderChannelFilters() {
+		return Object.keys(this.state.channel_fields).map(name => {
+			let type = this.state.channel_fields[name];
+			
+			if(type=="TEXT")
+				return; // Text fields are not indexed
+			
+			return (
+				<div key={name}>
+					<label>{name}</label>
+					<input type="text" name={"filter_channel_"+name} value={this.state.filters["filter_channel_"+name]} onChange={this.filterChange} />
+				</div>
+			);
+		});
 	}
 	
 	renderFilters() {
@@ -195,32 +207,14 @@ export class ELogsFilters extends evQueueComponent {
 			<div className="formdiv log_filters">
 				<div>
 					<label>Channel</label>
-					<Select name="filter_channel" value={this.state.filters.filter_channel} values={this.state.channels} onChange={this.filterChange} />
+					<ChannelSelector name="filter_channel" value={this.state.filters.filter_channel} onChange={this.filterChange} />
 				</div>
 				<div>
 					<label>Criticality</label>
 					<Select name="filter_crit" value={this.state.filters.filter_crit} values={crit_values} filter={false} onChange={this.filterChange} />
 				</div>
-				<div>
-					<label>IP</label>
-					<input type="text" name="filter_ip" value={this.state.filters.filter_ip} onChange={this.filterChange} />
-				</div>
-				<div>
-					<label>UID</label>
-					<input type="text" name="filter_uid" value={this.state.filters.filter_uid} onChange={this.filterChange} />
-				</div>
-				<div>
-					<label>Domain</label>
-					<input type="text" name="filter_domain" value={this.state.filters.filter_domain} onChange={this.filterChange} />
-				</div>
-				<div>
-					<label>Machine</label>
-					<input type="text" name="filter_machine" value={this.state.filters.filter_machine} onChange={this.filterChange} />
-				</div>
-				<div>
-					<label>Status</label>
-					<InputSpinner name="filter_status" value={this.state.filters.filter_status} onChange={this.filterChange} />
-				</div>
+				{this.renderGroupFilters()}
+				{this.renderChannelFilters()}
 				<div>
 					<label>Launched between</label>
 					Date&#160;:&#160;<DatePicker name="dt_inf" value={this.state.filters.dt_inf} onChange={this.filterChange} />
@@ -238,7 +232,7 @@ export class ELogsFilters extends evQueueComponent {
 	render() {
 		return (
 			<div id="searchformcontainer">
-				<a className="action" onClick={this.toggleFilters}>Filters</a> : <span>{this.renderExplain()}</span>
+				<a className="action" onClick={this.toggleFilters}>Filters</a>
 				{
 					this.hasFilter()?
 					(<span className="faicon fa-remove" title="Clear filters" onClick={this.cleanFilters}></span>):

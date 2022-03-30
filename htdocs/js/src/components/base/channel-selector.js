@@ -22,22 +22,40 @@
 import {evQueueComponent} from './evqueue-component.js';
 import {Select} from '../../ui/select.js';
 
-export class FieldTypeSelector extends React.Component {
+export class ChannelSelector extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
-		this.types = [
-			{name: 'Indexed char', value: 'CHAR'},
-			{name: 'Integer', value: 'INT'},
-			{name: 'IP', value: 'IP'},
-			{name: 'Packed value', value: 'PACK'},
-			{name: 'Full text', value: 'TEXT'}
-		];
+		this.state.channels = [];
+	}
+	
+	componentDidMount() {
+		this.API({
+				group: 'channels',
+				action: 'list',
+		}).then( (response) => {
+				
+		});
+		
+		let api = { group:'channels',action:'list' };
+		this.Subscribe('CHANNEL_CREATED',api,false);
+		this.Subscribe('CHANNEL_MODIFIED',api,false);
+		this.Subscribe('CHANNEL_REMOVED',api,true);
+	}
+	
+	evQueueEvent(response) {
+		let data = this.parseResponse(response);
+		
+		let channels = [{name: 'All channels', value: 0}];
+		for(let i=0;i<data.response.length;i++)
+			channels.push({name: data.response[i].name, value: data.response[i].id});
+		
+		this.setState({channels: channels});
 	}
 	
 	render() {
 		return (
-			<Select value={this.props.value} values={this.types} name={this.props.name} disabled={this.props.disabled} filter={false} onChange={this.props.onChange}>
+			<Select value={this.props.value} values={this.state.channels} name={this.props.name} disabled={this.props.disabled} onChange={this.props.onChange}>
 			</Select>
 		);
 	}
