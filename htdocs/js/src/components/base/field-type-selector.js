@@ -27,11 +27,12 @@ export class FieldTypeSelector extends React.Component {
 		super(props);
 		
 		this.types = [
-			{name: 'Indexed char', value: 'CHAR'},
+			{name: 'Indexed char (max 128)', value: 'CHAR'},
 			{name: 'Integer', value: 'INT'},
 			{name: 'IP', value: 'IP'},
 			{name: 'Packed value', value: 'PACK'},
-			{name: 'Full text', value: 'TEXT'}
+			{name: 'Full text', value: 'TEXT'},
+			{name: 'Full text (indexed)', value: 'ITEXT'}
 		];
 	}
 	

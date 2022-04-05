@@ -89,7 +89,20 @@ export class EditChannel extends evQueueComponent {
 				let channel = this.state.channel;
 				channel.group_id = resp.group_id;
 				channel.name = resp.name;
+				
+				delete resp.config.fields;
 				Object.assign(channel, JSON.parse(resp.config));
+				
+				let fields = {};
+				for(let i=0;i<resp.response.length;i++)
+				{
+					fields[resp.response[i].name] = {
+						id: parseInt(resp.response[i].id),
+						type: resp.response[i].type
+					}
+				}
+				channel.fields = fields;
+				
 				this.setState({channel: channel});
 				
 				this.updateGroupFields(channel.group_id);
