@@ -80,7 +80,7 @@ export class HeaderMenu extends evQueueComponent {
 				label: 'External Logs',
 				icon: 'fa-podcast',
 				submenu: [
-					{ label: 'Channel groups', icon: 'fa-road', url: 'elogs-channel-groups' },
+					{ label: 'Channel groups', icon: 'fa-clone', url: 'elogs-channel-groups' },
 					{ label: 'Channels', icon: 'fa-road', url: 'elogs-channels' },
 					{ label: 'Logs', icon: 'fa-file-text-o', url: 'elogs-search' },
 					{ label: 'Statistics', icon: 'fa-area-chart', url: 'elogs-stats' }
