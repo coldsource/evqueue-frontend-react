@@ -25,7 +25,7 @@ import {EditUserPreferences} from '../dialogs/users/preferences.js';
 import {Dialogs} from '../../ui/dialogs.js';
 import {EnvSelector} from '../base/env-selector.js';
 
-export class HeaderMenu extends React.Component {
+export class HeaderMenu extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
@@ -95,11 +95,9 @@ export class HeaderMenu extends React.Component {
 			if(idx==this.menu.length)
 				idx = 0;
 		
-		this.state = {
-			env: window.localStorage.getItem('env'),
-			sel1: idx,
-			sel2: 0
-		};
+		this.state.env = window.localStorage.getItem('env');
+		this.state.sel1 = idx;
+		this.state.sel2 = 0;
 		
 		this.logout = this.logout.bind(this);
 	}
@@ -148,6 +146,9 @@ export class HeaderMenu extends React.Component {
 	
 	level2() {
 		return this.menu[this.state.sel1].submenu.map((entry, idx) => {
+			if(entry.label=='External Logs' && parseFloat(this.state.cluster.min_version)<3.3)
+				return;
+			
 			return (
 				<li key={idx}>
 					<a href={'?loc='+entry.url}>

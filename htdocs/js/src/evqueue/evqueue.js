@@ -116,10 +116,11 @@ export class evQueueWS
 					
 					// Set our name
 					self.name = xmldoc.documentElement.getAttribute('node');
+					self.version = xmldoc.documentElement.getAttribute('version');
 					
 					// Notify of state change
 					if(self.stateChange!==undefined)
-						self.stateChange(self.node, self.name, self.state);
+						self.stateChange(self.node, self.name, self.state, self.version);
 					
 					resolve(); // We are now connected
 				}
