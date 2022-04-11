@@ -66,7 +66,9 @@ export class evQueueComponent extends React.Component {
 			refresh: true,
 			cluster: {
 				nodes_names: this.evqueue_event.GetNodes(),
-				nodes_states: this.evqueue_event.GetStates()
+				nodes_versions: this.evqueue_event.GetVersions(),
+				nodes_states: this.evqueue_event.GetStates(),
+				min_version: 0
 			},
 			subscriptions: 'PENDING'
 		};
@@ -249,11 +251,19 @@ export class evQueueComponent extends React.Component {
 		return this.event_dispatcher.Unsubscribe(this, event, object_id);
 	}
 	
-	clusterStateChanged(node, name, state)
+	clusterStateChanged(node, name, state, version)
 	{
+		let min_version = this.state.cluster.min_version;
+		if(min_version==0 && version)
+			min_version = version;
+		else if(version<min_version && version)
+			min_version = version;
+		
 		this.setState({cluster: {
 			nodes_names: this.evqueue_event.GetNodes(),
-			nodes_states: this.evqueue_event.GetStates()
+			nodes_versions: this.evqueue_event.GetVersions(),
+			nodes_states: this.evqueue_event.GetStates(),
+			min_version: min_version
 		}});
 	}
 }

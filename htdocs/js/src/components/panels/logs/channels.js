@@ -67,6 +67,7 @@ export class Channels extends evQueueComponent {
 			return (
 				<tr key={channel.name}>
 					<td>{channel.name}</td>
+					<td>{channel.group}</td>
 					<td className="tdActions">
 						<span className="faicon fa-edit" title="Edit channel" onClick={ (e) => this.editChannel(e, channel.id) } />
 						<span className="faicon fa-check" title="Test configuration" onClick={ (e) => this.checkConfig(e, channel.id) } />
@@ -89,6 +90,7 @@ export class Channels extends evQueueComponent {
 						<thead>
 							<tr>
 								<th>Name</th>
+								<th style={{width: '10rem'}}>Group</th>
 								<th>Actions</th>
 							</tr>
 						</thead>

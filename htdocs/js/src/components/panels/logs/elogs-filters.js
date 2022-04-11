@@ -112,23 +112,33 @@ export class ELogsFilters extends evQueueComponent {
 		
 		
 		if(event.target.name=='filter_channel') {
-			this.API({
-					group: 'channel',
-					action: 'get',
-					attributes: {id: this.props.group}
-			}).then( (response) => {
-					let data = this.parseResponse(response);
-					
-					let channel_fields = {};
-					let filters = this.state.filters;
-					for(let i=0;i<data.response.length;i++)
-					{
-						channel_fields[data.response[i].name] = data.response[i].type;
-						filters["filter_channel_"+data.response[i].name] = '';
-					}
-					
-					this.setState({channel_fields: channel_fields, filters: filters});
-			});
+			if(event.target.value==0)
+			{
+				let filters = this.state.filters;
+				for(const field in this.state.channel_fields)
+					delete filters["filter_channel_"+field];
+				this.setState({channel_fields: {}, filters: filters});
+			}
+			else
+			{
+				this.API({
+						group: 'channel',
+						action: 'get',
+						attributes: {id: this.props.group}
+				}).then( (response) => {
+						let data = this.parseResponse(response);
+						
+						let channel_fields = {};
+						let filters = this.state.filters;
+						for(let i=0;i<data.response.length;i++)
+						{
+							channel_fields[data.response[i].name] = data.response[i].type;
+							filters["filter_channel_"+data.response[i].name] = '';
+						}
+						
+						this.setState({channel_fields: channel_fields, filters: filters});
+				});
+			}
 		}
 	}
 	
