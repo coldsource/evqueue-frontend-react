@@ -216,7 +216,7 @@ export class ELogsFilters extends evQueueComponent {
 				{this.renderGroupFilters()}
 				{this.renderChannelFilters()}
 				<div>
-					<label>Launched between</label>
+					<label>Emitted between</label>
 					Date&#160;:&#160;<DatePicker name="dt_inf" value={this.state.filters.dt_inf} onChange={this.filterChange} />
 					&#160;
 					Hour&#160;:&#160;<Autocomplete className="hour" name="hr_inf" value={this.state.filters.hr_inf} autocomplete={this.hours} onChange={this.filterChange} />
