@@ -1,6 +1,10 @@
 div.evq-autocomplete {
 	display: inline-block;
 	
+	&.hour {
+		width: 6em !important;
+	}
+	
 	div {
 		border: 1px solid grey;
 		border-radius: 0.4rem;
