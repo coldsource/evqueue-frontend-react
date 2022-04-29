@@ -22,6 +22,9 @@
 import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Panel} from '../../../ui/panel.js';
 import {EventsUtils} from '../../../utils/events.js';
+import {ELogsFilters} from '../../panels/logs/elogs-filters.js';
+import {Tabs} from '../../../ui/tabs.js';
+import {Tab} from '../../../ui/tab.js';
 
 export class ELogs extends evQueueComponent {
 	constructor(props) {
@@ -32,31 +35,56 @@ export class ELogs extends evQueueComponent {
 		this.state.group_fields = [];
 		this.state.channel_fields = [];
 		this.state.details = {};
+		this.state.group = 0;
+		this.state.channelgroups = [];
+		
+		this.filters = React.createRef();
 		
 		this.updateFilters = this.updateFilters.bind(this);
 		this.toggleDetails = this.toggleDetails.bind(this);
+		this.evQueueEventLogs = this.evQueueEventLogs.bind(this);
+		this.evQueueEventChannelGroups = this.evQueueEventChannelGroups.bind(this);
 	}
 	
 	componentDidMount() {
+		let api = {node:'*', group:'channel_groups',action:'list'};
+		this.Subscribe('CHANNELGROUP_CREATED',api, false, 0, this.evQueueEventChannelGroups);
+		this.Subscribe('CHANNELGROUP_MODIFIED',api, false, 0, this.evQueueEventChannelGroups);
+		this.Subscribe('CHANNELGROUP_REMOVED',api,true, 0, this.evQueueEventChannelGroups);
+	}
+	
+	evQueueEventLogs(response) {
+		let data = this.parseResponse(response,'/response/*');
+		this.setState({logs: data.response});
+	}
+	
+	evQueueEventChannelGroups(response) {
+		let data = this.parseResponse(response);
+		this.setState({channelgroups: data.response}, () => this.changeTab(0));
+	}
+	
+	changeTab(idx) {
+		if(idx>=this.state.channelgroups.length)
+			return;
+		
+		let group_id = this.state.channelgroups[idx].id;
+		
 		this.API({
 			group: 'channel_group',
 			action: 'get',
-			attributes: {id: this.props.group}
+			attributes: {id: group_id}
 		}).then( (response) => {
 			let data = this.parseResponse(response);
-			this.setState({group_fields: data.response});
+			this.setState({group: group_id, group_fields: data.response}, () => this.updateFilters() );
 		});
-		
-		let api = {node:'*', group:'elogs',action:'list',attributes: {group_id: this.props.group}};
-		this.Subscribe('LOG_ELOG',api,true);
 	}
 	
-	updateFilters(filters) {
+	updateFilters(filters = {}) {
 		this.setState({filters: filters});
 		
 		this.Unsubscribe('LOG_ELOG');
 		
-		let attributes = Object.assign({group_id: this.props.group}, filters);
+		let attributes = Object.assign({group_id: this.state.group}, filters);
 		
 		let api = {
 			node: '*',
@@ -65,14 +93,14 @@ export class ELogs extends evQueueComponent {
 			attributes: attributes
 		};
 		
-		this.Subscribe('LOG_ELOG',api, true);
+		this.Subscribe('LOG_ELOG',api, true, 0, this.evQueueEventLogs);
 		
-		if(filters.filter_channel!=0)
+		if(filters.filter_channel!==undefined && filters.filter_channel!=0)
 		{
 			this.API({
 				group: 'channel',
 				action: 'get',
-				attributes: {id: this.props.group}
+				attributes: {id: this.state.group}
 			}).then( (response) => {
 				let data = this.parseResponse(response);
 				this.setState({channel_fields: data.response});
@@ -84,7 +112,7 @@ export class ELogs extends evQueueComponent {
 	
 	setFilter(name, value) {
 		let e = EventsUtils.createEvent(name,value);
-		this.props.filters.current.filterChange(e);
+		this.filters.current.filterChange(e);
 	}
 	
 	toggleDetails(id) {
@@ -105,11 +133,6 @@ export class ELogs extends evQueueComponent {
 			details[id] = this.parseResponse(response, "/response/channel").response[0];
 			this.setState({details: details});
 		});
-	}
-	
-	evQueueEvent(response) {
-		let data = this.parseResponse(response,'/response/*');
-		this.setState({logs: data.response});
 	}
 	
 	renderGroupFieldsHeader() {
@@ -180,7 +203,7 @@ export class ELogs extends evQueueComponent {
 		});
 	}
 	
-	render() {
+	renderTab() {
 		var actions = [
 			{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), callback:this.toggleAutorefresh}
 		];
@@ -203,6 +226,28 @@ export class ELogs extends evQueueComponent {
 						</tbody>
 					</table>
 				</Panel>
+			</div>
+		);
+	}
+	
+	renderTabs() {
+		return this.state.channelgroups.map(group => {
+			return (
+				<Tab key={group.name} title={group.name}>
+					<ELogsFilters group={group.id} ref={this.filters} onChange={this.updateFilters} />
+					<br />
+					{this.renderTab()}
+				</Tab>
+			);
+		});
+	}
+	
+	render() {
+		return (
+			<div>
+				<Tabs onChange={this.changeTab}>
+					{this.renderTabs()}
+				</Tabs>
 			</div>
 		);
 	}

@@ -19,54 +19,19 @@
  
 'use strict';
 
-import {evQueueComponent} from '../components/base/evqueue-component.js';
 import {HeaderMenu} from '../components/menus/header.js';
 import {ELogs} from '../components/panels/logs/elogs.js';
-import {ELogsFilters} from '../components/panels/logs/elogs-filters.js';
-import {Tabs} from '../ui/tabs.js';
-import {Tab} from '../ui/tab.js';
 
-export class PageELogsSearch extends evQueueComponent {
+export class PageELogsSearch extends React.Component {
 	constructor(props) {
 		super(props);
-		
-		this.state.channelgroups = [];
-		
-		this.logs = React.createRef();
-		this.filters = React.createRef();
-	}
-	
-	componentDidMount() {
-		var api = {node:'*', group:'channel_groups',action:'list'};
-		this.Subscribe('CHANNELGROUP_CREATED',api);
-		this.Subscribe('CHANNELGROUP_MODIFIED',api);
-		this.Subscribe('CHANNELGROUP_REMOVED',api,true);
-	}
-	
-	evQueueEvent(response, ref) {
-		let data = this.parseResponse(response);
-		this.setState({channelgroups: data.response});
-	}
-	
-	renderTabs() {
-		return this.state.channelgroups.map(group => {
-			return (
-				<Tab key={group.name} title={group.name}>
-					<ELogsFilters group={group.id} ref={this.filters} onChange={this.logs} />
-					<br />
-					<ELogs group={group.id} ref={this.logs} filters={this.filters} />
-				</Tab>
-			);
-		});
 	}
 	
 	render() {
 		return (
 			<div>
 				<HeaderMenu current="External Logs" />
-				<Tabs>
-					{this.renderTabs()}
-				</Tabs>
+				<ELogs />
 			</div>
 		);
 	}

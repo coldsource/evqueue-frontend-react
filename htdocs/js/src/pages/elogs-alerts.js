@@ -21,6 +21,7 @@
 
 import {evQueueComponent} from '../components/base/evqueue-component.js';
 import {HeaderMenu} from '../components/menus/header.js';
+import {Alerts} from '../components/panels/logs/alerts.js';
 
 export class PageELogsAlerts extends React.Component {
 	constructor(props) {
@@ -31,7 +32,7 @@ export class PageELogsAlerts extends React.Component {
 		return (
 			<div>
 				<HeaderMenu current="External Logs" />
-				Elogs Alerts
+				<Alerts />
 			</div>
 		);
 	}

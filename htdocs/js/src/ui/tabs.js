@@ -37,6 +37,9 @@ export class Tabs extends React.Component {
 	}
 	
 	changeTab(idx) {
+		if(this.props.onChange)
+			this.props.onChange(idx);
+		
 		this.setState({current:idx});
 	}
 	
