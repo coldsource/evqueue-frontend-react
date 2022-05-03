@@ -31,6 +31,10 @@ export class ChannelSelector extends evQueueComponent {
 	
 	componentDidMount() {
 		let api = { group:'channels',action:'list' };
+		
+		if(this.props.group)
+			api.parameters = {group_id: this.props.group};
+		
 		this.Subscribe('CHANNEL_CREATED',api,false);
 		this.Subscribe('CHANNEL_MODIFIED',api,false);
 		this.Subscribe('CHANNEL_REMOVED',api,true);
@@ -47,8 +51,12 @@ export class ChannelSelector extends evQueueComponent {
 	}
 	
 	render() {
+		let value = this.props.value;
+		if(value===undefined)
+			value = 0;
+		
 		return (
-			<Select value={this.props.value} values={this.state.channels} name={this.props.name} disabled={this.props.disabled} onChange={this.props.onChange}>
+			<Select value={value} values={this.state.channels} name={this.props.name} disabled={this.props.disabled} filter={false} onChange={this.props.onChange}>
 			</Select>
 		);
 	}

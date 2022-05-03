@@ -42,6 +42,10 @@ export class EditAlert extends evQueueComponent {
 			group: ''
 		};
 		
+		this.state.filters = {};
+		this.state.group_fields = {};
+		this.state.channel_fields = {};
+		
 		this.dlg = React.createRef();
 		
 		this.onChange = this.onChange.bind(this);
@@ -56,16 +60,26 @@ export class EditAlert extends evQueueComponent {
 	onChange(e) {
 		let name = e.target.name;
 		let value = e.target.value;
-		console.log(name);
-		console.log(value);
 		
 		let alert = this.state.alert;
 		alert[name] = value;
 		this.setState({alert: alert});
 	}
 	
-	filterChange(filters) {
-		console.log(filters);
+	filterChange(filters, group_fields, channel_fields) {
+		this.setState({filters: filters, group_fields: group_fields, channel_fields: channel_fields});
+	}
+	
+	renderGroupBySelect() {
+		let values = [];
+		
+		for(const field in this.state.group_fields)
+			values.push({name: field, value: field, group: "Group fields"});
+		
+		for(const field in this.state.channel_fields)
+			values.push({name: field, value: field, group: "Channel fields"});
+		
+		return (<Select name="group" values={values} value={this.state.alert.group} filter={false} onChange={this.onChange} />);
 	}
 	
 	save() {
@@ -86,7 +100,7 @@ export class EditAlert extends evQueueComponent {
 				</h2>
 				<Tabs>
 					<Tab title="Filters">
-						<ELogsFilters panel={false} datefilter={false} onChange={this.filterChange} />
+						<ELogsFilters filters={this.state.filters} panel={false} datefilter={false} onChange={this.filterChange} />
 					</Tab>
 					<Tab title="Trigger">
 						<div className="formdiv">
@@ -100,7 +114,7 @@ export class EditAlert extends evQueueComponent {
 							</div>
 							<div>
 								<label>Group by</label>
-								...
+								{this.renderGroupBySelect()}
 							</div>
 						</div>
 					</Tab>

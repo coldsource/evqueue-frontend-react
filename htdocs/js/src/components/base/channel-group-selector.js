@@ -39,7 +39,7 @@ export class ChannelGroupSelector extends evQueueComponent {
 	evQueueEvent(response) {
 		let data = this.parseResponse(response);
 		
-		let channelgroups = [];
+		let channelgroups = [{name: 'All groups', value: 0}];;
 		for(let i=0;i<data.response.length;i++)
 			channelgroups.push({name: data.response[i].name, value: data.response[i].id});
 		
@@ -47,8 +47,12 @@ export class ChannelGroupSelector extends evQueueComponent {
 	}
 	
 	render() {
+		let value = this.props.value;
+		if(value===undefined)
+			value = 0;
+		
 		return (
-			<Select value={this.props.value} values={this.state.channelgroups} name={this.props.name} disabled={this.props.disabled} onChange={this.props.onChange}>
+			<Select value={value} values={this.state.channelgroups} name={this.props.name} disabled={this.props.disabled} filter={false} onChange={this.props.onChange}>
 			</Select>
 		);
 	}

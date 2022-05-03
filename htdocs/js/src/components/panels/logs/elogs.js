@@ -23,91 +23,46 @@ import {evQueueComponent} from '../../base/evqueue-component.js';
 import {Panel} from '../../../ui/panel.js';
 import {EventsUtils} from '../../../utils/events.js';
 import {ELogsFilters} from '../../panels/logs/elogs-filters.js';
-import {Tabs} from '../../../ui/tabs.js';
-import {Tab} from '../../../ui/tab.js';
 
 export class ELogs extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
 		this.state.logs = [];
-		this.state.filter = {};
-		this.state.group_fields = [];
-		this.state.channel_fields = [];
+		this.state.filters = {};
+		this.state.group_fields = {};
+		this.state.channel_fields = {};
 		this.state.details = {};
-		this.state.group = 0;
-		this.state.channelgroups = [];
 		
 		this.filters = React.createRef();
 		
 		this.updateFilters = this.updateFilters.bind(this);
 		this.toggleDetails = this.toggleDetails.bind(this);
-		this.evQueueEventLogs = this.evQueueEventLogs.bind(this);
-		this.evQueueEventChannelGroups = this.evQueueEventChannelGroups.bind(this);
+		this.evQueueEvent = this.evQueueEvent.bind(this);
 	}
 	
 	componentDidMount() {
-		let api = {node:'*', group:'channel_groups',action:'list'};
-		this.Subscribe('CHANNELGROUP_CREATED',api, false, 0, this.evQueueEventChannelGroups);
-		this.Subscribe('CHANNELGROUP_MODIFIED',api, false, 0, this.evQueueEventChannelGroups);
-		this.Subscribe('CHANNELGROUP_REMOVED',api,true, 0, this.evQueueEventChannelGroups);
+		this.updateFilters({}, {}, {});
 	}
 	
-	evQueueEventLogs(response) {
+	evQueueEvent(response) {
 		let data = this.parseResponse(response,'/response/*');
 		this.setState({logs: data.response});
 	}
 	
-	evQueueEventChannelGroups(response) {
-		let data = this.parseResponse(response);
-		this.setState({channelgroups: data.response}, () => this.changeTab(0));
-	}
-	
-	changeTab(idx) {
-		if(idx>=this.state.channelgroups.length)
-			return;
-		
-		let group_id = this.state.channelgroups[idx].id;
-		
-		this.API({
-			group: 'channel_group',
-			action: 'get',
-			attributes: {id: group_id}
-		}).then( (response) => {
-			let data = this.parseResponse(response);
-			this.setState({group: group_id, group_fields: data.response}, () => this.updateFilters() );
-		});
-	}
-	
-	updateFilters(filters = {}) {
-		this.setState({filters: filters});
+	updateFilters(filters = {}, group_fields = {}, channel_fields = {}) {
+		this.setState({filters: filters, group_fields: group_fields, channel_fields: channel_fields});
 		
 		this.Unsubscribe('LOG_ELOG');
-		
-		let attributes = Object.assign({group_id: this.state.group}, filters);
 		
 		let api = {
 			node: '*',
 			group: 'elogs',
 			action: 'list',
-			attributes: attributes
+			attributes: filters
 		};
 		
-		this.Subscribe('LOG_ELOG',api, true, 0, this.evQueueEventLogs);
-		
-		if(filters.filter_channel!==undefined && filters.filter_channel!=0)
-		{
-			this.API({
-				group: 'channel',
-				action: 'get',
-				attributes: {id: this.state.group}
-			}).then( (response) => {
-				let data = this.parseResponse(response);
-				this.setState({channel_fields: data.response});
-			});
-		}
-		else
-			this.setState({channel_fields: []});
+		this.Subscribe('LOG_ELOG',api, true);
 	}
 	
 	setFilter(name, value) {
@@ -130,58 +85,71 @@ export class ELogs extends evQueueComponent {
 			action: 'get',
 			attributes: {id: id}
 		}).then( (response) => {
-			details[id] = this.parseResponse(response, "/response/channel").response[0];
+			details[id] = {};
+			details[id].group = this.parseResponse(response, "/response/group").response[0];
+			details[id].channel = this.parseResponse(response, "/response/channel").response[0];
 			this.setState({details: details});
 		});
 	}
 	
 	renderGroupFieldsHeader() {
-		return this.state.group_fields.map(field => {
+		return Object.keys(this.state.group_fields).map(field => {
 			return (
-				<th key={field.name}>{field.name}</th>
+				<th key={'group_'+field}>{field}</th>
 			);
 		});
 	}
 	
 	renderChannelFieldsHeader() {
-		return this.state.channel_fields.map(field => {
+		return Object.keys(this.state.channel_fields).map(field => {
 			return (
-				<th key={field.name}>{field.name}</th>
+				<th key={'channel_'+field}>{field}</th>
 			);
 		});
 	}
 	
 	renderGroupFields(log) {
-		return this.state.group_fields.map(field => {
-			if(field.type!='TEXT')
-				return (<td key={field.name} className="center"><span className="action" onClick={(e) => this.setFilter('filter_group_'+field.name, log[field.name])}>{log[field.name]}</span></td>);
+		return Object.keys(this.state.group_fields).map(field => {
+			if(this.state.group_fields[field]!='TEXT')
+				return (<td key={'group_'+field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_group_'+field, log[field])}>{log[field]}</span></td>);
 			else
-				return (<td key={field.name} className="center"><span>{log[field.name]}</span></td>);
+				return (<td key={'group_'+field} className="center"><span>{log[field]}</span></td>);
 		});
 	}
 	
 	renderChannelFields(log) {
-		return this.state.channel_fields.map(field => {
-			if(field.type!='TEXT')
-				return (<td key={field.name} className="center"><span className="action" onClick={(e) => this.setFilter('filter_channel_'+field.name, log['channel_'+field.name])}>{log['channel_'+field.name]}</span></td>);
+		return Object.keys(this.state.channel_fields).map(field => {
+			if(this.state.channel_fields[field]!='TEXT')
+				return (<td key={'channel_'+field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_channel_'+field, log['channel_'+field])}>{log['channel_'+field]}</span></td>);
 			else
-				return (<td key={field.name} className="center"><span>{log['channel_'+field.name]}</span></td>);
+				return (<td key={'channel_'+field} className="center"><span>{log['channel_'+field]}</span></td>);
 		});
 	}
 	
 	renderChannelLogs(log) {
-		if(this.state.details[log.id]===undefined)
-			return (<tr><td colSpan={3 + this.state.group_fields.length}></td></tr>);
+		let ncols = 3 + Object.keys(this.state.group_fields).length + Object.keys(this.state.channel_fields).length;
 		
-		return (<tr><td colSpan={3 + this.state.group_fields.length}><ul>{this.renderChannelLogsValues(this.state.details[log.id])}</ul></td></tr>);
+		if(this.state.details[log.id]===undefined)
+			return (<tr><td colSpan={ncols}></td></tr>);
+		
+		return (
+			<tr>
+				<td colSpan={ncols}>
+					<ul>
+						{this.renderChannelLogsValues('group', this.state.details[log.id].group)}
+						{this.renderChannelLogsValues('channel', this.state.details[log.id].channel)}
+					</ul>
+				</td>
+			</tr>
+		);
 	}
 	
-	renderChannelLogsValues(values) {
+	renderChannelLogsValues(type, values) {
 		return Object.keys(values).map(name => {
 			if(name=="domnode")
 				return;
 			return (
-				<li key={name}><b>{name} :</b> {values[name]}</li>
+				<li key={type+'_'+name}><b>{name} :</b> {values[name]}</li>
 			);
 		});
 	}
@@ -203,7 +171,7 @@ export class ELogs extends evQueueComponent {
 		});
 	}
 	
-	renderTab() {
+	renderLogsPannel() {
 		var actions = [
 			{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), callback:this.toggleAutorefresh}
 		];
@@ -230,24 +198,12 @@ export class ELogs extends evQueueComponent {
 		);
 	}
 	
-	renderTabs() {
-		return this.state.channelgroups.map(group => {
-			return (
-				<Tab key={group.name} title={group.name}>
-					<ELogsFilters group={group.id} ref={this.filters} onChange={this.updateFilters} />
-					<br />
-					{this.renderTab()}
-				</Tab>
-			);
-		});
-	}
-	
 	render() {
 		return (
 			<div>
-				<Tabs onChange={this.changeTab}>
-					{this.renderTabs()}
-				</Tabs>
+					<ELogsFilters ref={this.filters} filters={this.state.filters} onChange={this.updateFilters} />
+					<br />
+					{this.renderLogsPannel()}
 			</div>
 		);
 	}

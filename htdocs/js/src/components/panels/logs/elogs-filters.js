@@ -32,22 +32,8 @@ export class ELogsFilters extends evQueueComponent {
 	constructor(props) {
 		super(props,'any');
 		
-		this.empty_filters = {
-			filter_crit: '',
-			dt_inf: '',
-			hr_inf: '',
-			filter_emitted_from: '',
-			dt_sup: '',
-			hr_sup: '',
-			filter_emitted_until: '',
-			filter_channel: 0,
-		};
-		
-		this.state.filters = Object.assign({}, this.empty_filters);
 		this.state.group_fields = {};
 		this.state.channel_fields = {};
-		this.state.group_id = this.props.group?this.props.group:0;
-		
 		
 		this.state.opened = false;
 		
@@ -67,8 +53,11 @@ export class ELogsFilters extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		if(this.state.group_id)
-			this.groupChange(this.state.group_id);
+		if(this.props.filters.filter_group)
+			this.getGroupFields(this.props.filters.filter_group).then(group_fields => this.setState({group_fields: group_fields}));
+		
+		if(this.props.filters.filter_channel)
+			this.getChannelFields(this.props.filters.filter_channel).then(channel_fields => this.setState({channel_fields: channel_fields}));
 	}
 	
 	componentDidUpdate() {
@@ -76,36 +65,49 @@ export class ELogsFilters extends evQueueComponent {
 			this.context.onComponentUpdate();
 	}
 	
-	groupChange(id) {
-		this.API({
+	getGroupFields(id) {
+		return new Promise((resolve, reject) => {
+			this.API({
 				group: 'channel_group',
 				action: 'get',
 				attributes: {id: id}
-		}).then( (response) => {
-				let data = this.parseResponse(response);
-				
-				let group_fields = {};
-				let filters = this.state.filters;
-				for(let i=0;i<data.response.length;i++)
-				{
-					group_fields[data.response[i].name] = data.response[i].type;
-					filters["filter_group_"+data.response[i].name] = '';
-				}
-				
-				this.setState({group_id: id, group_fields: group_fields, filters: filters});
+			}).then( (response) => {
+					let data = this.parseResponse(response);
+					
+					let group_fields = {};
+					for(let i=0;i<data.response.length;i++)
+						group_fields[data.response[i].name] = data.response[i].type;
+					
+					resolve(group_fields);
+			});
 		});
 	}
 	
-	channelChange(id) {
+	groupChange(id) {
 		if(id==0)
 		{
-			let filters = this.state.filters;
-			for(const field in this.state.channel_fields)
-				delete filters["filter_channel_"+field];
-			this.setState({channel_fields: {}, filters: filters});
+			let filters = {};
+			
+			if(this.props.onChange)
+				this.props.onChange(filters, {}, {});
+			
+			this.setState({group_fields: {}, channel_fields: {}});
 		}
 		else
 		{
+			this.getGroupFields(id).then( group_fields => {
+				let filters = {filter_group: id};
+				
+				if(this.props.onChange)
+					this.props.onChange(filters, group_fields, {});
+				
+				this.setState({group_fields: group_fields, channel_fields: {}});
+			});
+		}
+	}
+	
+	getChannelFields(id) {
+		return new Promise((resolve, reject) => {
 			this.API({
 					group: 'channel',
 					action: 'get',
@@ -114,14 +116,37 @@ export class ELogsFilters extends evQueueComponent {
 					let data = this.parseResponse(response);
 					
 					let channel_fields = {};
-					let filters = this.state.filters;
 					for(let i=0;i<data.response.length;i++)
-					{
 						channel_fields[data.response[i].name] = data.response[i].type;
-						filters["filter_channel_"+data.response[i].name] = '';
-					}
 					
-					this.setState({channel_fields: channel_fields, filters: filters});
+					resolve(channel_fields);
+			});
+		});
+	}
+	
+	channelChange(id) {
+		if(id==0)
+		{
+			let filters = Object.assign({}, this.props.filters);
+			filters['filter_channel'] = 0;
+			for(const field in this.state.channel_fields)
+				delete filters["filter_channel_"+field];
+			
+			if(this.props.onChange)
+				this.props.onChange(filters, this.state.group_fields, {});
+			
+			this.setState({channel_fields: {}});
+		}
+		else
+		{
+			this.getChannelFields(id).then(channel_fields => {
+				let filters = Object.assign({}, this.props.filters);
+				filters['filter_channel'] = id;
+				
+				if(this.props.onChange)
+					this.props.onChange(filters, this.state.group_fields, channel_fields);
+				
+				this.setState({channel_fields: channel_fields});
 			});
 		}
 	}
@@ -132,6 +157,9 @@ export class ELogsFilters extends evQueueComponent {
 	
 	implodeDate(date,hour)
 	{
+		if(!date && !hour)
+			return '';
+		
 		if(!date)
 		{
 			let d = new Date();
@@ -145,55 +173,33 @@ export class ELogsFilters extends evQueueComponent {
 	}
 	
 	filterChange(event) {
-		this.setFilter(event.target.name,event.target.value);
+		let filters = Object.assign({}, this.props.filters);
+			filters[event.target.name] = event.target.value;
 		
 		if(event.target.name=='dt_inf' || event.target.name=='hr_inf')
-			this.setFilter('filter_emitted_from',this.implodeDate(this.state.filters.dt_inf,this.state.filters.hr_inf));
+			filters['filter_emitted_from'] = this.implodeDate(filters.dt_inf,filters.hr_inf);
 		if(event.target.name=='dt_sup' || event.target.name=='hr_sup')
-			this.setFilter('filter_emitted_until',this.implodeDate(this.state.filters.dt_sup,this.state.filters.hr_sup));
+			filters['filter_emitted_until'] = this.implodeDate(filters.dt_sup,filters.hr_sup);
 		
 		if(this.props.onChange)
-			this.props.onChange(this.state.filters);
-		
-		
-		if(event.target.name=='filter_channel')
-			this.channelChange(event.target.value);
-	}
-	
-	setFilter(name,value) {
-		let filters = this.state.filters;
-		filters[name] = value;
-		this.setState({filters:filters});
+			this.props.onChange(filters, this.state.group_fields, this.state.channel_fields);
 	}
 	
 	cleanFilters() {
-		this.setState({filters:Object.assign({}, this.empty_filters), opened:false, channel_fields: {}});
-		
 		if(this.props.onChange)
-			this.props.onChange(this.empty_filters);
+			this.props.onChange({}, {}, {});
+		
+		this.setState({opened:false, group_fields: {}, channel_fields: {}});
 	}
 	
 	hasFilter() {
-		var filters = this.state.filters;
+		let filters = this.props.filters;
 		for(name in filters)
 		{
-			if(filters[name]!='')
+			if(filters[name]!='' && filters[name]!=0)
 				return true;
 		}
 		return false;
-	}
-	
-	renderGroupSelector() {
-		if(this.props.group)
-			return;
-		
-		return (
-			<div>
-				<label>Group</label>
-				<ChannelGroupSelector name="group" value={this.state.group_id} onChange={e => this.groupChange(e.target.value)} />
-			</div>
-			
-		);
 	}
 	
 	renderGroupFilters() {
@@ -203,10 +209,14 @@ export class ELogsFilters extends evQueueComponent {
 			if(type=="TEXT")
 				return; // Text fields are not indexed
 			
+			let val = this.props.filters["filter_group_"+name];
+			if(val===undefined)
+				val = '';
+			
 			return (
 				<div key={name}>
 					<label>{name}</label>
-					<input type="text" name={"filter_group_"+name} value={this.state.filters["filter_group_"+name]} onChange={this.filterChange} />
+					<input type="text" name={"filter_group_"+name} value={val} onChange={this.filterChange} />
 				</div>
 			);
 		});
@@ -219,10 +229,14 @@ export class ELogsFilters extends evQueueComponent {
 			if(type=="TEXT")
 				return; // Text fields are not indexed
 			
+			let val = this.props.filters["filter_channel_"+name];
+			if(val===undefined)
+				val = '';
+			
 			return (
 				<div key={name}>
 					<label>{name}</label>
-					<input type="text" name={"filter_channel_"+name} value={this.state.filters["filter_channel_"+name]} onChange={this.filterChange} />
+					<input type="text" name={"filter_channel_"+name} value={val} onChange={this.filterChange} />
 				</div>
 			);
 		});
@@ -235,13 +249,25 @@ export class ELogsFilters extends evQueueComponent {
 		return (
 			<div>
 				<label>Emitted between</label>
-				Date&#160;:&#160;<DatePicker name="dt_inf" value={this.state.filters.dt_inf} onChange={this.filterChange} />
+				Date&#160;:&#160;<DatePicker name="dt_inf" value={this.props.filters.dt_inf} onChange={this.filterChange} />
 				&#160;
-				Hour&#160;:&#160;<Autocomplete className="hour" name="hr_inf" value={this.state.filters.hr_inf} autocomplete={this.hours} onChange={this.filterChange} />
+				Hour&#160;:&#160;<Autocomplete className="hour" name="hr_inf" value={this.props.filters.hr_inf} autocomplete={this.hours} onChange={this.filterChange} />
 				&#160;&#160;<b>and</b>&#160;&#160;
-				Date&#160;:&#160;<DatePicker name="dt_sup" value={this.state.filters.dt_sup} onChange={this.filterChange} />
+				Date&#160;:&#160;<DatePicker name="dt_sup" value={this.props.filters.dt_sup} onChange={this.filterChange} />
 				&#160;
-				Hour&#160;:&#160;<Autocomplete className="hour" name="hr_sup" value={this.state.filters.hr_sup} autocomplete={this.hours} onChange={this.filterChange} />
+				Hour&#160;:&#160;<Autocomplete className="hour" name="hr_sup" value={this.props.filters.hr_sup} autocomplete={this.hours} onChange={this.filterChange} />
+			</div>
+		);
+	}
+	
+	renderChannelSelector() {
+		if(this.props.filters.filter_group===undefined || this.props.filters.filter_group==0)
+			return;
+		
+		return (
+			<div>
+				<label>Channel</label>
+				<ChannelSelector name="filter_channel" value={this.props.filters.filter_channel} group={this.props.filters.filter_group} onChange={e => this.channelChange(e.target.value)} />
 			</div>
 		);
 	}
@@ -264,14 +290,14 @@ export class ELogsFilters extends evQueueComponent {
 		
 		return (
 			<div className="formdiv log_filters">
-				{this.renderGroupSelector()}
 				<div>
-					<label>Channel</label>
-					<ChannelSelector name="filter_channel" value={this.state.filters.filter_channel} onChange={this.filterChange} />
+					<label>Group</label>
+					<ChannelGroupSelector name="group" value={this.props.filters.filter_group} onChange={e => this.groupChange(e.target.value)} />
 				</div>
+				{this.renderChannelSelector()}
 				<div>
 					<label>Criticality</label>
-					<Select name="filter_crit" value={this.state.filters.filter_crit} values={crit_values} filter={false} onChange={this.filterChange} />
+					<Select name="filter_crit" value={this.props.filters.filter_crit} values={crit_values} filter={false} onChange={this.filterChange} />
 				</div>
 				{this.renderGroupFilters()}
 				{this.renderChannelFilters()}
