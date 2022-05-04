@@ -45,7 +45,7 @@ export class ChannelSelector extends evQueueComponent {
 		
 		let channels = [{name: 'All channels', value: 0}];
 		for(let i=0;i<data.response.length;i++)
-			channels.push({name: data.response[i].name, value: data.response[i].id});
+			channels.push({name: data.response[i].name, value: parseInt(data.response[i].id)});
 		
 		this.setState({channels: channels});
 	}

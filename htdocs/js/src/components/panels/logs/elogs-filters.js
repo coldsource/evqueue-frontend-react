@@ -54,10 +54,10 @@ export class ELogsFilters extends evQueueComponent {
 	
 	componentDidMount() {
 		if(this.props.filters.filter_group)
-			this.getGroupFields(this.props.filters.filter_group).then(group_fields => this.setState({group_fields: group_fields}));
+			this.getGroupFields(this.props.filters.filter_group).then(group_fields => this.setState({group_fields: group_fields}) );
 		
 		if(this.props.filters.filter_channel)
-			this.getChannelFields(this.props.filters.filter_channel).then(channel_fields => this.setState({channel_fields: channel_fields}));
+			this.getChannelFields(this.props.filters.filter_channel).then(channel_fields => this.setState({channel_fields: channel_fields}) );
 	}
 	
 	componentDidUpdate() {

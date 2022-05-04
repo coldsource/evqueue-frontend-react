@@ -34,29 +34,53 @@ export class Alerts extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		/*this.API({
-			group: 'channel_group',
-			action: 'get',
-			attributes: {id: this.props.group}
-		}).then( (response) => {
-			let data = this.parseResponse(response);
-			this.setState({group_fields: data.response});
-		});
+		let api = {group:'alerts',action:'list'};
 		
-		let api = {node:'*', group:'elogs',action:'list',attributes: {group_id: this.props.group}};
-		this.Subscribe('LOG_ELOG',api,true);*/
+		this.Subscribe('ALERT_CREATED',api,false);
+		this.Subscribe('ALERT_MODIFIED',api,false);
+		this.Subscribe('ALERT_REMOVED',api,true);
+	}
+	
+	evQueueEvent(data) {
+		this.setState({alerts: this.parseResponse(data).response});
 	}
 	
 	editAlert(e, id) {
 		Dialogs.open(EditAlert, {id: id});
 	}
 	
+	removeAlert(e, id) {
+		this.simpleAPI({
+			group: 'alert',
+			action: 'delete',
+			attributes: {id: id}
+		},"Alert removed", "Are you sure you want to remove this alert ?");
+	}
+	
 	renderAlerts() {
 		return this.state.alerts.map(alert => {
+			let trigger_desc = alert.occurrences;
+			if(alert.groupby)
+			{
+				if(alert.groupby.substr(0, 6)=='group_')
+					trigger_desc += ' / '+alert.groupby.substr(6)+' (group)';
+				else if(alert.groupby.substr(0, 8)=='channel_')
+					trigger_desc += ' / '+alert.groupby.substr(8)+' (channel)';
+			}
+			if(alert.period==1)
+				trigger_desc += ' / minute';
+			else
+				trigger_desc += ' / '+alert.period+' minutes';
+			
 			return (
 				<tr key={alert.id}>
-					<td></td>
-					<td></td>
+					<td>{alert.name}</td>
+					<td>{alert.description}</td>
+					<td>{trigger_desc}</td>
+					<td className="center">
+						<span className="faicon fa-edit" title="Edit alert" onClick={ (e) => this.editAlert(e, alert.id) } />
+						<span className="faicon fa-remove" title="Remove alert" onClick={ (e) => this.removeAlert(e, alert.id) } />
+					</td>
 				</tr>
 			);
 		});
@@ -74,6 +98,8 @@ export class Alerts extends evQueueComponent {
 						<thead>
 							<tr>
 								<th style={{width: '10rem'}}>Name</th>
+								<th>Description</th>
+								<th style={{width: '16rem'}}>Trigger</th>
 								<th style={{width: '10rem'}}>Actions</th>
 							</tr>
 						</thead>
