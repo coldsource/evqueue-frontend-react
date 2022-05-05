@@ -88,7 +88,7 @@ export class Alerts extends evQueueComponent {
 	
 	render() {
 		var actions = [
-			{icon:'fa-file-o', title: "Create new channel", callback:this.editAlert}
+			{icon:'fa-file-o', title: "Create new alert", callback:this.editAlert}
 		];
 		
 		return (
