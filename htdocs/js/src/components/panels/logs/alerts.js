@@ -76,7 +76,7 @@ export class Alerts extends evQueueComponent {
 				<tr key={alert.id}>
 					<td>{alert.name}</td>
 					<td>{alert.description}</td>
-					<td>{trigger_desc}</td>
+					<td className="center">{trigger_desc}</td>
 					<td className="center">
 						<span className="faicon fa-edit" title="Edit alert" onClick={ (e) => this.editAlert(e, alert.id) } />
 						<span className="faicon fa-remove" title="Remove alert" onClick={ (e) => this.removeAlert(e, alert.id) } />
