@@ -41,13 +41,15 @@ export class EditChannel extends evQueueComponent {
 			name: '',
 			group_id: '',
 			regex: '',
-			date: '',
+			date_format: '',
+			date_field: '',
 			crit: 'LOG_NOTICE',
 			fields: {},
 			group_matches: {},
 			matches: {}
 		};
 		
+		this.state.date_type = 'auto';
 		this.state.groups = [];
 		this.state.group_fields = {};
 		this.state.regex_error = '';
@@ -57,6 +59,7 @@ export class EditChannel extends evQueueComponent {
 		this.dlg_checker = undefined;
 		
 		this.onChange = this.onChange.bind(this);
+		this.dateTypeChange = this.dateTypeChange.bind(this);
 		this.save = this.save.bind(this);
 		this.renderRegexError = this.renderRegexError.bind(this);
 		this.addField = this.addField.bind(this);
@@ -93,6 +96,13 @@ export class EditChannel extends evQueueComponent {
 				delete resp.config.fields;
 				Object.assign(channel, JSON.parse(resp.config));
 				
+				let date_type = 'manual';
+				if(channel.date_format=='auto')
+				{
+					date_type = 'auto';
+					channel.date_format = '';
+				}
+				
 				let fields = {};
 				for(let i=0;i<resp.response.length;i++)
 				{
@@ -103,7 +113,7 @@ export class EditChannel extends evQueueComponent {
 				}
 				channel.fields = fields;
 				
-				this.setState({channel: channel});
+				this.setState({date_type: date_type, channel: channel});
 				
 				this.updateGroupFields(channel.group_id);
 			});
@@ -163,6 +173,28 @@ export class EditChannel extends evQueueComponent {
 			this.dlg_checker.current.setConfig(channel);
 	}
 	
+	dateTypeChange(e) {
+		let val = e.target.value;
+		
+		let channel = this.state.channel;
+		
+		if(val=='auto')
+		{
+			channel.date_format = 'auto';
+			channel.date_field = '';
+		}
+		else
+		{
+			channel.date_format = '';
+			channel.date_field = '';
+		}
+		
+		this.setState({date_type: val, channel: channel});
+		
+		if(this.state.config_checker)
+			this.dlg_checker.current.setConfig(channel);
+	}
+	
 	save() {
 		let action = this.props.id?'edit':'create';
 		let action_name = this.props.id?'modified':'created';
@@ -179,6 +211,9 @@ export class EditChannel extends evQueueComponent {
 			if(!config[name])
 				delete config[name];
 		}
+		
+		if(this.state.date_type=='auto')
+			config.date = 'auto'; // Special date format if auto is requested
 		
 		let attributes = {
 			name: this.state.channel.name,
@@ -283,6 +318,26 @@ export class EditChannel extends evQueueComponent {
 		this.setState({config_checker: !this.state.config_checker});
 	}
 	
+	renderDateFormatSelector() {
+		if(this.state.date_type=='auto')
+			return;
+		
+		let regex_values = this.addRegexValues();
+		
+		return (
+			<React.Fragment>
+				<div>
+					<label>Date format</label>
+					<input type="text" name="date_format" placeholder="%Y-%m-%d %H:%M:%S" value={this.state.channel.date_format} onChange={this.onChange} />
+				</div>
+				<div>
+					<label>Date field</label>
+					<Select name={"date_field"} value={this.state.channel.date_field} values={regex_values} filter={false} onChange={this.onChange} />
+				</div>
+			</React.Fragment>
+		);
+	}
+	
 	render() {
 		let channel = this.state.channel;
 		let title = this.props.id?"Edit channel « "+channel.name+" »":"Create new channel";
@@ -310,6 +365,8 @@ export class EditChannel extends evQueueComponent {
 					Channel properties
 					<Help>
 						Logging channels are used for external logging purpose. Each channel can have its own custom fields. A regular expression is used to extract data from the raw logged line.
+						<br /><br />Date can be automatically set to the reception date of the log line or you can choose to match it from regular expression capture group. In this case, you must specify a format patter to parse the date, see C function strptime for a list of allowed fields.
+						<br /><br />Criticality can be either fixed for all channel logs, or matched from the regular expression capture groupe.
 					</Help>
 				</h2>
 				<Tabs>
@@ -323,6 +380,11 @@ export class EditChannel extends evQueueComponent {
 								<label>Group</label>
 								<Select name="group_id" value={this.state.channel.group_id} values={this.state.groups} onChange={this.onChange} />
 							</div>
+							<div>
+								<label>Date type</label>
+								<Select name="date" value={this.state.date_type} values={[{name: 'Automatic', value: 'auto'}, {name: 'Manual', value: 'manual'}]} filter={false} onChange={this.dateTypeChange} />
+							</div>
+							{this.renderDateFormatSelector()}
 							<div>
 								<label>Criticality</label>
 								<Select name="crit" value={channel.crit} values={crit_values} filter={false} onChange={this.onChange} />
