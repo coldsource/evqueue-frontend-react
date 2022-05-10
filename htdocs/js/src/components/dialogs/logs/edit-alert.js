@@ -40,6 +40,7 @@ export class EditAlert extends evQueueComponent {
 		this.state.alert = {
 			name: '',
 			description: '',
+			active: 1,
 			filters: {},
 			occurrences: 1,
 			period: 1,
@@ -95,6 +96,7 @@ export class EditAlert extends evQueueComponent {
 					occurrences: alert.occurrences,
 					period: alert.period,
 					groupby: alert.groupby,
+					active: alert.active,
 					filters: filters,
 					notifications: notifications
 				};
@@ -196,6 +198,7 @@ export class EditAlert extends evQueueComponent {
 			period: alert.period,
 			groupby: alert.groupby,
 			filters: JSON.stringify(alert.filters),
+			active: alert.active,
 			notifications: JSON.stringify(alert.notifications)
 		};
 		
@@ -230,11 +233,11 @@ export class EditAlert extends evQueueComponent {
 		return (
 			<Dialog ref={this.dlg} title={title} width="700">
 				<Tabs>
-					<Tab title="Name">
+					<Tab title="General">
 						<h2>
-							Name
+							General
 							<Help>
-								Here you can simply name your alert.
+								Name and description of the alert.
 							</Help>
 						</h2>
 						<div className="formdiv">

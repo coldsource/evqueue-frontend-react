@@ -57,6 +57,16 @@ export class Alerts extends evQueueComponent {
 		},"Alert removed", "Are you sure you want to remove this alert ?");
 	}
 	
+	toggleLock(id, active) {
+		let action = active==1?'lock':'unlock';
+		
+		this.API({
+			group: 'alert',
+			action: action,
+			attributes: {id: id}
+		});
+	}
+	
 	renderAlerts() {
 		return this.state.alerts.map(alert => {
 			let trigger_desc = alert.occurrences;
@@ -72,11 +82,22 @@ export class Alerts extends evQueueComponent {
 			else
 				trigger_desc += ' / '+alert.period+' minutes';
 			
+			let lock_icon = 'faicon fa-lock';
+			let lock_title = "Activate this alert";
+			if(alert.active==1)
+			{
+				lock_icon = 'faicon fa-check';
+				lock_title = "Disable this alert";
+			}
+			
 			return (
 				<tr key={alert.id}>
 					<td>{alert.name}</td>
 					<td>{alert.description}</td>
 					<td className="center">{trigger_desc}</td>
+					<td className="center">
+						<span className={lock_icon} title={lock_title} onClick={ (e) => this.toggleLock(alert.id, alert.active==1) } />
+					</td>
 					<td className="center">
 						<span className="faicon fa-edit" title="Edit alert" onClick={ (e) => this.editAlert(e, alert.id) } />
 						<span className="faicon fa-remove" title="Remove alert" onClick={ (e) => this.removeAlert(e, alert.id) } />
@@ -100,6 +121,7 @@ export class Alerts extends evQueueComponent {
 								<th style={{width: '10rem'}}>Name</th>
 								<th>Description</th>
 								<th style={{width: '16rem'}}>Trigger</th>
+								<th style={{width: '10rem'}}>Status</th>
 								<th style={{width: '10rem'}}>Actions</th>
 							</tr>
 						</thead>
