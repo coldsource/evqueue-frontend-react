@@ -95,10 +95,10 @@ export class Alerts extends evQueueComponent {
 					<td>{alert.name}</td>
 					<td>{alert.description}</td>
 					<td className="center">{trigger_desc}</td>
-					<td className="center">
+					<td className="tdActions">
 						<span className={lock_icon} title={lock_title} onClick={ (e) => this.toggleLock(alert.id, alert.active==1) } />
 					</td>
-					<td className="center">
+					<td className="tdActions">
 						<span className="faicon fa-edit" title="Edit alert" onClick={ (e) => this.editAlert(e, alert.id) } />
 						<span className="faicon fa-remove" title="Remove alert" onClick={ (e) => this.removeAlert(e, alert.id) } />
 					</td>
@@ -115,14 +115,14 @@ export class Alerts extends evQueueComponent {
 		return (
 			<div className="evq-logs-alerts">
 				<Panel noborder left="" title="External logs alerts" actions={actions}>
-					<table className="evenodd">
+					<table className="evenodd" className="border">
 						<thead>
 							<tr>
 								<th style={{width: '10rem'}}>Name</th>
 								<th>Description</th>
 								<th style={{width: '16rem'}}>Trigger</th>
-								<th style={{width: '10rem'}}>Status</th>
-								<th style={{width: '10rem'}}>Actions</th>
+								<th>Status</th>
+								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
