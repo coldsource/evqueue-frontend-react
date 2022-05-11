@@ -112,9 +112,14 @@ export class Autocomplete extends React.Component {
 	applyFilter() {
 		let filter;
 		if(this.props.multiple)
-			filter = this.state.value.toLowerCase()
+			filter = this.state.value;
 		else
-			filter = this.props.value.toLowerCase();
+			filter = this.props.value;
+		
+		if(filter!==undefined)
+			filter = filter.toLowerCase()
+		else
+			filter = '';
 		
 		if(filter=='')
 			return this.props.autocomplete;
