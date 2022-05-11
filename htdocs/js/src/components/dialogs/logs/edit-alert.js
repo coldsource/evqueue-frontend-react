@@ -98,40 +98,6 @@ export class EditAlert extends evQueueComponent {
 				};
 				
 				this.setState({alert: alertconf});
-				
-				if(filters.filter_group)
-				{
-					this.API({
-						group: 'channel_group',
-						action: 'get',
-						attributes: {id: filters.filter_group}
-					}).then( (response) => {
-							let data = this.parseResponse(response);
-							
-							let group_fields = {};
-							for(let i=0;i<data.response.length;i++)
-								group_fields[data.response[i].name] = data.response[i].type;
-							
-							this.setState({group_fields: group_fields});
-					});
-				}
-				
-				if(filters.filter_channel)
-				{
-					this.API({
-							group: 'channel',
-							action: 'get',
-							attributes: {id: filters.filter_channel}
-					}).then( (response) => {
-							let data = this.parseResponse(response);
-							
-							let channel_fields = {};
-							for(let i=0;i<data.response.length;i++)
-								channel_fields[data.response[i].name] = data.response[i].type;
-							
-							this.setState({channel_fields: channel_fields});
-					});
-				}
 			});
 		}
 	}
@@ -154,10 +120,10 @@ export class EditAlert extends evQueueComponent {
 		this.setState({alert: alert});
 	}
 	
-	filterChange(filters, group_fields, channel_fields) {
+	filterChange(filters) {
 		let alert = this.state.alert;
 		alert.filters = filters;
-		this.setState({alert: alert, group_fields: group_fields, channel_fields: channel_fields});
+		this.setState({alert: alert});
 	}
 	
 	save() {

@@ -75,6 +75,7 @@ export class App extends React.Component {
 		this.state = {
 			path: url.hash,
 			get: get,
+			data: {},
 			ready: false,
 			config_error: '',
 			messages: [],
@@ -125,6 +126,7 @@ export class App extends React.Component {
 		App.warning = this.warning.bind(this);
 		App.changeURL = this.changeURL.bind(this);
 		App.getParameter = this.getParameter.bind(this);
+		App.getData = this.getData.bind(this);
 	}
 	
 	loadClusterConfig() {
@@ -235,14 +237,19 @@ export class App extends React.Component {
 		return this.state.get.get(name);
 	}
 	
-	changeURL(path)
+	getData() {
+		return this.state.data;
+	}
+	
+	changeURL(path, data = {})
 	{
 		let get = new URLSearchParams(path);
 		
 		window.history.pushState('','',path);
 		
 		this.setState({
-			get: get
+			get: get,
+			data: data
 		});
 	}
 	

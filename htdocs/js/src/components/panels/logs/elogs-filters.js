@@ -89,7 +89,7 @@ export class ELogsFilters extends evQueueComponent {
 			let filters = {};
 			
 			if(this.props.onChange)
-				this.props.onChange(filters, {}, {});
+				this.props.onChange(filters);
 			
 			this.setState({group_fields: {}, channel_fields: {}});
 		}
@@ -99,7 +99,7 @@ export class ELogsFilters extends evQueueComponent {
 				let filters = {filter_group: id};
 				
 				if(this.props.onChange)
-					this.props.onChange(filters, group_fields, {});
+					this.props.onChange(filters);
 				
 				this.setState({group_fields: group_fields, channel_fields: {}});
 			});
@@ -133,7 +133,7 @@ export class ELogsFilters extends evQueueComponent {
 				delete filters["filter_channel_"+field];
 			
 			if(this.props.onChange)
-				this.props.onChange(filters, this.state.group_fields, {});
+				this.props.onChange(filters);
 			
 			this.setState({channel_fields: {}});
 		}
@@ -144,7 +144,7 @@ export class ELogsFilters extends evQueueComponent {
 				filters['filter_channel'] = id;
 				
 				if(this.props.onChange)
-					this.props.onChange(filters, this.state.group_fields, channel_fields);
+					this.props.onChange(filters);
 				
 				this.setState({channel_fields: channel_fields});
 			});
@@ -182,14 +182,14 @@ export class ELogsFilters extends evQueueComponent {
 			filters['filter_emitted_until'] = this.implodeDate(filters.dt_sup,filters.hr_sup);
 		
 		if(this.props.onChange)
-			this.props.onChange(filters, this.state.group_fields, this.state.channel_fields);
+			this.props.onChange(filters);
 	}
 	
 	cleanFilters() {
 		if(this.props.onChange)
-			this.props.onChange({}, {}, {});
+			this.props.onChange({});
 		
-		this.setState({opened:false, group_fields: {}, channel_fields: {}});
+		this.setState({opened:false);
 	}
 	
 	hasFilter() {

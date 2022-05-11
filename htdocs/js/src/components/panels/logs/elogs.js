@@ -20,6 +20,7 @@
 'use strict';
 
 import {evQueueComponent} from '../../base/evqueue-component.js';
+import {App} from '../../base/app.js';
 import {Panel} from '../../../ui/panel.js';
 import {EventsUtils} from '../../../utils/events.js';
 import {ELogsFilters} from '../../panels/logs/elogs-filters.js';
@@ -29,7 +30,8 @@ export class ELogs extends evQueueComponent {
 		super(props);
 		
 		this.state.logs = [];
-		this.state.filters = {};
+		
+		this.state.filters = App.getData();
 		this.state.group_fields = {};
 		this.state.channel_fields = {};
 		this.state.details = {};
@@ -42,16 +44,27 @@ export class ELogs extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		this.updateFilters({}, {}, {});
+		this.updateFilters(App.getData(), {}, {}); // Subscribe events
 	}
 	
 	evQueueEvent(response) {
-		let data = this.parseResponse(response,'/response/*');
-		this.setState({logs: data.response});
+		let data = this.parseResponse(response,'/response/logs/*');
+		
+		let group_fields_resp = this.parseResponse(response,'/response/group/*');
+		let group_fields = {};
+		for(let i=0;i<group_fields_resp.response.length;i++)
+			group_fields['group_'+group_fields_resp.response[i].name] = group_fields_resp.response[i].type;
+		
+		let channel_fields_resp = this.parseResponse(response,'/response/channel/*');
+		let channel_fields = {};
+		for(let i=0;i<channel_fields_resp.response.length;i++)
+			channel_fields['channel_'+channel_fields_resp.response[i].name] = channel_fields_resp.response[i].type;
+		
+		this.setState({logs: data.response, group_fields: group_fields, channel_fields: channel_fields});
 	}
 	
-	updateFilters(filters = {}, group_fields = {}, channel_fields = {}) {
-		this.setState({filters: filters, group_fields: group_fields, channel_fields: channel_fields});
+	updateFilters(filters = {}) {
+		this.setState({filters: filters});
 		
 		this.Unsubscribe('LOG_ELOG');
 		
@@ -95,7 +108,7 @@ export class ELogs extends evQueueComponent {
 	renderGroupFieldsHeader() {
 		return Object.keys(this.state.group_fields).map(field => {
 			return (
-				<th key={'group_'+field}>{field}</th>
+				<th key={'group_'+field}>{field.substr(6)}</th>
 			);
 		});
 	}
@@ -103,7 +116,7 @@ export class ELogs extends evQueueComponent {
 	renderChannelFieldsHeader() {
 		return Object.keys(this.state.channel_fields).map(field => {
 			return (
-				<th key={'channel_'+field}>{field}</th>
+				<th key={'channel_'+field}>{field.substr(8)}</th>
 			);
 		});
 	}
@@ -111,18 +124,18 @@ export class ELogs extends evQueueComponent {
 	renderGroupFields(log) {
 		return Object.keys(this.state.group_fields).map(field => {
 			if(this.state.group_fields[field]!='TEXT')
-				return (<td key={'group_'+field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_group_'+field, log[field])}>{log[field]}</span></td>);
+				return (<td key={field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_'+field, log[field])}>{log[field]}</span></td>);
 			else
-				return (<td key={'group_'+field} className="center"><span>{log[field]}</span></td>);
+				return (<td key={field} className="center"><span>{log[field]}</span></td>);
 		});
 	}
 	
 	renderChannelFields(log) {
 		return Object.keys(this.state.channel_fields).map(field => {
 			if(this.state.channel_fields[field]!='TEXT')
-				return (<td key={'channel_'+field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_channel_'+field, log['channel_'+field])}>{log['channel_'+field]}</span></td>);
+				return (<td key={field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_'+field, log[field])}>{log[field]}</span></td>);
 			else
-				return (<td key={'channel_'+field} className="center"><span>{log['channel_'+field]}</span></td>);
+				return (<td key={field} className="center"><span>{log[field]}</span></td>);
 		});
 	}
 	

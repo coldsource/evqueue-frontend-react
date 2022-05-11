@@ -22,6 +22,7 @@
 import {evQueueComponent} from '../components/base/evqueue-component.js';
 import {HeaderMenu} from '../components/menus/header.js';
 import {Alerts} from '../components/panels/logs/alerts.js';
+import {AlertTriggers} from '../components/panels/logs/alert-triggers.js';
 
 export class PageELogsAlerts extends React.Component {
 	constructor(props) {
@@ -33,6 +34,8 @@ export class PageELogsAlerts extends React.Component {
 			<div>
 				<HeaderMenu current="External Logs" />
 				<Alerts />
+				<br />
+				<AlertTriggers />
 			</div>
 		);
 	}
