@@ -41,7 +41,7 @@ export class EditChannel extends evQueueComponent {
 			name: '',
 			group_id: '',
 			regex: '',
-			date_format: '',
+			date_format: 'auto',
 			date_field: '',
 			crit: 'LOG_NOTICE',
 			fields: {},
@@ -259,6 +259,10 @@ export class EditChannel extends evQueueComponent {
 	removeField(name) {
 		let channel = this.state.channel;
 		delete channel.fields[name];
+		
+		let matches = channel.matches;
+		delete matches[name];
+		
 		this.setState({channel: channel});
 	}
 	
