@@ -98,10 +98,7 @@ export class EditChannel extends evQueueComponent {
 				
 				let date_type = 'manual';
 				if(channel.date_format=='auto')
-				{
 					date_type = 'auto';
-					channel.date_format = '';
-				}
 				
 				let fields = {};
 				for(let i=0;i<resp.response.length;i++)
