@@ -171,31 +171,73 @@ export class ELogs extends evQueueComponent {
 		});
 	}
 	
+	renderGrouppedLogs() {
+		return this.state.logs.map( (log, idx) => {
+			return (
+				<React.Fragment key={idx}>
+					<tr>
+						<td className="left">{log[this.state.filters.groupby]}</td>
+						<td className="left">{log.n}</td>
+					</tr>
+				</React.Fragment>
+			);
+		});
+	}
+	
 	renderLogsPannel() {
 		var actions = [
 			{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), callback:this.toggleAutorefresh}
 		];
 		
-		return (
-			<div className="evq-logs-elogs">
-				<Panel noborder left="" title="Last external logs" actions={actions}>
-					<table className="evenodd4">
-						<thead>
-							<tr>
-								<th style={{width: '10rem'}}>Channel</th>
-								<th style={{width: '10rem'}}>Date</th>
-								<th style={{width: '10rem'}}>Crit</th>
-								{this.renderGroupFieldsHeader()}
-								{this.renderChannelFieldsHeader()}
-							</tr>
-						</thead>
-						<tbody>
-							{ this.renderLogs() }
-						</tbody>
-					</table>
-				</Panel>
-			</div>
-		);
+		if(!this.state.filters.groupby)
+		{
+			return (
+				<div className="evq-logs-elogs">
+					<Panel noborder left="" title="Last external logs" actions={actions}>
+						<table className="evenodd4">
+							<thead>
+								<tr>
+									<th style={{width: '10rem'}}>Channel</th>
+									<th style={{width: '10rem'}}>Date</th>
+									<th style={{width: '10rem'}}>Crit</th>
+									{this.renderGroupFieldsHeader()}
+									{this.renderChannelFieldsHeader()}
+								</tr>
+							</thead>
+							<tbody>
+								{ this.renderLogs() }
+							</tbody>
+						</table>
+					</Panel>
+				</div>
+			);
+		}
+		else
+		{
+			let group_name = this.state.filters.groupby;
+			if(group_name.substr(0,6)=='group_')
+				group_name = group_name.substr(6);
+			else if(group_name.substr(0,8)=='channel_')
+				group_name = group_name.substr(8);
+			
+			return (
+				<div className="evq-logs-elogs">
+					<Panel noborder left="" title="Last external logs" actions={actions}>
+						<table className="evenodd4">
+							<thead>
+								<tr>
+									<th style={{width: '16rem'}}>{group_name}</th>
+									<th className="left">Number</th>
+								</tr>
+							</thead>
+							<tbody>
+								{ this.renderGrouppedLogs() }
+							</tbody>
+						</table>
+					</Panel>
+				</div>
+			);
+		}
 	}
 	
 	render() {

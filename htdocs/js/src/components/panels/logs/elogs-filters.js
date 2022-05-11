@@ -272,6 +272,32 @@ export class ELogsFilters extends evQueueComponent {
 		);
 	}
 	
+	renderGroupBySelect() {
+		let values = [
+			{name: 'None', value: '', group: "General"},
+			{name: 'crit', value: 'crit', group: "General"}
+		];
+		
+		for(const field in this.state.group_fields)
+		{
+			if(this.state.group_fields[field]!='TEXT')
+				values.push({name: field, value: 'group_'+field, group: "Group fields"});
+		}
+		
+		for(const field in this.state.channel_fields)
+		{
+			if(this.state.channel_fields[field]!='TEXT')
+				values.push({name: field, value: 'channel_'+field, group: "Channel fields"});
+		}
+		
+		return (
+			<div>
+				<label>Group by</label>
+				<Select name="groupby" values={values} value={this.props.filters.groupby} filter={false} onChange={this.filterChange} />
+			</div>
+		);
+	}
+	
 	renderFilters(force = false) {
 		if(!force && !this.state.opened)
 			return;
@@ -302,6 +328,7 @@ export class ELogsFilters extends evQueueComponent {
 				{this.renderGroupFilters()}
 				{this.renderChannelFilters()}
 				{this.renderDateFilter()}
+				{this.renderGroupBySelect()}
 			</div>
 		);
 	}

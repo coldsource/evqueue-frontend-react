@@ -44,12 +44,9 @@ export class EditAlert extends evQueueComponent {
 			filters: {},
 			occurrences: 1,
 			period: 1,
-			groupby: '',
 			notifications: {}
 		};
 		
-		this.state.group_fields = {};
-		this.state.channel_fields = {};
 		this.state.notifications = [];
 		
 		this.dlg = React.createRef();
@@ -95,7 +92,6 @@ export class EditAlert extends evQueueComponent {
 					description: alert.description,
 					occurrences: alert.occurrences,
 					period: alert.period,
-					groupby: alert.groupby,
 					active: alert.active,
 					filters: filters,
 					notifications: notifications
@@ -164,27 +160,6 @@ export class EditAlert extends evQueueComponent {
 		this.setState({alert: alert, group_fields: group_fields, channel_fields: channel_fields});
 	}
 	
-	renderGroupBySelect() {
-		let values = [
-			{name: 'None', value: '', group: "General"},
-			{name: 'crit', value: 'crit', group: "General"}
-		];
-		
-		for(const field in this.state.group_fields)
-		{
-			if(this.state.group_fields[field]!='TEXT')
-				values.push({name: field, value: 'group_'+field, group: "Group fields"});
-		}
-		
-		for(const field in this.state.channel_fields)
-		{
-			if(this.state.channel_fields[field]!='TEXT')
-				values.push({name: field, value: 'channel_'+field, group: "Channel fields"});
-		}
-		
-		return (<Select name="groupby" values={values} value={this.state.alert.groupby} filter={false} onChange={this.onChange} />);
-	}
-	
 	save() {
 		let action = this.props.id?'edit':'create';
 		let action_name = this.props.id?'modified':'created';
@@ -196,7 +171,6 @@ export class EditAlert extends evQueueComponent {
 			description: alert.description,
 			occurrences: alert.occurrences,
 			period: alert.period,
-			groupby: alert.groupby,
 			filters: JSON.stringify(alert.filters),
 			active: alert.active,
 			notifications: JSON.stringify(alert.notifications)
@@ -275,10 +249,6 @@ export class EditAlert extends evQueueComponent {
 							<div>
 								<label>Time period (minutes)</label>
 								<InputSpinner type="text" name="period" value={alert.period} onChange={this.onChange} min="1" />
-							</div>
-							<div>
-								<label>Group by</label>
-								{this.renderGroupBySelect()}
 							</div>
 						</div>
 					</Tab>
