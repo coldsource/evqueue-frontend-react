@@ -189,7 +189,7 @@ export class ELogsFilters extends evQueueComponent {
 		if(this.props.onChange)
 			this.props.onChange({});
 		
-		this.setState({opened:false);
+		this.setState({opened:false});
 	}
 	
 	hasFilter() {
