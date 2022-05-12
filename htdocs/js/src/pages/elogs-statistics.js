@@ -54,7 +54,7 @@ export class PageELogsStatistics extends evQueueComponent {
 	
 	renderPartitions() {
 		return this.state.partitions.map(partition => {
-			let date = partition.name.substr(1,4)+'-'+partition.name.substr(5,2)+'-'+partition.name.substr(7,2);
+			let date = partition.name=='p0'?'N/A':partition.name.substr(1,4)+'-'+partition.name.substr(5,2)+'-'+partition.name.substr(7,2);
 			
 			return (
 				<tr key={partition.name}>
