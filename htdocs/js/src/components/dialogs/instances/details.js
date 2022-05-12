@@ -55,7 +55,7 @@ export class InstanceDetails extends evQueueComponent {
 	
 	componentDidMount() {
 		var api = { node:this.props.node, group:'instance',action:'query',attributes:{id:this.props.id} };
-		this.Subscribe('TASK_QUEUE',api,false,this.props.id,this.evQueueEventWorkflow);
+		this.Subscribe('TASK_ENQUEUE',api,false,this.props.id,this.evQueueEventWorkflow);
 		this.Subscribe('TASK_EXECUTE',api,false,this.props.id,this.evQueueEventWorkflow);
 		this.Subscribe('TASK_TERMINATE',api,false,this.props.id,this.evQueueEventWorkflow);
 		this.Subscribe('TASK_PROGRESS',api,true,this.props.id,this.evQueueEventWorkflow);
