@@ -135,6 +135,8 @@ export class HeaderMenu extends evQueueComponent {
 	
 	level1() {
 		return this.menu.map((entry, idx) => {
+			if(entry.label=='External Logs' && parseFloat(this.state.cluster.min_version)<3.3)
+				return;
 			return (
 				<li key={idx} className={this.state.sel1==idx?'selected':''} onClick={ () => this.setState({sel1:idx}) }>
 					<span className={'faicon '+entry.icon}></span>
@@ -147,9 +149,6 @@ export class HeaderMenu extends evQueueComponent {
 	
 	level2() {
 		return this.menu[this.state.sel1].submenu.map((entry, idx) => {
-			if(entry.label=='External Logs' && parseFloat(this.state.cluster.min_version)<3.3)
-				return;
-			
 			return (
 				<li key={idx}>
 					<a href={'?loc='+entry.url}>
