@@ -69,8 +69,8 @@ export class evQueueComponent extends React.Component {
 				nodes_versions: this.evqueue_event.GetVersions(),
 				nodes_modules: this.evqueue_event.GetModules(),
 				nodes_states: this.evqueue_event.GetStates(),
-				min_version: 0,
-				available_modules: {}
+				min_version: this.computeMinVersion(),
+				available_modules: this.computeAvailableModules()
 			},
 			subscriptions: 'PENDING'
 		};
@@ -253,14 +253,23 @@ export class evQueueComponent extends React.Component {
 		return this.event_dispatcher.Unsubscribe(this, event, object_id);
 	}
 	
-	clusterStateChanged(node, name, state, version, modules)
-	{
-		let min_version = this.state.cluster.min_version;
-		if(min_version==0 && version)
-			min_version = version;
-		else if(version<min_version && version)
-			min_version = version;
+	computeMinVersion() {
+		let min_version = 0;
+		let versions = this.evqueue_event.GetVersions();
+		for(let i=0;i<versions.length;i++)
+		{
+			let version = versions[i];
+			
+			if(min_version==0 && version)
+				min_version = version;
+			else if(version<min_version && version)
+				min_version = version;
+		}
 		
+		return min_version;
+	}
+	
+	computeAvailableModules() {
 		let nodes_modules = this.evqueue_event.GetModules();
 		let available_modules_arr = Object.keys(nodes_modules[0]);
 		for(let i=0;i<nodes_modules.length;i++)
@@ -270,13 +279,18 @@ export class evQueueComponent extends React.Component {
 		for(let i=0;i<available_modules_arr.length;i++)
 			available_modules[available_modules_arr[i]] = true;
 		
+		return available_modules;
+	}
+	
+	clusterStateChanged(node, name, state, version, modules)
+	{
 		this.setState({cluster: {
 			nodes_names: this.evqueue_event.GetNodes(),
 			nodes_versions: this.evqueue_event.GetVersions(),
 			nodes_modules: this.evqueue_event.GetModules(),
 			nodes_states: this.evqueue_event.GetStates(),
-			min_version: min_version,
-			available_modules: available_modules
+			min_version: this.computeMinVersion(),
+			available_modules: this.computeAvailableModules()
 		}});
 	}
 }
