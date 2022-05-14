@@ -39,11 +39,13 @@ export class evQueueCluster
 			evQueueCluster.global = {};
 			evQueueCluster.global.nodes_names = [];
 			evQueueCluster.global.nodes_versions = [];
+			evQueueCluster.global.nodes_modules = [];
 			evQueueCluster.global.nodes_states = [];
 			for(var i=0;i<nodes_desc.length;i++)
 			{
 				evQueueCluster.global.nodes_names.push('offline');
 				evQueueCluster.global.nodes_versions.push('');
+				evQueueCluster.global.nodes_modules.push([]);
 				evQueueCluster.global.nodes_states.push('DISCONNECTED');
 			}
 		}
@@ -79,6 +81,14 @@ export class evQueueCluster
 	GetVersions()
 	{
 		return evQueueCluster.global.nodes_versions.concat();
+	}
+	
+	/*
+	 * Returns the modules supported by the node
+	 */
+	GetModules()
+	{
+		return evQueueCluster.global.nodes_modules.concat();
 	}
 	
 	/*
@@ -213,10 +223,11 @@ export class evQueueCluster
 			this.nodes[i].Close();
 	}
 	
-	stateChange(node, name, state, version) {
-		var idx = this.GetNodeByCnx(node);
+	stateChange(node, name, state, version, modules) {
+		let idx = this.GetNodeByCnx(node);
 		evQueueCluster.global.nodes_names[idx] = name;
 		evQueueCluster.global.nodes_versions[idx] = version;
+		evQueueCluster.global.nodes_modules[idx] = modules;
 		evQueueCluster.global.nodes_states[idx] = state;
 		
 		if(this.stateChangeCallback!==undefined)

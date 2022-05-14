@@ -135,7 +135,7 @@ export class HeaderMenu extends evQueueComponent {
 	
 	level1() {
 		return this.menu.map((entry, idx) => {
-			if(entry.label=='External Logs' && parseFloat(this.state.cluster.min_version)<3.3)
+			if(entry.label=='External Logs' && this.state.cluster.available_modules.elogs!==true)
 				return;
 			return (
 				<li key={idx} className={this.state.sel1==idx?'selected':''} onClick={ () => this.setState({sel1:idx}) }>

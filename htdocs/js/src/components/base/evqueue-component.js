@@ -67,8 +67,10 @@ export class evQueueComponent extends React.Component {
 			cluster: {
 				nodes_names: this.evqueue_event.GetNodes(),
 				nodes_versions: this.evqueue_event.GetVersions(),
+				nodes_modules: this.evqueue_event.GetModules(),
 				nodes_states: this.evqueue_event.GetStates(),
-				min_version: 0
+				min_version: 0,
+				available_modules: {}
 			},
 			subscriptions: 'PENDING'
 		};
@@ -251,7 +253,7 @@ export class evQueueComponent extends React.Component {
 		return this.event_dispatcher.Unsubscribe(this, event, object_id);
 	}
 	
-	clusterStateChanged(node, name, state, version)
+	clusterStateChanged(node, name, state, version, modules)
 	{
 		let min_version = this.state.cluster.min_version;
 		if(min_version==0 && version)
@@ -259,11 +261,22 @@ export class evQueueComponent extends React.Component {
 		else if(version<min_version && version)
 			min_version = version;
 		
+		let nodes_modules = this.evqueue_event.GetModules();
+		let available_modules_arr = Object.keys(nodes_modules[0]);
+		for(let i=0;i<nodes_modules.length;i++)
+			available_modules_arr = available_modules_arr.filter(x => Object.keys(nodes_modules[i]).includes(x));
+		
+		let available_modules = {};
+		for(let i=0;i<available_modules_arr.length;i++)
+			available_modules[available_modules_arr[i]] = true;
+		
 		this.setState({cluster: {
 			nodes_names: this.evqueue_event.GetNodes(),
 			nodes_versions: this.evqueue_event.GetVersions(),
+			nodes_modules: this.evqueue_event.GetModules(),
 			nodes_states: this.evqueue_event.GetStates(),
-			min_version: min_version
+			min_version: min_version,
+			available_modules: available_modules
 		}});
 	}
 }

@@ -64,9 +64,21 @@ export class PageNodes extends evQueueComponent {
 		(seconds%60)+'s';
 	}
 	
+	renderModules(modules) {
+		return Object.keys(modules).map( name => {
+			return (
+				<div key={name}>
+					<div>Module</div>
+					<div>{name} (v{modules[name]})</div>
+				</div>
+			);
+		});
+	}
+	
 	renderStatus() {
 		return this.state.cluster.nodes_states.map( (node_state, idx) => {
 			let node = this.state.nodes_status[idx];
+			let modules = this.state.cluster.nodes_modules[idx];
 			
 			return (
 				<div key={idx} className="tabbed">
@@ -90,10 +102,7 @@ export class PageNodes extends evQueueComponent {
 						<div>Version</div>
 						<div>{node.version}</div>
 					</div>
-					<div>
-						<div>Git support</div>
-						<div>{node['git-support']}</div>
-					</div>
+					{this.renderModules(modules)}
 				</div>
 			);
 		});

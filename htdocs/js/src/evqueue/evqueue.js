@@ -29,6 +29,8 @@ export class evQueueWS
 		
 		this.state = 'DISCONNECTED'; // We start in disconnected state
 		this.name = 'offline'; // Name will be known upon connecton
+		this.version = '';
+		this.modules = [];
 		this.last_error = false;
 		this.api_promise = Promise.resolve(); // No previous query was run at this time
 	}
@@ -87,7 +89,7 @@ export class evQueueWS
 				
 				// Notify of state change
 				if(self.stateChange!==undefined)
-					self.stateChange(self.node, self.name, self.state);
+					self.stateChange(self.node, self.name, self.state, self.version, self.modules);
 			}
 			
 			self.ws.onmessage = function (event) {
@@ -118,9 +120,15 @@ export class evQueueWS
 					self.name = xmldoc.documentElement.getAttribute('node');
 					self.version = xmldoc.documentElement.getAttribute('version');
 					
+					let modules_it = xmldoc.evaluate('//module', xmldoc.documentElement);
+					let module;
+					self.modules = {};
+					while(module = modules_it.iterateNext())
+						self.modules[module.getAttribute('name')] = module.getAttribute('version');
+					
 					// Notify of state change
 					if(self.stateChange!==undefined)
-						self.stateChange(self.node, self.name, self.state, self.version);
+						self.stateChange(self.node, self.name, self.state, self.version, self.modules);
 					
 					resolve(); // We are now connected
 				}

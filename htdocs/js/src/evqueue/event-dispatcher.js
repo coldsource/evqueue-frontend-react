@@ -121,7 +121,7 @@ export class EventDispatcher {
 		this.handlers[external_id](data, ref);
 	}
 	
-	StateChange(node, name, state, version) {
+	StateChange(node, name, state, version, modules) {
 		var node_idx = this.evqueue_event.GetNodeByCnx(node);
 		
 		// Resubscribe events if node comes UP
@@ -145,6 +145,6 @@ export class EventDispatcher {
 		
 		// Notify subscribers
 		for(var i=0;i<this.cluster_handlers.length;i++)
-			this.cluster_handlers[i].handler(node, name, state, version);
+			this.cluster_handlers[i].handler(node, name, state, version, modules);
 	}
 }
