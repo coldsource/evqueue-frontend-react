@@ -185,7 +185,7 @@ export class EditChannelGroup extends evQueueComponent {
 				<h2>
 					Channel group properties
 					<Help>
-						Logging channels are used for external logging purpose. Each channel can have its own custom fields. A regular expression is used to extract data from the raw logged line.
+						Logging channels groups are used for external logging purpose. Channel groups are used to define common fields between all channels in the same group. Channel will inherit configuration from their group.
 					</Help>
 				</h2>
 				<div className="formdiv">

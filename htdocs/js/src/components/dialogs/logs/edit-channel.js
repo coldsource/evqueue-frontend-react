@@ -362,16 +362,16 @@ export class EditChannel extends evQueueComponent {
 		
 		return (
 			<Dialog ref={this.dlg} title={title} width="700">
-				<h2>
-					Channel properties
-					<Help>
-						Logging channels are used for external logging purpose. Each channel can have its own custom fields. A regular expression is used to extract data from the raw logged line.
-						<br /><br />Date can be automatically set to the reception date of the log line or you can choose to match it from regular expression capture group. In this case, you must specify a format patter to parse the date, see C function strptime for a list of allowed fields.
-						<br /><br />Criticality can be either fixed for all channel logs, or matched from the regular expression capture groupe.
-					</Help>
-				</h2>
 				<Tabs>
 					<Tab title="Fields">
+						<h2>
+							Channel fields
+							<Help>
+								Logging channels are used for external logging purpose. Each channel can have its own custom fields. A regular expression is used to extract data from the raw logged line.
+								<br /><br />Date can be automatically set to the reception date of the log line or you can choose to match it from regular expression capture group. In this case, you must specify a format patter to parse the date, see C function strptime for a list of allowed fields.
+								<br /><br />Criticality can be either fixed for all channel logs, or matched from the regular expression capture groupe.
+							</Help>
+						</h2>
 						<div className="formdiv">
 							<div>
 								<label>Name</label>
@@ -397,6 +397,14 @@ export class EditChannel extends evQueueComponent {
 						</div>
 					</Tab>
 					<Tab title="Matching">
+						<h2>
+							Fields match
+							<Help>
+								Here you can define the regular expression that will be used to match your logs. You have to write it with capture groups (using parenthesis) that will be used to captures fields values.
+								<br /><br />All fields must be bound to a valid capture group in your regular expression.
+								<br /><br />You can use the config checker to help writing regular expression by using a test log to see how your settings matches.
+							</Help>
+						</h2>
 						<button onClick={this.toggleConfigCheck}>{config_checker_label}</button>
 						<div className="formdiv">
 							<div>
