@@ -47,10 +47,19 @@ export class ELogs extends evQueueComponent {
 		this.evQueueEvent = this.evQueueEvent.bind(this);
 		this.nextPage = this.nextPage.bind(this);
 		this.previousPage = this.previousPage.bind(this);
+		this.bookmark = this.bookmark.bind(this);
 	}
 	
 	componentDidMount() {
-		this.updateFilters(App.getData(), {}, {}); // Subscribe events
+		let filters = {};
+		let preferences = JSON.parse(window.localStorage.preferences);
+		
+		if(Object.keys(App.getData()).length>0)
+			filters = Object.assign(filters, App.getData());
+		else if(preferences.elogs!==undefined && preferences.elogs.bookmark_filters!==undefined)
+			filters = Object.assign(filters, preferences.elogs.bookmark_filters);
+		
+		this.updateFilters(filters, {}, {}); // Subscribe events
 	}
 	
 	evQueueEvent(response) {
@@ -67,6 +76,26 @@ export class ELogs extends evQueueComponent {
 			channel_fields['channel_'+channel_fields_resp.response[i].name] = channel_fields_resp.response[i].type;
 		
 		this.setState({logs: data.response, group_fields: group_fields, channel_fields: channel_fields});
+	}
+	
+	bookmark() {
+		let preferences = JSON.parse(window.localStorage.preferences);
+		
+		if(preferences.elogs===undefined)
+			preferences.elogs = {};
+		
+		preferences.elogs.bookmark_filters = this.state.filters;
+		
+		this.simpleAPI({
+			group: 'user',
+			action: 'update_preferences',
+			attributes: {
+				name: window.localStorage.user,
+				preferences: JSON.stringify(preferences)
+			}
+		}, "Search filters bookmarked").then( () => {
+			window.localStorage.preferences = JSON.stringify(preferences);
+		});
 	}
 	
 	nextPage() {
@@ -217,7 +246,8 @@ export class ELogs extends evQueueComponent {
 	
 	renderLogsPannel() {
 		let actions = [
-			{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), callback:this.toggleAutorefresh}
+		{icon:'fa-star', callback:this.bookmark},
+		{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), callback:this.toggleAutorefresh}
 		];
 		
 		let current_page = this.state.current_page;
