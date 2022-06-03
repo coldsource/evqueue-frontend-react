@@ -274,7 +274,7 @@ export class ELogs extends evQueueComponent {
 								<tr>
 									<th style={{width: '10rem'}}>Channel</th>
 									<th style={{width: '10rem'}}>Date</th>
-									<th style={{width: '10rem'}}>Crit</th>
+									<th style={{width: '8rem'}}>Crit</th>
 									{this.renderGroupFieldsHeader()}
 									{this.renderChannelFieldsHeader()}
 								</tr>
