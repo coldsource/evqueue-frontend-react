@@ -31,7 +31,16 @@ export class ELogs extends evQueueComponent {
 		
 		this.state.logs = [];
 		
-		this.state.filters = App.getData();
+		// Init filters
+		let filters = {};
+		let preferences = JSON.parse(window.localStorage.preferences);
+		
+		if(Object.keys(App.getData()).length>0)
+			filters = Object.assign(filters, App.getData());
+		else if(preferences.elogs!==undefined && preferences.elogs.bookmark_filters!==undefined)
+			filters = Object.assign(filters, preferences.elogs.bookmark_filters);
+		
+		this.state.filters = filters;
 		this.state.group_fields = {};
 		this.state.channel_fields = {};
 		
@@ -51,15 +60,7 @@ export class ELogs extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		let filters = {};
-		let preferences = JSON.parse(window.localStorage.preferences);
-		
-		if(Object.keys(App.getData()).length>0)
-			filters = Object.assign(filters, App.getData());
-		else if(preferences.elogs!==undefined && preferences.elogs.bookmark_filters!==undefined)
-			filters = Object.assign(filters, preferences.elogs.bookmark_filters);
-		
-		this.updateFilters(filters, {}, {}); // Subscribe events
+		this.updateFilters(this.state.filters, {}, {}); // Subscribe events
 	}
 	
 	evQueueEvent(response) {
