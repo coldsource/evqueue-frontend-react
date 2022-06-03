@@ -34,13 +34,19 @@ export class ELogs extends evQueueComponent {
 		this.state.filters = App.getData();
 		this.state.group_fields = {};
 		this.state.channel_fields = {};
+		
 		this.state.details = {};
+		
+		this.state.current_page = 1;
+		this.items_per_page = 100;
 		
 		this.filters = React.createRef();
 		
 		this.updateFilters = this.updateFilters.bind(this);
 		this.toggleDetails = this.toggleDetails.bind(this);
 		this.evQueueEvent = this.evQueueEvent.bind(this);
+		this.nextPage = this.nextPage.bind(this);
+		this.previousPage = this.previousPage.bind(this);
 	}
 	
 	componentDidMount() {
@@ -63,7 +69,19 @@ export class ELogs extends evQueueComponent {
 		this.setState({logs: data.response, group_fields: group_fields, channel_fields: channel_fields});
 	}
 	
+	nextPage() {
+		this.setState({current_page: ++this.state.current_page});
+		this.updateFilters(this.state.filters);
+	}
+	
+	previousPage() {
+		this.setState({current_page: --this.state.current_page});
+		this.updateFilters(this.state.filters);
+	}
+	
 	updateFilters(filters = {}) {
+		filters.limit = this.items_per_page;
+		filters.offset = (this.state.current_page-1)*this.items_per_page;
 		this.setState({filters: filters});
 		
 		this.Unsubscribe('LOG_ELOG');
@@ -198,15 +216,28 @@ export class ELogs extends evQueueComponent {
 	}
 	
 	renderLogsPannel() {
-		var actions = [
+		let actions = [
 			{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), callback:this.toggleAutorefresh}
 		];
+		
+		let current_page = this.state.current_page;
+		let title = (
+			<span>
+				Last external logs
+				&#160;
+				{ current_page>1?(<span className="faicon fa-backward" onClick={this.previousPage}></span>):'' }
+				&#160;
+				{ (current_page-1)*this.items_per_page + 1 } - { current_page*this.items_per_page - (this.items_per_page - this.state.logs.length)}
+				{ this.state.logs.length==this.items_per_page?(<span className="faicon fa-forward" onClick={this.nextPage}></span>):''}
+			</span>
+			
+		);
 		
 		if(!this.state.filters.groupby)
 		{
 			return (
 				<div className="evq-logs-elogs">
-					<Panel noborder left="" title="Last external logs" actions={actions}>
+					<Panel noborder left="" title={title} actions={actions}>
 						<table className="evenodd4">
 							<thead>
 								<tr>
