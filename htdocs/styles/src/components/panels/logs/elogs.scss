@@ -1,0 +1,17 @@
+.evq-logs-elogs {
+	ul {
+		list-style-type: none;
+		margin: 0px;
+		padding-left: 1rem;
+		
+		li {
+			white-space: pre-wrap;
+			span.label {
+				display: inline-block;
+				width: 10rem;
+				font-weight: bold;
+				text-align: right;
+			}
+		}
+	}
+}

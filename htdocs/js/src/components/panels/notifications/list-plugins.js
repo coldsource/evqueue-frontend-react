@@ -30,6 +30,8 @@ export class ListNotificationPlugins extends evQueueComponent {
 		super(props);
 		
 		this.state.notification_types = [];
+		
+		this.syncBinaries = this.syncBinaries.bind(this);
 	}
 	
 	componentDidMount() {
@@ -63,6 +65,13 @@ export class ListNotificationPlugins extends evQueueComponent {
 		}, "Configuration saved");
 	}
 	
+	syncBinaries() {
+		this.simpleAPI({
+			group: 'control',
+			action: 'syncnotifications'
+		}, "All notification plugins binaries synchronized");
+	}
+	
 	renderList() {
 		return this.state.notification_types.map((type) => {
 			return (
@@ -79,9 +88,13 @@ export class ListNotificationPlugins extends evQueueComponent {
 	}
 	
 	render() {
+		let actions = [
+			{icon:'fa-download', title: "Sync plugins binaries to disk", callback:this.syncBinaries}
+		];
+		
 		return (
 			<div className="evq-notification-types-list">
-				<Panel noborder left="" title="Notification plugins">
+				<Panel noborder left="" title="Notification plugins" actions={actions}>
 					<table className="border">
 						<thead>
 							<tr>

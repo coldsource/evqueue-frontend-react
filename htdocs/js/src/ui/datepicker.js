@@ -181,9 +181,13 @@ export class DatePicker extends React.Component {
 	}
 	
 	render() {
+		let val = this.props.value;
+		if(val===undefined)
+			val = '';
+		
 		return (
 			<div ref={this.ref} className="evq-datepicker">
-				<input ref={this.input_ref} name={this.props.name} value={this.props.value} onChange={this.changeDate} onFocus={this._onFocus} type="text" />
+				<input ref={this.input_ref} name={this.props.name} value={val} onChange={this.changeDate} onFocus={this._onFocus} type="text" />
 				{this.renderCalendar()}
 			</div>
 		);

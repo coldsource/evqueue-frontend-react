@@ -31,12 +31,20 @@ export class Tabs extends React.Component {
 		}
 	}
 	
+	componentDidMount() {
+		if(this.props.onChange)
+			this.props.onChange(this.state.current);
+	}
+	
 	componentDidUpdate() {
 		if(this.context.onComponentUpdate)
 			this.context.onComponentUpdate();
 	}
 	
 	changeTab(idx) {
+		if(this.props.onChange)
+			this.props.onChange(idx);
+		
 		this.setState({current:idx});
 	}
 	

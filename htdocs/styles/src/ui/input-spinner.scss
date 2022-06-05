@@ -17,13 +17,15 @@ div.evq-input-spinner {
 	
 	span.evq-input-spinner-plus {
 		position: absolute;
-		top: 0.2rem;
+		top: 0.4rem;
 		right: 0.3rem;
+		line-height: 0.5rem;
 	}
 	
 	span.evq-input-spinner-minus {
 		position: absolute;
-		bottom: 0.2rem;
+		bottom: 0.3rem;
 		right: 0.3rem;
+		line-height: 0.5rem;
 	}
 }

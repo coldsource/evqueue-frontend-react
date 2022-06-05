@@ -30,6 +30,11 @@ import {PageUsers} from '../../pages/users.js';
 import {PageEngineLogs} from '../../pages/engine-logs.js';
 import {PageAPILogs} from '../../pages/api-logs.js';
 import {PageNotificationLogs} from '../../pages/notification-logs.js';
+import {PageELogsChannels} from '../../pages/elogs-channels.js';
+import {PageELogsChannelGroups} from '../../pages/elogs-channel-groups.js';
+import {PageELogsSearch} from '../../pages/elogs-search.js';
+import {PageELogsAlerts} from '../../pages/elogs-alerts.js';
+import {PageELogsStatistics} from '../../pages/elogs-statistics.js';
 import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
 import {PageNotificationTypes} from '../../pages/notification-types.js';
 import {PageNotification} from '../../pages/notification.js';
@@ -70,6 +75,7 @@ export class App extends React.Component {
 		this.state = {
 			path: url.hash,
 			get: get,
+			data: {},
 			ready: false,
 			config_error: '',
 			messages: [],
@@ -120,6 +126,7 @@ export class App extends React.Component {
 		App.warning = this.warning.bind(this);
 		App.changeURL = this.changeURL.bind(this);
 		App.getParameter = this.getParameter.bind(this);
+		App.getData = this.getData.bind(this);
 	}
 	
 	loadClusterConfig() {
@@ -230,14 +237,19 @@ export class App extends React.Component {
 		return this.state.get.get(name);
 	}
 	
-	changeURL(path)
+	getData() {
+		return this.state.data;
+	}
+	
+	changeURL(path, data = {})
 	{
 		let get = new URLSearchParams(path);
 		
 		window.history.pushState('','',path);
 		
 		this.setState({
-			get: get
+			get: get,
+			data: data
 		});
 	}
 	
@@ -323,6 +335,16 @@ export class App extends React.Component {
 			return (<PageNotificationLogs />);
 		else if(path=='logs-api')
 			return (<PageAPILogs />);
+		else if(path=='elogs-channel-groups')
+			return (<PageELogsChannelGroups />);
+		else if(path=='elogs-channels')
+			return (<PageELogsChannels />);
+		else if(path=='elogs-search')
+			return (<PageELogsSearch />);
+		else if(path=='elogs-alerts')
+			return (<PageELogsAlerts />);
+		else if(path=='elogs-stats')
+			return (<PageELogsStatistics />);
 		else if(path=='workflow-editor')
 			return (<PageWorkflowEditor />);
 		else if(path=='notification-plugins')

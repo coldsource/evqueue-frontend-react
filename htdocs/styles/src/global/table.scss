@@ -16,6 +16,24 @@ table {
 		line-height: 20px;
 		padding: 2px 3px;
 	}
+	
+	&.evenodd {
+		tr:nth-child(odd) {
+			background-color: white;
+		}
+		tr:nth-child(even) {
+			background-color: $evq-light-grey;
+		}
+	}
+	
+	&.evenodd4 {
+		tr:nth-child(4n+1), tr:nth-child(4n+2) {
+			background-color: white;
+		}
+		tr:nth-child(4n+3), tr:nth-child(4n+4) {
+			background-color: $evq-light-light-grey;
+		}
+	}
 }
 
 table.border {

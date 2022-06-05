@@ -82,7 +82,8 @@ export class ListNotifications extends evQueueComponent {
 			
 			return (
 				<tr key={notification.id}>
-					<td>{type}</td>
+					<td className="center">{type}</td>
+					<td className="center">{notification.scope}</td>
 					<td>{notification.name}</td>
 					<td className="tdActions">
 						<span className="faicon fa-cogs" title="Edit configuration" onClick={ (e) => this.editNotification(e, notification.type_id, notification.id) }/>
@@ -94,9 +95,10 @@ export class ListNotifications extends evQueueComponent {
 	}
 	
 	render() {
-		var actions = [
+		let actions = [
 			{icon:'fa-file-o', title: "Create new notification", callback:this.editNotification}
 		];
+		
 		return (
 			<div className="evq-notification-list">
 				<Panel noborder left="" title="Notifications" actions={actions}>
@@ -104,6 +106,7 @@ export class ListNotifications extends evQueueComponent {
 						<thead>
 							<tr>
 								<th style={{width: '16rem'}}>Type</th>
+								<th style={{width: '10rem'}}>Scope</th>
 								<th>Name</th>
 								<th className="tdActions">Actions</th>
 							</tr>

@@ -112,9 +112,14 @@ export class Autocomplete extends React.Component {
 	applyFilter() {
 		let filter;
 		if(this.props.multiple)
-			filter = this.state.value.toLowerCase()
+			filter = this.state.value;
 		else
-			filter = this.props.value.toLowerCase();
+			filter = this.props.value;
+		
+		if(filter!==undefined)
+			filter = filter.toLowerCase()
+		else
+			filter = '';
 		
 		if(filter=='')
 			return this.props.autocomplete;
@@ -194,6 +199,9 @@ export class Autocomplete extends React.Component {
 		};
 		
 		let input_value = this.props.multiple?this.state.value:this.props.value;
+		if(input_value===undefined)
+			input_value = '';
+		
 		let input_style = {
 			flexBasis: input_value.length<5?'5ch':input_value.length+'ch'
 		};

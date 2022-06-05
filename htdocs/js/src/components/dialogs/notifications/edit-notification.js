@@ -31,12 +31,13 @@ export class EditNotification extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
+		this.state.scope = 'WORKFLOW';
 		this.state.help = '';
 		this.state.fields = [];
 		this.state.base_config= {
 			type_id: this.props.type_id!==undefined?this.props.type_id:0,
 			name: '',
-			subscribe_all: 'yes'
+			subscribe_all: 'no'
 		};
 		this.state.notification_config = {};
 		
@@ -74,6 +75,9 @@ export class EditNotification extends evQueueComponent {
 		}).then( (xml) => {
 			let help = this.xpath("/response/plugin/configuration/notification",xml.documentElement)[0].help;
 			
+			let scope_attr = this.xpath("/response/notification_type/@scope",xml.documentElement);
+			let scope = scope_attr.length>0?scope_attr[0]:'WORKFLOW';
+			
 			let config_fields = this.xpath("/response/plugin/configuration/notification/field",xml.documentElement);
 			
 			if(id!==undefined)
@@ -90,7 +94,7 @@ export class EditNotification extends evQueueComponent {
 					
 					let notif_config = JSON.parse(atob(data.parameters));
 					
-					this.setState({help: help, fields: config_fields, base_config: base_config, notification_config: notif_config});
+					this.setState({scope: scope, help: help, fields: config_fields, base_config: base_config, notification_config: notif_config});
 					
 				});
 			}
@@ -100,7 +104,7 @@ export class EditNotification extends evQueueComponent {
 				for(let i=0;i<config_fields.length;i++)
 					notif_config[config_fields[i].name] = '';
 				
-				this.setState({help: help, fields: config_fields, notification_config: notif_config});
+				this.setState({scope: scope, help: help, fields: config_fields, notification_config: notif_config});
 			}
 		});
 	}
@@ -131,6 +135,18 @@ export class EditNotification extends evQueueComponent {
 		this.dlg.current.close();
 	}
 	
+	renderScopeForm() {
+		if(this.state.scope!='WORKFLOW')
+			return;
+		
+		return (
+			<div>
+				<label>Subscribe all workflows</label>
+				<Select name="subscribe_all" value={this.state.base_config.subscribe_all} values={[{name: 'yes', value: 'yes'},{name: 'no', value: 'no'}]} filter={false} onChange={this.onBaseChange} />
+			</div>
+		);
+	}
+	
 	render() {
 		return (
 			<Dialog ref={this.dlg} title="Edit notification configuration" width="700">
@@ -148,10 +164,7 @@ export class EditNotification extends evQueueComponent {
 						<label>Name</label>
 						<input type="text" name="name" value={this.state.base_config.name} onChange={this.onBaseChange} />
 					</div>
-					<div>
-						<label>Subscribe all workflows</label>
-						<Select name="subscribe_all" value={this.state.base_config.subscribe_all} values={[{name: 'yes', value: 'yes'},{name: 'no', value: 'no'}]} filter={false} onChange={this.onBaseChange} />
-					</div>
+					{this.renderScopeForm()}
 				</div>
 				<ConfigEditor fields={this.state.fields} values={this.state.notification_config} onChange={this.onNotificationChange} />
 				<button className="submit" onClick={ (e)=> this.save() }>Save notification</button>
