@@ -311,8 +311,8 @@ export class ELogs extends evQueueComponent {
 						<table className="evenodd4">
 							<thead>
 								<tr>
-									<th></th>
-									{this.renderFieldHeader('Channel', 'channel', '8rem')}
+									<th style={{width: '1rem'}}></th>
+									{this.renderFieldHeader('Channel', 'channel')}
 									{this.renderFieldHeader('Date', 'date', '10rem')}
 									{this.renderFieldHeader('Crit', 'crit', '7rem')}
 									{this.renderGroupFieldsHeader()}
