@@ -17,6 +17,8 @@ div.evq-workflow-schedules-list {
 		margin-left: 2rem;
 		font-style: italic;
 		color: grey;
+		max-width: 100%;
+		overflow-wrap: anywhere;
 	}
 	
 	th:nth-child(2) {
