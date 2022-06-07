@@ -226,7 +226,7 @@ export class ELogs extends evQueueComponent {
 	}
 	
 	renderChannelLogs(log) {
-		let ncols = 3 + Object.keys(this.state.group_fields).length + Object.keys(this.state.channel_fields).length;
+		let ncols = 4 + Object.keys(this.state.group_fields).length + Object.keys(this.state.channel_fields).length;
 		
 		if(this.state.details[log.id]===undefined)
 			return (<tr><td colSpan={ncols}></td></tr>);
