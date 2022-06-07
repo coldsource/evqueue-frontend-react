@@ -43,6 +43,7 @@ export class ELogs extends evQueueComponent {
 		this.state.filters = filters;
 		this.state.group_fields = {};
 		this.state.channel_fields = {};
+		this.state.hidden_fields = {};
 		
 		this.state.details = {};
 		
@@ -57,6 +58,7 @@ export class ELogs extends evQueueComponent {
 		this.nextPage = this.nextPage.bind(this);
 		this.previousPage = this.previousPage.bind(this);
 		this.bookmark = this.bookmark.bind(this);
+		this.toggleShowField = this.toggleShowField.bind(this);
 	}
 	
 	componentDidMount() {
@@ -153,37 +155,73 @@ export class ELogs extends evQueueComponent {
 		});
 	}
 	
+	toggleShowField(field) {
+		let hidden_fields = this.state.hidden_fields;
+		
+		if(hidden_fields[field]===undefined)
+			hidden_fields[field] = true;
+		else
+			delete hidden_fields[field];
+		
+		this.setState({hidden_fields: hidden_fields});
+	}
+	
+	renderFieldHeader(name, field, width = '') {
+		if(this.state.hidden_fields[field]!==undefined)
+		{
+			return (
+				<th key={field}>
+					<span className="action fa fa-eye" title={"Show "+name} onClick={e => this.toggleShowField(field)}></span>
+				</th>
+			);
+		}
+		
+		return (
+			<th key={field} style={width!=''?{width: width}:{}}><span className="action" title={"Hide "+name} onClick={e => this.toggleShowField(field)}>{name}</span></th>
+		);
+	}
+	
 	renderGroupFieldsHeader() {
 		return Object.keys(this.state.group_fields).map(field => {
-			return (
-				<th key={'group_'+field}>{field.substr(6)}</th>
-			);
+			return this.renderFieldHeader(field.substr(6), field);
 		});
 	}
 	
 	renderChannelFieldsHeader() {
 		return Object.keys(this.state.channel_fields).map(field => {
-			return (
-				<th key={'channel_'+field}>{field.substr(8)}</th>
-			);
+			return this.renderFieldHeader(field.substr(8), field);
 		});
+	}
+	
+	renderField(log, field, add_class = '') {
+		if(this.state.hidden_fields[field]!==undefined)
+			return (<td key={field}></td>);
+		
+		let field_type = 'TEXT';
+		if(field.substr(0,6)=='group_')
+			field_type = this.state.group_fields[field];
+		else if(field.substr(0,8)=='channel_')
+			field_type = this.state.channel_fields[field];
+		
+		let css_class = "center";css_class
+		if(add_class!='')
+			css_class += " "+add_class;
+		
+		if(field_type!='TEXT')
+			return (<td key={field} className={css_class}><span className="action" onClick={(e) => this.setFilter('filter_'+field, log[field])}>{log[field]}</span></td>);
+		else
+			return (<td key={field} className={css_class}><span>{log[field]}</span></td>);
 	}
 	
 	renderGroupFields(log) {
 		return Object.keys(this.state.group_fields).map(field => {
-			if(this.state.group_fields[field]!='TEXT')
-				return (<td key={field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_'+field, log[field])}>{log[field]}</span></td>);
-			else
-				return (<td key={field} className="center"><span>{log[field]}</span></td>);
+			return this.renderField(log, field);
 		});
 	}
 	
 	renderChannelFields(log) {
 		return Object.keys(this.state.channel_fields).map(field => {
-			if(this.state.channel_fields[field]!='TEXT')
-				return (<td key={field} className="center"><span className="action" onClick={(e) => this.setFilter('filter_'+field, log[field])}>{log[field]}</span></td>);
-			else
-				return (<td key={field} className="center"><span>{log[field]}</span></td>);
+			return this.renderField(log, field);
 		});
 	}
 	
@@ -220,9 +258,10 @@ export class ELogs extends evQueueComponent {
 			return (
 				<React.Fragment key={idx}>
 					<tr>
-						<td className="left"><span className={this.state.details[log.id]===undefined?"faicon fa-plus":"faicon fa-minus"} onClick={e => this.toggleDetails(log.id)}></span> {log.channel}</td>
-						<td className="center">{log.date}</td>
-						<td className="center" className={"center bold "+log.crit}>{log.crit}</td>
+						<td className="left"><span className={this.state.details[log.id]===undefined?"faicon fa-plus":"faicon fa-minus"} onClick={e => this.toggleDetails(log.id)}></span></td>
+						{this.renderField(log, 'channel')}
+						{this.renderField(log, 'date')}
+						{this.renderField(log, 'crit', "center bold "+log.crit)}
 						{this.renderGroupFields(log)}
 						{this.renderChannelFields(log)}
 					</tr>
@@ -247,8 +286,8 @@ export class ELogs extends evQueueComponent {
 	
 	renderLogsPannel() {
 		let actions = [
-		{icon:'fa-star', callback:this.bookmark},
-		{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), callback:this.toggleAutorefresh}
+		{icon:'fa-star', title:'Bookmark filters', callback:this.bookmark},
+		{icon:'fa-refresh '+(this.state.refresh?' fa-spin':''), title:'Toggle autorefresh', callback:this.toggleAutorefresh}
 		];
 		
 		let current_page = this.state.current_page;
@@ -272,9 +311,10 @@ export class ELogs extends evQueueComponent {
 						<table className="evenodd4">
 							<thead>
 								<tr>
-									<th style={{width: '10rem'}}>Channel</th>
-									<th style={{width: '10rem'}}>Date</th>
-									<th style={{width: '8rem'}}>Crit</th>
+									<th style={{width: '1rem'}}></th>
+									{this.renderFieldHeader('Channel', 'channel')}
+									{this.renderFieldHeader('Date', 'date', '10rem')}
+									{this.renderFieldHeader('Crit', 'crit', '7rem')}
 									{this.renderGroupFieldsHeader()}
 									{this.renderChannelFieldsHeader()}
 								</tr>
