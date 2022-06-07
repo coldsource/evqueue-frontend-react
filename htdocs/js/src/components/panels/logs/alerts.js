@@ -73,9 +73,9 @@ export class Alerts extends evQueueComponent {
 			if(alert.groupby)
 			{
 				if(alert.groupby.substr(0, 6)=='group_')
-					trigger_desc += ' / '+alert.groupby.substr(6)+' (group)';
+					trigger_desc += ' / '+alert.groupby.substr(6);
 				else if(alert.groupby.substr(0, 8)=='channel_')
-					trigger_desc += ' / '+alert.groupby.substr(8)+' (channel)';
+					trigger_desc += ' / '+alert.groupby.substr(8);
 			}
 			if(alert.period==1)
 				trigger_desc += ' / minute';
