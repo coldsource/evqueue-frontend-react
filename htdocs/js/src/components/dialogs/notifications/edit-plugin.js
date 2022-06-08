@@ -22,6 +22,7 @@
 import {Dialog} from '../../../ui/dialog.js';
 import {Help} from '../../../ui/help.js';
 import {ConfigEditor} from '../../base/config-editor.js';
+import {Base64Utils} from '../../../utils/base64.js';
 
 import {evQueueComponent} from '../../base/evqueue-component.js';
 
@@ -71,7 +72,7 @@ export class EditNotificationPlugin extends evQueueComponent {
 						config[config_fields[i].name] = '';
 				}
 				else
-					config = JSON.parse(atob(json));
+					config = JSON.parse(Base64Utils.decodeUTF8(json));
 				
 				this.setState({help: help, fields: config_fields, values: config});
 			});
@@ -82,7 +83,7 @@ export class EditNotificationPlugin extends evQueueComponent {
 		this.simpleAPI({
 			group: 'notification_type',
 			action: 'set_conf',
-			attributes: {id: this.props.id, content: btoa(JSON.stringify(this.state.values))}
+			attributes: {id: this.props.id, content: Base64Utils.encodeUTF8(JSON.stringify(this.state.values))}
 		}, "Configuration saved");
 	}
 	

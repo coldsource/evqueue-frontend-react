@@ -26,6 +26,7 @@ import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
 import {NotificationTypeSelector} from '../../base/notification-type-selector.js';
 import {ConfigEditor} from '../../base/config-editor.js';
+import {Base64Utils} from '../../../utils/base64.js';
 
 export class EditNotification extends evQueueComponent {
 	constructor(props) {
@@ -92,7 +93,7 @@ export class EditNotification extends evQueueComponent {
 					base_config.subscribe_all = data.subscribe_all;
 					base_config.name = data.name;
 					
-					let notif_config = JSON.parse(atob(data.parameters));
+					let notif_config = JSON.parse(Base64Utils.decodeUTF8(data.parameters));
 					
 					this.setState({scope: scope, help: help, fields: config_fields, base_config: base_config, notification_config: notif_config});
 					
@@ -120,7 +121,7 @@ export class EditNotification extends evQueueComponent {
 			type_id: this.state.base_config.type_id,
 			name: this.state.base_config.name,
 			subscribe_all: this.state.base_config.subscribe_all,
-			parameters: btoa(JSON.stringify(this.state.notification_config))
+			parameters: Base64Utils.encodeUTF8(JSON.stringify(this.state.notification_config))
 		}
 		
 		if(this.props.id!==undefined)
