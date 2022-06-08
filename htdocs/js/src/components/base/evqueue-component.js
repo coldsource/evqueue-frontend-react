@@ -86,15 +86,12 @@ export class evQueueComponent extends React.Component {
 	}
 	
 	toggleAutorefresh() {
+		if(this.state.refresh)
+			this.event_dispatcher.Block(this);
+		else
+			this.event_dispatcher.Unblock(this);
+		
 		this.setState({refresh:!this.state.refresh});
-	}
-	
-	shouldComponentUpdate(nextProps, nextState) {
-		if(nextState.refresh)
-			return true;
-		else if(this.state.refresh)
-			return true;
-		return false;
 	}
 	
 	xpath(xpath,context)

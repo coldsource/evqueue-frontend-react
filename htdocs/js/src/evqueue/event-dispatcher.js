@@ -37,6 +37,8 @@ export class EventDispatcher {
 		// States for evqueue events
 		this.external_id = 0;
 		this.handlers = {};
+		this.instances = {};
+		this.instances_blocked = new Set();
 		this.external_id_ref = {};
 		this.subscriptions = [];
 		
@@ -79,6 +81,7 @@ export class EventDispatcher {
 		// Store state
 		var external_id = ++this.external_id;
 		this.handlers[external_id] = handler;
+		this.instances[external_id] = instance;
 		this.external_id_ref[external_id] = api.ref;
 		this.subscriptions.push({
 			event:event,
@@ -106,6 +109,7 @@ export class EventDispatcher {
 				
 				subscriptions.splice(i,1);
 				delete this.handlers[external_id];
+				delete this.instances[external_id];
 				delete this.external_id_ref[external_id];
 				
 				this.evqueue_event.Unsubscribe(sub_event, sub_external_id, sub_object_id);
@@ -113,11 +117,26 @@ export class EventDispatcher {
 				i--;
 			}
 		}
+		
+		this.instances_blocked.delete(instance);
+	}
+	
+	Block(instance) {
+		this.instances_blocked.add(instance);
+	}
+	
+	Unblock(instance) {
+		this.instances_blocked.delete(instance);
 	}
 	
 	Dispatch(data) {
-		var external_id = parseInt(data.documentElement.getAttribute('external-id'));
-		var ref = this.external_id_ref[external_id];
+		let external_id = parseInt(data.documentElement.getAttribute('external-id'));
+		let ref = this.external_id_ref[external_id];
+		
+		let instance = this.instances[external_id];
+		if(this.instances_blocked.has(instance))
+			return;
+		
 		this.handlers[external_id](data, ref);
 	}
 	
