@@ -202,6 +202,24 @@ export class ELogsFilters extends evQueueComponent {
 		return false;
 	}
 	
+	renderFilterClean(name, val) {
+		if(val=='')
+			return;
+		
+		return (<span className="fa fa-remove action" onClick={ e => this.filterChange({target: {name: name, value: ''}}) }></span>);
+	}
+	
+	renderFilter(prefix, name, val) {
+		return (
+			<div key={prefix + name}>
+				<label>{name}</label>
+				<input type="text" name={prefix + name} value={val} onChange={this.filterChange} />
+				&#160;&#160;
+				{this.renderFilterClean(prefix + name, val)}
+			</div>
+		);
+	}
+	
 	renderGroupFilters() {
 		return Object.keys(this.state.group_fields).map(name => {
 			let type = this.state.group_fields[name];
@@ -213,12 +231,7 @@ export class ELogsFilters extends evQueueComponent {
 			if(val===undefined)
 				val = '';
 			
-			return (
-				<div key={name}>
-					<label>{name}</label>
-					<input type="text" name={"filter_group_"+name} value={val} onChange={this.filterChange} />
-				</div>
-			);
+			return this.renderFilter("filter_group_", name, val);
 		});
 	}
 	
@@ -233,12 +246,7 @@ export class ELogsFilters extends evQueueComponent {
 			if(val===undefined)
 				val = '';
 			
-			return (
-				<div key={name}>
-					<label>{name}</label>
-					<input type="text" name={"filter_channel_"+name} value={val} onChange={this.filterChange} />
-				</div>
-			);
+			return this.renderFilter("filter_channel_", name, val);
 		});
 	}
 	
