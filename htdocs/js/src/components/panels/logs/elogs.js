@@ -103,18 +103,23 @@ export class ELogs extends evQueueComponent {
 	
 	nextPage() {
 		this.setState({current_page: ++this.state.current_page});
-		this.updateFilters(this.state.filters);
+		this.updateFilters(this.state.filters, false);
 	}
 	
 	previousPage() {
 		this.setState({current_page: --this.state.current_page});
-		this.updateFilters(this.state.filters);
+		this.updateFilters(this.state.filters, false);
 	}
 	
-	updateFilters(filters = {}) {
+	updateFilters(filters = {}, reset_current_page = true) {
 		filters.limit = this.items_per_page;
 		filters.offset = (this.state.current_page-1)*this.items_per_page;
-		this.setState({filters: filters});
+		
+		let current_page = this.state.current_page;
+		if(reset_current_page)
+			current_page = 1;
+		
+		this.setState({filters: filters, current_page: current_page});
 		
 		this.Unsubscribe('LOG_ELOG');
 		
