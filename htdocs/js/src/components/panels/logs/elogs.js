@@ -113,11 +113,12 @@ export class ELogs extends evQueueComponent {
 	
 	updateFilters(filters = {}, reset_current_page = true) {
 		filters.limit = this.items_per_page;
-		filters.offset = (this.state.current_page-1)*this.items_per_page;
 		
 		let current_page = this.state.current_page;
 		if(reset_current_page)
 			current_page = 1;
+		
+		filters.offset = (current_page-1)*this.items_per_page;
 		
 		this.setState({filters: filters, current_page: current_page});
 		
