@@ -96,10 +96,16 @@ export class EditWorkflowSchedule extends evQueueComponent {
 			this.API({
 				group: 'workflow_schedule',
 				action: 'get',
-				attributes: {id: this.props.id}	
+				attributes: {id: this.props.id}
 			}).then( (response) => {
 				let workflow_schedule = this.state.workflow_schedule;
+				
 				Object.assign(workflow_schedule, this.parseResponse(response).response[0]);
+				
+				let parameters = this.parseResponse(response, "/response/workflow_schedule/*").response;
+				workflow_schedule.workflow_parameters = {};
+				for(let i=0;i<parameters.length;i++)
+					workflow_schedule.workflow_parameters[parameters[i].name] = parameters[i].value;
 				
 				// Parse schedule
 				let schedule_parts = workflow_schedule.schedule.split(';');
@@ -353,7 +359,7 @@ export class EditWorkflowSchedule extends evQueueComponent {
 	
 	render() {
 		let workflow_schedule = this.state.workflow_schedule;
-		let title = this.props.id?"Edit schedule « "+workflow_schedule.name+" »":"Create new schedule";
+		let title = this.props.id?"Edit schedule":"Create new schedule";
 		let submit = this.props.id?"Edit schedule":"Create schedule";
 		
 		return (
