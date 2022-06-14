@@ -39,7 +39,7 @@ export class ChannelGroupSelector extends evQueueComponent {
 	evQueueEvent(response) {
 		let data = this.parseResponse(response);
 		
-		let channelgroups = [{name: 'All groups', value: 0}];;
+		let channelgroups = [{name: 'All groups', value: 0}];
 		for(let i=0;i<data.response.length;i++)
 			channelgroups.push({name: data.response[i].name, value: parseInt(data.response[i].id)});
 		
