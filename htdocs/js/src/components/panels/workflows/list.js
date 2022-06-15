@@ -203,17 +203,17 @@ export class WorkflowsList extends evQueueComponent {
 				var same_git_version = (git_workflow.lastcommit==workflow.lastcommit);
 				var git_status;
 				var git_msg;
-				if(same_git_version && workflow.modified==0)
+				if(same_git_version && git_workflow.modified==0)
 				{
 					git_status = 'uptodate';
 					git_msg = "Up-to-date with git version";
 				}
-				else if(same_git_version && workflow.modified==1)
+				else if(same_git_version && git_workflow.modified==1)
 				{
 					git_status = 'needpush';
 					git_msg = "You have local modifications that can be pushed to git";
 				}
-				else if(workflow.lastcommit!='' && !same_git_version && workflow.modified==0)
+				else if(workflow.lastcommit!='' && !same_git_version && git_workflow.modified==0)
 				{
 					git_status = 'needpull';
 					git_msg = "Git version is more recent, update local version to avoid conflicts";
