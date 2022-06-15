@@ -34,7 +34,7 @@ export class Alerts extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		let api = {group:'alerts',action:'list'};
+		let api = {node:'*', group:'alerts',action:'list'};
 		
 		this.Subscribe('ALERT_CREATED',api,false);
 		this.Subscribe('ALERT_MODIFIED',api,false);

@@ -31,7 +31,7 @@ export class AlertTriggers extends evQueueComponent {
 }
 	
 	componentDidMount() {
-		let api = {group:'alert_triggers',action:'list'};
+		let api = {node:'*', group:'alert_triggers',action:'list'};
 		
 		this.Subscribe('ALERT_TRIGGER',api,true);
 	}
