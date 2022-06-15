@@ -128,10 +128,11 @@ export class ExecutingInstances extends ListInstances {
 	}
 	
 	WorkflowStatus(wf) {
-		if(wf.running_tasks - wf.queued_tasks > 0)
+		let queued_tasks = wf.queued_tasks!==undefined?wf.queued_tasks:0;
+		if(wf.running_tasks - queued_tasks > 0)
 			return <span className="fa fa-spinner fa-pulse fa-fw" title="Task(s) running"></span>;
 		
-		if(wf.queued_tasks > 0)
+		if(queued_tasks > 0)
 			return <span className="faicon fa-hand-stop-o" title="Task(s) queued"></span>;
 		
 		if(wf.retrying_tasks > 0)
