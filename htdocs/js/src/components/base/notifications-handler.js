@@ -62,7 +62,7 @@ export class NotificationsHandler extends evQueueComponent {
 				{
 					App.changeURL('?loc=elogs-search', filters);
 					
-					let tab = App.wrapper.tabs.getCurrent(t => App.wrapper.tabs.update(t.id, {active: true}));
+					App.wrapper.tabs.getCurrent(t => App.wrapper.tabs.update(t.id, {active: true}));
 				}
 			});
 			
@@ -87,6 +87,8 @@ export class NotificationsHandler extends evQueueComponent {
 			App.wrapper.notifications.onClicked.addListener(e => { 
 				if(e=='instance')
 					App.changeURL('?loc=home', {filter_id: instance.id});
+				
+					App.wrapper.tabs.getCurrent(t => App.wrapper.tabs.update(t.id, {active: true}));
 			});
 			
 			App.wrapper.notifications.create("instance", {
