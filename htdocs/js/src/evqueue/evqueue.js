@@ -215,6 +215,17 @@ export class evQueueWS
 		var old_api_promise = self.api_promise;
 		self.api_promise = new Promise(function(resolve, reject) {
 			old_api_promise.then( () => {
+				if(api.required_modules!==undefined)
+				{
+					for(let i=0;i<api.required_modules.length;i++)
+					{
+						if(self.modules[api.required_modules[i]]===undefined)
+						{
+							resolve();
+							return; // Skip api command as requirements are not met
+						}
+					}
+				}
 				var api_cmd = self.build_api_xml(api);
 				self.ws.send(api_cmd);
 				if(self.callback!==undefined)

@@ -244,9 +244,9 @@ export class evQueueCluster
 	 */
 	Subscribe(event,api,send_now,object_id,external_id)
 	{
-		var api_cmd_b64 = btoa(this.BuildAPI(api));
+		let api_cmd_b64 = btoa(this.BuildAPI(api));
 		
-		var attributes = {
+		let attributes = {
 			type: event,
 			api_cmd: api_cmd_b64,
 			send_now: (send_now?'yes':'no')
@@ -258,12 +258,17 @@ export class evQueueCluster
 		if(object_id)
 			attributes.object_id = object_id;
 		
-		return this.API({
+		let cmd = {
 			node: api.node,
 			group: 'event',
 			action: 'subscribe',
 			attributes: attributes
-		});
+		};
+		
+		if(api.required_modules!==undefined)
+			cmd.required_modules = api.required_modules;
+		
+		return this.API(cmd);
 	}
 	
 	/*
