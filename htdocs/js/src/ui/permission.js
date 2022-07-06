@@ -19,26 +19,44 @@
 
 'use strict';
 
-import {EventsUtils} from '../utils/events.js';
+import {App} from '../components/base/app.js';
+import {Checkbox} from './checkbox.js';
 
-export class Checkbox extends React.Component {
+export class Permission extends React.Component {
 	constructor(props) {
 		super(props);
+		
+		this.state = {
+			granted: false
+		};
+		
+		App.wrapper.permissions.contains({permissions: [this.props.name]}, granted => {
+			this.setState({granted: granted});
+		});
 		
 		this.changeValue = this.changeValue.bind(this);
 	}
 	
 	changeValue(e) {
-		let value = this.props.value!==undefined?this.props.value:false;
-		
-		if(this.props.onChange)
-			this.props.onChange(EventsUtils.createEvent(this.props.name, !value));
+		if(!this.state.granted)
+		{
+			App.wrapper.permissions.request({
+				permissions: [this.props.name]
+			}, (granted) => {
+				if (granted)
+					this.setState({granted: true});
+			});
+		}
+		else
+		{
+			App.wrapper.permissions.remove({permissions: [this.props.name]});
+			this.setState({granted: false});
+		}
 	}
 	
 	render() {
-		let icon = this.props.value?'fa-check-square-o':'fa-square-o';
 		return (
-			<span className={"evq-checkbox faicon "+icon} onClick={ this.changeValue }></span>
+			<Checkbox name="granted" value={this.state.granted} onChange={this.changeValue} />
 		);
 	}
 }

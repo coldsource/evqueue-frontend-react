@@ -33,11 +33,15 @@ export class TerminatedInstances extends ListInstances {
 		this.state.current_page = 1;
 		this.items_per_page = 30;
 		
+		let appdata = App.getData();
+		
 		if(App.getParameter('filter_schedule_id'))
 			this.state.search_filters.filter_schedule_id = App.getParameter('filter_schedule_id');
-		
-		if(App.getParameter('filter_id'))
+		else if(App.getParameter('filter_id'))
 			this.state.search_filters.filter_id = App.getParameter('filter_id');
+		else if(Object.keys(appdata).length>0)
+			this.state.search_filters = Object.assign({}, appdata);
+		
 		
 		// Bind actions
 		this.nextPage = this.nextPage.bind(this);
@@ -50,6 +54,12 @@ export class TerminatedInstances extends ListInstances {
 	componentDidMount() {
 		// Subscribe to events
 		this.updateFilters(this.state.search_filters);
+	}
+	
+	componentDidUpdate(prevState) {
+		let appdata = App.getData();
+		if(Object.keys(appdata).length>0)
+			this.updateFilters(appdata);
 	}
 	
 	workflowDuration(wf) {

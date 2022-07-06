@@ -35,8 +35,9 @@ export class ELogs extends evQueueComponent {
 		let filters = {};
 		let preferences = JSON.parse(window.localStorage.preferences);
 		
-		if(Object.keys(App.getData()).length>0)
-			filters = Object.assign(filters, App.getData());
+		let appdata = App.getData();
+		if(Object.keys(appdata).length>0)
+			filters = Object.assign(filters, appdata);
 		else if(preferences.elogs!==undefined && preferences.elogs.bookmark_filters!==undefined)
 			filters = Object.assign(filters, preferences.elogs.bookmark_filters);
 		
@@ -63,6 +64,12 @@ export class ELogs extends evQueueComponent {
 	
 	componentDidMount() {
 		this.updateFilters(this.state.filters, {}, {}); // Subscribe events
+	}
+	
+	componentDidUpdate(prevState) {
+		let appdata = App.getData();
+		if(Object.keys(appdata).length>0)
+			this.updateFilters(appdata);
 	}
 	
 	evQueueEvent(response) {

@@ -23,6 +23,7 @@ import {App} from '../../base/app.js';
 import {NodeSelector} from '../../base/node-selector.js';
 import {Dialog} from '../../../ui/dialog.js';
 import {Help} from '../../../ui/help.js';
+import {Permission} from '../../../ui/permission.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
 import {CryptoJS} from '../../../evqueue/cryptojs/core.js';
 
@@ -86,6 +87,18 @@ export class EditUserPreferences extends evQueueComponent {
 		});
 	}
 	
+	renderNotifications() {
+		if(App.wrap_context!='extension')
+			return;
+		
+		return (
+			<div>
+				<label>Notifications</label>
+				<Permission name="notifications" />
+			</div>
+		);
+	}
+	
 	render() {
 		let preferences = this.state.preferences;
 		
@@ -112,6 +125,7 @@ export class EditUserPreferences extends evQueueComponent {
 						<label>Preferred node</label>
 						<NodeSelector name="preferred_node" value={preferences.preferred_node} onChange={this.onChange} />
 					</div>
+					{this.renderNotifications()}
 				</div>
 				<button className="submit" onClick={this.save}>Save preferences</button>
 			</Dialog>

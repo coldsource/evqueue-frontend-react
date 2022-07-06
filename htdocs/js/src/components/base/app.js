@@ -46,6 +46,7 @@ import {Page404} from '../../pages/404.js';
 import {PageAuth} from '../../pages/auth.js';
 import {PageSettings} from '../../pages/settings.js';
 import {LS} from '../../utils/local-storage.js';
+import {NotificationsHandler} from './notifications-handler.js';
 
 export class App extends React.Component {
 	constructor(props) {
@@ -56,16 +57,24 @@ export class App extends React.Component {
 		{
 			// Chrome
 			if(chrome.storage!==undefined)
+			{
 				this.wrap_context = 'extension';
+				this.wrapper = chrome;
+			}
 		}
 		else
 		{
 			// Firefrox
 			if(typeof(browser)!='undefined' && browser.storage!==undefined)
+			{
 				this.wrap_context = 'extension';
+				this.wrapper = browser;
+			}
 		}
 		
 		App.wrap_context = this.wrap_context;
+		if(this.wrap_context=='extension')
+			App.wrapper = this.wrapper;
 		
 		App.global = {instance: this};
 		
@@ -238,7 +247,10 @@ export class App extends React.Component {
 	}
 	
 	getData() {
-		return this.state.data;
+		let data = Object.assign({}, this.state.data);
+		if(Object.keys(data).length>0)
+			this.setState({data: {}});
+		return data;
 	}
 	
 	changeURL(path, data = {})
@@ -377,6 +389,13 @@ export class App extends React.Component {
 		});
 	}
 	
+	renderNotificationsHandler() {
+		if(App.global.cluster_config===undefined)
+			return;
+		
+		return (<NotificationsHandler />);
+	}
+	
 	render() {
 		if(!this.state.ready)
 			return (<div></div>);
@@ -399,6 +418,7 @@ export class App extends React.Component {
 		
 		return (
 			<div>
+				{ this.renderNotificationsHandler() }
 				{ this.route() }
 				<div className="evq-messages">
 					{ this.renderMessages() }
