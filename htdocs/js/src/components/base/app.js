@@ -207,6 +207,7 @@ export class App extends React.Component {
 						
 						clusters_config[name] = {
 							color: cluster.color,
+							disable_notifications: cluster.disable_notifications,
 							nodes: nodes
 						};
 					}
@@ -391,6 +392,10 @@ export class App extends React.Component {
 	
 	renderNotificationsHandler() {
 		if(App.global.cluster_config===undefined)
+			return;
+		
+		let path = this.getPath();
+		if(path=='auth' || path=='settings' || !this.isAuthenticated())
 			return;
 		
 		return (<NotificationsHandler />);

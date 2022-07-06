@@ -42,6 +42,10 @@ export class NotificationsHandler extends evQueueComponent {
 	}
 	
 	evQueueEventELogs(data) {
+		let env = window.localStorage.getItem('env');
+		if(App.global.clusters_config[env].disable_notifications===true)
+			return;
+		
 		let trigger = this.parseResponse(data).response[0];
 		
 		let filters = JSON.parse(trigger.filters);
@@ -76,6 +80,10 @@ export class NotificationsHandler extends evQueueComponent {
 	}
 	
 	evQueueEventInstance(data) {
+		let env = window.localStorage.getItem('env');
+		if(App.global.clusters_config[env].disable_notifications===true)
+			return;
+		
 		let instance = this.parseResponse(data).response[0];
 		if(instance.errors==0)
 			return;

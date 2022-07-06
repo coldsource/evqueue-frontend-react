@@ -23,6 +23,7 @@ import {App} from '../components/base/app.js';
 import {CryptoJS} from '../evqueue/cryptojs/core.js';
 import {Tabs} from '../ui/tabs.js';
 import {Tab} from '../ui/tab.js';
+import {Checkbox} from '../ui/checkbox.js';
 import {LS} from '../utils/local-storage.js';
 
 export class PageSettings extends React.Component {
@@ -32,6 +33,7 @@ export class PageSettings extends React.Component {
 		this.state = {
 			new_name: '',
 			new_color: '#f0f0f0',
+			disable_notifications: false,
 			clusters: {}
 		};
 		
@@ -69,6 +71,7 @@ export class PageSettings extends React.Component {
 			user: '',
 			password: '',
 			password_clear: '',
+			disable_notifications: false,
 			color: color
 		};
 		
@@ -167,6 +170,10 @@ export class PageSettings extends React.Component {
 							<div>
 								<label>Password</label>
 								<input type="password" name="password_clear" placeholder="Leave empty to keep old password" value={cluster.password_clear} onChange={ (e) => this.onChange(e, name) } />
+							</div>
+							<div>
+								<label>Disable notifications</label>
+								<Checkbox name="disable_notifications" value={cluster.disable_notifications} onChange={ (e) => this.onChange(e, name) } />
 							</div>
 							<div>
 								<label>Color</label>
