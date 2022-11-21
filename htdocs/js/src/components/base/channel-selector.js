@@ -32,9 +32,6 @@ export class ChannelSelector extends evQueueComponent {
 	componentDidMount() {
 		let api = { group:'channels',action:'list' };
 		
-		if(this.props.group)
-			api.parameters = {group_id: this.props.group};
-		
 		this.Subscribe('CHANNEL_CREATED',api,false);
 		this.Subscribe('CHANNEL_MODIFIED',api,false);
 		this.Subscribe('CHANNEL_REMOVED',api,true);
@@ -43,9 +40,9 @@ export class ChannelSelector extends evQueueComponent {
 	evQueueEvent(response) {
 		let data = this.parseResponse(response);
 		
-		let channels = [{name: 'All channels', value: 0}];
+		let channels = [];
 		for(let i=0;i<data.response.length;i++)
-			channels.push({name: data.response[i].name, value: parseInt(data.response[i].id)});
+			channels.push({name: data.response[i].name, value: parseInt(data.response[i].id), group_id: parseInt(data.response[i].group_id)});
 		
 		this.setState({channels: channels});
 	}
@@ -55,8 +52,15 @@ export class ChannelSelector extends evQueueComponent {
 		if(value===undefined)
 			value = 0;
 		
+		let values = [{name: 'All channels', value: 0}];
+		for(let i=0;i<this.state.channels.length;i++)
+		{
+			if(this.state.channels[i].group_id==this.props.group || !this.props.group)
+				values.push(this.state.channels[i]);
+		}
+		
 		return (
-			<Select value={value} values={this.state.channels} name={this.props.name} disabled={this.props.disabled} filter={false} onChange={this.props.onChange}>
+			<Select value={value} values={values} name={this.props.name} disabled={this.props.disabled} filter={false} onChange={this.props.onChange}>
 			</Select>
 		);
 	}
