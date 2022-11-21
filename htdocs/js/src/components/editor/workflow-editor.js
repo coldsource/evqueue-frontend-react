@@ -34,6 +34,7 @@ import {ValueSelector} from '../dialogs/workflows/value-selector.js';
 import {CustomAttributeSelector} from '../dialogs/workflows/custom-attribute-selector.js';
 import {WorkflowProperties} from '../dialogs/workflows/properties.js';
 import {WorkflowUpload} from '../dialogs/workflows/upload.js';
+import {Base64Utils} from '../../utils/base64.js';
 
 export class WorkflowEditor extends evQueueComponent {
 	constructor(props) {
@@ -119,7 +120,7 @@ export class WorkflowEditor extends evQueueComponent {
 			group: 'workflow',
 			attributes: {
 				name: workflow.properties.name,
-				content: btoa(xml),
+				content: Base64Utils.encodeUTF8(xml),
 				group: workflow.properties.group,
 				comment: workflow.properties.comment
 			}
