@@ -285,16 +285,52 @@ export class InstanceDetails extends evQueueComponent {
 		);
 	}
 	
+	humanTime(seconds) {
+		if(seconds<0)
+			seconds = 0;
+		seconds = Math.floor(seconds);
+		return (seconds/86400 >= 1 ? Math.floor(seconds/86400)+' days, ' : '') +
+                (seconds/3600 >= 1 ? (Math.floor(seconds/3600)%24)+'h ' : '') +
+                (seconds/60 >= 1 ? (Math.floor(seconds/60)%60 + 1)+'m ' : '') +
+                (seconds/60 < 1 ? (seconds+'s') : '');
+	}
+	
 	renderTaskProgression(task) {
 		if(task.status!='EXECUTING')
 			return;
 		
 		if(!task.progression)
 			return;
-		
+
+		var remainingHumanTime = "Calculating ...";
+
+		if(task.progression != 0){
+			let progress = parseFloat(task.progression);
+
+			let startTime = new Date(task.execution_time).getTime();
+			let endTime = Date.now();
+			let totalSeconds = (endTime - startTime)/1000;
+
+			let time_per_percent_max = totalSeconds / progress;
+			let time_per_percent_min = totalSeconds / (progress + 1);
+
+			let error_per_percent = Math.ceil(time_per_percent_max - time_per_percent_min);
+			let total_error = error_per_percent * (100 - progress);
+
+			let remainingTime = totalSeconds / progress * (100 - progress);
+			remainingTime = Math.round(remainingTime / total_error) * total_error;
+
+			remainingHumanTime = this.humanTime(remainingTime);
+		}
+
 		return (
-			<div className="progressbar">
-				<div style={{width: task.progression+'%'}} />
+			<div>
+				<div className="progressbar">
+					<div style={{width: task.progression+'%'}} />
+				</div>
+				<div className="center">
+					{task.progression+'%'} ~ ETA : {remainingHumanTime}
+				</div>
 			</div>
 		);
 	}
@@ -316,7 +352,8 @@ export class InstanceDetails extends evQueueComponent {
 	
 	notifyTasksDetail() {
 		return this.details_dlg.map( (detail) => {
-			detail.ref.current.setState({task:this.taskFromEvqid(detail.evqid)});
+			if(detail.ref.current != null)
+				detail.ref.current.setState({task:this.taskFromEvqid(detail.evqid)});
 		});
 	}
 	
