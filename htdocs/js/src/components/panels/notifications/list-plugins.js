@@ -77,6 +77,7 @@ export class ListNotificationPlugins extends evQueueComponent {
 			return (
 				<tr key={type.id}>
 					<td>{type.name}</td>
+					<td className="center">{type.scope}</td>
 					<td>{type.description}</td>
 					<td className="tdActions">
 						<span className="faicon fa-cogs" title="Edit configuration" onClick={ (e) => this.editPlugin(type.id) }/>
@@ -99,6 +100,7 @@ export class ListNotificationPlugins extends evQueueComponent {
 						<thead>
 							<tr>
 								<th>Name</th>
+								<th>Scope</th>
 								<th>Description</th>
 								<th className="tdActions">Actions</th>
 							</tr>
