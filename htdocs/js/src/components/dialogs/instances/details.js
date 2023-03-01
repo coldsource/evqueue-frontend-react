@@ -207,6 +207,46 @@ export class InstanceDetails extends evQueueComponent {
 		if(comment)
 			return (<div><i>{comment}</i></div>);
 	}
+
+	renderProgressionBar(prct, color){
+		if(prct > 0)
+			return (<div style={{width: prct +'%' , 'background-color' : color}}  />);
+	}
+
+	renderWorkflowProgression(workflow){
+		let total_tasks = this.xpath('//tasks/task',workflow).length;
+		let nb_success = this.xpath('//tasks/task[@status="TERMINATED" and @retval=0]',workflow).length;
+		let nb_error = this.xpath('//tasks/task[@status="TERMINATED" and @retval!=0]',workflow).length;
+		let nb_queued = (workflow.getAttribute('queued_tasks') != undefined) ? workflow.getAttribute('queued_tasks') : 0;
+		let nb_running = (workflow.getAttribute('running_tasks')!= undefined) ? workflow.getAttribute('running_tasks') : 0;
+		nb_running -= nb_queued;
+
+		let progressionTxt = "";
+		if(nb_success > 0 )
+			progressionTxt += "Success : " + nb_success + "/" + total_tasks + " - ";
+		if(nb_error > 0)
+			progressionTxt += "Error : " + nb_error + "/" + total_tasks + " - ";
+		if(nb_running > 0)
+			progressionTxt += "Executing : " + nb_running + "/" + total_tasks + " - ";
+		if(nb_queued > 0)
+			progressionTxt += "Queued : " + nb_queued + "/" + total_tasks + " - ";
+
+		if(progressionTxt.length > 2){
+			progressionTxt = progressionTxt.substring(0, progressionTxt.length - 2);
+		}
+
+		return (
+			<div>
+				<div className="progressbar_workflow">
+					{this.renderProgressionBar((nb_success / total_tasks) * 100, "green")}
+					{this.renderProgressionBar((nb_error / total_tasks) * 100, "red")}
+					{this.renderProgressionBar((nb_running / total_tasks) * 100, "blue")}
+					{this.renderProgressionBar((nb_queued / total_tasks) * 100, "grey")}
+				</div>
+				{progressionTxt}
+			</div>
+		);
+	}
 	
 	renderWorkflow() {
 		var workflow = this.state.workflow.documentElement.firstChild;
@@ -216,6 +256,8 @@ export class InstanceDetails extends evQueueComponent {
 				{this.workflowComment(workflow)}
 				<br />
 				<div className="workflow">
+					{this.renderWorkflowProgression(workflow)}
+					<br />
 					{
 						this.xpath('subjobs/job',workflow).map( (node) => {
 							return this.renderJob(node);
