@@ -43,6 +43,12 @@ div.workflow {
 		}
 	}
 
+	.progressbar_workflow{
+		height: 0.3rem;
+		display: flex;
+		flex: auto;
+	}
+
 	.taskState {
 		margin-right: 5px;
 	}
