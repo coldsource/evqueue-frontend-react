@@ -50,7 +50,10 @@ export class InputSpinner extends React.Component {
 		if(!this.isValid(val))
 			return;
 		
-		this.props.onChange(e);
+		val = parseInt(val);
+		
+		let ne = EventsUtils.createEvent(this.props.name, val);
+		this.props.onChange(ne);
 	}
 	
 	step(n) {
