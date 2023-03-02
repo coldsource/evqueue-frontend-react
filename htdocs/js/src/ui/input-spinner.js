@@ -54,8 +54,9 @@ export class InputSpinner extends React.Component {
 	}
 	
 	step(n) {
+		let value = this.props.value==''?0:parseInt(this.props.value);
 		let step = this.props.step!==undefined?this.props.step:1;
-		let val = parseInt(this.props.value)+n*step;
+		let val = value+n*step;
 		
 		if(!this.isValid(val))
 			return;
