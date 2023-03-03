@@ -1,0 +1,52 @@
+.evq-storage-variables {
+	.tree {
+		.dir {
+			display: table;
+			
+			&>.faicon:first-of-type {
+				margin-left: -0.35rem;
+			}
+			
+			.left:not(.last) {
+				border-left: 1px dotted grey;
+				height: 100%;
+				display: table-cell;
+				
+				span {
+					border-bottom: 1px dotted grey;
+					height: 0.6rem;
+					width: 0.3rem;
+					display: inline-block;
+					vertical-align: top;
+				}
+			}
+			
+			.left.last {
+				border-left: 1px dotted grey;
+				border-bottom: 1px dotted grey;
+				height: 0.5rem;
+				width: 0.3rem;
+				display: inline-block;
+				vertical-align: top;
+			}
+			
+			.fa-hashtag {
+				color: $evq-light-blue;
+			}
+			
+			.varname {
+				font-weight: bold;
+				color: $evq-light-blue;
+				cursor: pointer;
+			}
+		}
+		
+		.dircontent {
+			&:not(.last) {
+				border-left: 1px dotted grey;
+			}
+			
+			padding-left: 1rem;
+		}
+	}
+}

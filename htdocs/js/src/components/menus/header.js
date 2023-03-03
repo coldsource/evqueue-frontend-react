@@ -86,6 +86,14 @@ export class HeaderMenu extends evQueueComponent {
 					{ label: 'Alerts', icon: 'fa-exclamation-triangle', url: 'elogs-alerts' },
 					{ label: 'Statistics', icon: 'fa-area-chart', url: 'elogs-stats' }
 				]
+			},
+			{
+				label: 'Storage',
+				icon: 'fa-database',
+				submenu: [
+					{ label: 'Variables', icon: 'fa-hashtag', url: 'storage-variables' },
+					{ label: 'Launchers', icon: 'fa-rocket', url: 'storage-launchers' }
+				]
 			}
 		];
 		
@@ -137,6 +145,10 @@ export class HeaderMenu extends evQueueComponent {
 		return this.menu.map((entry, idx) => {
 			if(entry.label=='External Logs' && this.state.cluster.available_modules.elogs!==true)
 				return;
+			
+			if(entry.label=='Storage' && this.state.cluster.available_modules.storage!==true)
+				return;
+			
 			return (
 				<li key={idx} className={this.state.sel1==idx?'selected':''} onClick={ () => this.setState({sel1:idx}) }>
 					<span className={'faicon '+entry.icon}></span>
