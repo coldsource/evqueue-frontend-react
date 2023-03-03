@@ -210,7 +210,7 @@ export class InstanceDetails extends evQueueComponent {
 
 	renderProgressionBar(prct, color){
 		if(prct > 0)
-			return (<div style={{width: prct +'%' , 'background-color' : color}}  />);
+			return (<div style={{width: prct +'%' , 'backgroundColor' : color}}  />);
 	}
 
 	renderWorkflowProgression(workflow){
