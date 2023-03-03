@@ -97,12 +97,13 @@ export class EventDispatcher {
 	Unsubscribe(instance, event = undefined, object_id = 0)
 	{
 		// Find correct subsciption
-		var subscriptions = this.subscriptions;
-		var external_id = 0;
+		let subscriptions = this.subscriptions;
 		for(var i=0;i<subscriptions.length;i++)
 		{
 			if(subscriptions[i].instance===instance && (event===undefined || subscriptions[i].event==event) && (object_id==0 || subscriptions[i].object_id==object_id))
 			{
+				let external_id = subscriptions[i].external_id;
+				
 				let sub_event = subscriptions[i].event;
 				let sub_external_id = subscriptions[i].external_id;
 				let sub_object_id = subscriptions[i].object_id;
@@ -135,6 +136,10 @@ export class EventDispatcher {
 		
 		let instance = this.instances[external_id];
 		if(this.instances_blocked.has(instance))
+			return;
+		
+		// Ignore event if handler has been removed (component has been unmounted while event was online)
+		if(this.handlers[external_id]===undefined)
 			return;
 		
 		this.handlers[external_id](data, ref);
