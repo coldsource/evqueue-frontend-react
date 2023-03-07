@@ -23,6 +23,7 @@ import {App} from '../../base/app.js';
 import {Dialog} from '../../../ui/dialog.js';
 import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
+import {Checkbox} from '../../../ui/checkbox.js';
 
 import {evQueueComponent} from '../../base/evqueue-component.js';
 
@@ -165,11 +166,19 @@ export class Launcher extends evQueueComponent {
 	}
 	
 	launch() {
+		// Convert boolean values to integers
+		let parameters = Object.assign({}, this.state.parameters_values);
+		for(const [key, value] of Object.entries(parameters))
+		{
+			if(typeof(value)==='boolean')
+				parameters[key] = value?1:0;
+		}
+		
 		this.simpleAPI({
 			group: 'instance',
 			action: 'launch',
 			attributes: {name: this.state.workflow_name, user: this.state.user_value, host: this.state.host_value},
-			parameters: this.state.parameters_values
+			parameters: parameters
 		}, "Instance launched").then( () => {
 			this.dlg.current.close();
 		});
@@ -202,7 +211,12 @@ export class Launcher extends evQueueComponent {
 		if(variable.structure=='ARRAY')
 		{
 			for(let i=0;i<variable.value.length;i++)
-				values.push({name: variable.value[i], value: variable.value[i]});
+			{
+				if(variable.type=='BOOLEAN')
+					values.push({name: variable.value[i]?'true':'false', value: variable.value[i]});
+				else
+					values.push({name: variable.value[i], value: variable.value[i]});
+			}
 		}
 		else if(variable.structure=='MAP')
 		{

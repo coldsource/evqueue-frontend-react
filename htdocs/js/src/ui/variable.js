@@ -22,6 +22,7 @@
 import {App} from '../components/base/app.js';
 import {EventsUtils} from '../utils/events.js';
 import {InputSpinner} from './input-spinner.js';
+import {Checkbox} from './checkbox.js';
 import {Dialogs} from './dialogs.js';
 import {Prompt} from './prompt.js';
 
@@ -42,6 +43,15 @@ export class Variable extends React.Component {
 		this.props.onChange(EventsUtils.createEvent(this.props.name, value));
 	}
 	
+	getEmptyValue() {
+		if(this.props.type=='STRING')
+			return '';
+		else if(this.props.type=='INT')
+			return 0;
+		else if(this.props.type=='BOOLEAN')
+			return false;
+	}
+	
 	renderStructure() {
 		if(this.props.structure=='NONE')
 		{
@@ -60,7 +70,7 @@ export class Variable extends React.Component {
 					<div>
 						<label></label>
 						<span className="faicon fa-plus" onClick={ e => {
-							this.props.value.push('');
+							this.props.value.push(this.getEmptyValue());
 							this.onChange(EventsUtils.createEvent(this.props.name, this.props.value), false);
 						}}></span>
 					</div>
@@ -92,7 +102,7 @@ export class Variable extends React.Component {
 										return false;
 									}
 									
-									this.props.value[key] = '';
+									this.props.value[key] = this.getEmptyValue();
 									this.onChange(EventsUtils.createEvent(this.props.name, this.props.value), false);
 								}
 							});
@@ -142,6 +152,8 @@ export class Variable extends React.Component {
 			return (<input type="text" name={this.props.name} value={value} onChange={e => this.onChange(e, key)} />);
 		else if(this.props.type=='INT')
 			return (<InputSpinner name={this.props.name} value={value} onChange={e => this.onChange(e, key)} />);
+		else if(this.props.type=='BOOLEAN')
+			return (<Checkbox name={this.props.name} value={value} onChange={e => this.onChange(e, key)} />);
 	}
 	
 	render() {

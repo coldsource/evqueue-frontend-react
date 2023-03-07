@@ -19,6 +19,7 @@
 
 'use strict';
 
+import {App} from '../../base/app.js';
 import {Dialog} from '../../../ui/dialog.js';
 import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
@@ -35,7 +36,7 @@ export class EditVariable extends evQueueComponent {
 			name: '',
 			type: 'INT',
 			structure: 'NONE',
-			value: ''
+			value: this.getEmptyValue('INT')
 		}
 		
 		this.dlg = React.createRef();
@@ -64,6 +65,15 @@ export class EditVariable extends evQueueComponent {
 		}
 	}
 	
+	getEmptyValue(type) {
+		if(type=='STRING')
+			return '';
+		else if(type=='INT')
+			return 0;
+		else if(type=='BOOLEAN')
+			return false;
+	}
+	
 	onChange(e) {
 		let name = e.target.name;
 		let value = e.target.value;
@@ -72,15 +82,19 @@ export class EditVariable extends evQueueComponent {
 		
 		if(name=='type' || name=='structure')
 		{
-			let st = variable.structure;
-			if(name=='structure')
-				st = value;
+			let new_structure = variable.structure;
+			let new_type = variable.type;
 			
-			if(st=='NONE')
-				variable.value = '';
-			else if(st=='ARRAY')
+			if(name=='structure')
+				new_structure = value;
+			if(name=='type')
+				new_type = value;
+			
+			if(new_structure=='NONE')
+				variable.value = this.getEmptyValue(new_type);
+			else if(new_structure=='ARRAY')
 				variable.value = [];
-			else if(st=='MAP')
+			else if(new_structure=='MAP')
 				variable.value = {};
 		}
 		
@@ -93,6 +107,18 @@ export class EditVariable extends evQueueComponent {
 		
 		let attributes = Object.assign({}, this.state.variable);
 		attributes.value = JSON.stringify(attributes.value);
+		
+		if(attributes.path=='')
+		{
+			App.warning("Path can't be empty");
+			return;
+		}
+		
+		if(attributes.name=='')
+		{
+			App.warning("Name can't be empty");
+			return;
+		}
 		
 		if(this.props.id)
 			attributes.id = this.props.id
@@ -130,7 +156,7 @@ export class EditVariable extends evQueueComponent {
 					</div>
 					<div>
 						<label>Type</label>
-						<Select name="type" value={variable.type} values={[{name: 'Integer', value: 'INT'},{name: 'String', value: 'STRING'}]} onChange={this.onChange} />
+						<Select name="type" value={variable.type} values={[{name: 'Integer', value: 'INT'},{name: 'String', value: 'STRING'},{name: 'Boolean', value: 'BOOLEAN'}]} onChange={this.onChange} />
 					</div>
 					<div>
 						<label>Structure</label>
