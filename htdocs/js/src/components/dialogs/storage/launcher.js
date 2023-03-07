@@ -49,17 +49,46 @@ export class Launcher extends evQueueComponent {
 		this.launch = this.launch.bind(this);
 	}
 	
+	has_dependency(path) {
+		return path.match(/{([a-zA-Z0-9]+)}/)!==null;
+	}
+	
+	resolve_dependency(path) {
+		return path.replaceAll(/{([a-zA-Z0-9]+)}/g, (match) => {
+			let param_name = match.substr(1, match.length-2);
+			if(this.state.parameters_values[param_name]!==undefined && this.state.parameters_values[param_name]!='')
+				return this.state.parameters_values[param_name];
+			return match;
+		});
+	}
+	
 	get_variable(path, variables) {
 		if(path=='')
 			return Promise.resolve();
 		
+		let resolved_path = this.resolve_dependency(path);
+		
+		if(this.has_dependency(resolved_path))
+		{
+			variables[path] = {
+				is_resolved: false
+			}
+			
+			return Promise.resolve();
+		}
+		
 		return this.API({
 			group: 'storage',
 			action: 'get',
-			attributes: {path: path}
+			attributes: {path: resolved_path}
 		}).then(response => {
 			variables[path] = this.parseResponse(response);
 			variables[path].value = JSON.parse(variables[path].value);
+			variables[path].is_resolved = true;
+		}).catch(() => {
+			variables[path] = {
+				is_resolved: false
+			}
 		});
 	}
 	
@@ -83,12 +112,18 @@ export class Launcher extends evQueueComponent {
 					let user = launcher.user;
 					let host = launcher.host;
 					
+					let parameters_values = {};
 					let variables = {};
 					let promises = [];
 					for(const [param, path] of Object.entries(parameters))
 					{
-						let promise = this.get_variable(path, variables);
-						promises.push(promise);
+						if(path=='')
+							parameters_values[param] = '';
+						else
+						{
+							let promise = this.get_variable(path, variables);
+							promises.push(promise);
+						}
 					}
 					
 					promises.push(this.get_variable(launcher.user, variables));
@@ -96,7 +131,6 @@ export class Launcher extends evQueueComponent {
 					
 					Promise.all(promises).then(() => {
 						// Set parameters that are bound to unique value variables
-						let parameters_values = {};
 						let var_set = 0;
 						for(const [param, path] of Object.entries(parameters))
 						{
@@ -162,7 +196,18 @@ export class Launcher extends evQueueComponent {
 	change_param(e) {
 		let params = this.state.parameters_values;
 		params[e.target.name] = e.target.value;
-		this.setState({parameters_values: params});
+		this.setState({parameters_values: params}, () => {
+			// A parameter has changed value, try to update dependent variables
+			for(const [path, variable] of Object.entries(this.state.variables))
+			{
+				if(this.has_dependency(path))
+				{
+					this.get_variable(path, this.state.variables).then(() => {
+						this.setState({variables: this.state.variables});
+					});
+				}
+			}
+		});
 	}
 	
 	launch() {
@@ -196,6 +241,9 @@ export class Launcher extends evQueueComponent {
 		}
 		
 		let variable = this.state.variables[path];
+		
+		if(!variable.is_resolved)
+			return;
 		
 		if(variable.structure=='NONE')
 		{
