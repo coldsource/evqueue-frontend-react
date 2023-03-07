@@ -327,14 +327,23 @@ export class InstanceDetails extends evQueueComponent {
 		);
 	}
 	
-	humanTime(seconds) {
+	humanTime(seconds, show_sec = false) {
 		if(seconds<0)
 			seconds = 0;
 		seconds = Math.floor(seconds);
+
+		let minute_human = (seconds/60 >= 1 ? (Math.floor(seconds/60)%60 + 1)+'m ' : '');
+		let seconds_human = (seconds/60 < 1 ? (seconds+'s') : '');
+
+		if(show_sec){
+			minute_human = (seconds/60 >= 1 ? (Math.floor(seconds/60)%60)+'m ' : '')
+			seconds_human = (seconds%60)+'s';
+		}
+
 		return (seconds/86400 >= 1 ? Math.floor(seconds/86400)+' days, ' : '') +
                 (seconds/3600 >= 1 ? (Math.floor(seconds/3600)%24)+'h ' : '') +
-                (seconds/60 >= 1 ? (Math.floor(seconds/60)%60 + 1)+'m ' : '') +
-                (seconds/60 < 1 ? (seconds+'s') : '');
+                minute_human +
+                seconds_human;
 	}
 	
 	renderTaskProgression(task) {
@@ -399,13 +408,14 @@ export class InstanceDetails extends evQueueComponent {
 		});
 	}
 	
-	tabParameters() {
+	tabSummary() {
 		if(!this.state.workflow)
 			return;
-		
+
 		return (
-			<div className="tabbed">
-				{this.renderParameters()}
+			<div>
+				{this.renderWorkflowSummary()}
+				{this.renderParametersSummary()}
 			</div>
 		);
 	}
@@ -439,10 +449,56 @@ export class InstanceDetails extends evQueueComponent {
 			</div>
 		);
 	}
+
+	renderWorkflowSummary(){
+		let workflow_xml = this.state.workflow.documentElement.firstChild;
+
+		let name = workflow_xml.getAttribute("name");
+		let user = workflow_xml.getAttribute("user");
+		let host = workflow_xml.getAttribute("host");
+		let node = this.state.workflow.documentElement.getAttribute("node");
+		let start_time = workflow_xml.getAttribute("start_time");
+		let end_time = workflow_xml.getAttribute("end_time");
+
+		return (
+			<fieldset className="tabbed">
+				<legend>Workflow</legend>
+				<div>
+					<div>Name</div>
+					<div>{name}</div>
+				</div>
+				<div style={{contentVisibility: user == undefined ? "hidden" : ""}}>
+					<div>User</div>
+					<div>{user}</div>
+				</div>
+				<div>
+					<div>Host</div>
+					<div>{host != undefined ? host : "localhost" }</div>
+				</div>
+				<div>
+					<div>Node</div>
+					<div>{node}</div>
+				</div>
+				<div>
+					<div>Start time</div>
+					<div>{start_time!==undefined ? start_time : ''}</div>
+				</div>
+				<div style={{contentVisibility: end_time == undefined ? "hidden" : ""}}>
+					<div>End time</div>
+					<div>{end_time!==undefined ? end_time : ''}</div>
+				</div>
+				<div style={{contentVisibility: end_time == undefined ? "hidden" : ""}}>
+					<div>Duration</div>
+					<div>{this.humanTime((Date.parse(end_time)-Date.parse(start_time))/1000, true)}</div>
+				</div>
+			</fieldset>
+		);
+
+	}
 	
-	renderParameters() {
-		var parameters = this.xpath('/response/workflow/parameters/parameter',this.state.workflow.documentElement);
-		return parameters.map( (parameter) => {
+	renderParametersSummary() {
+		let parameters = this.xpath('/response/workflow/parameters/parameter',this.state.workflow.documentElement);
+		parameters = parameters.map( (parameter) => {
 			return (
 				<div key={parameter.name}>
 					<div>{parameter.name}</div>
@@ -450,6 +506,13 @@ export class InstanceDetails extends evQueueComponent {
 				</div>
 			);
 		});
+
+		return (
+			<fieldset className="tabbed">
+				<legend>Parameters</legend>
+				{parameters}
+			</fieldset>
+		);
 	}
 	
 	render() {
@@ -462,11 +525,11 @@ export class InstanceDetails extends evQueueComponent {
 					<Tab title="Tree">
 						{ this.tabWorkflow() }
 					</Tab>
+					<Tab title="Summary">
+						{ this.tabSummary() }
+					</Tab>
 					<Tab title="XML">
 						{ this.tabXML() }
-					</Tab>
-					<Tab title="Parameters">
-						{ this.tabParameters() }
 					</Tab>
 					<Tab title="Tags">
 						{ this.tabTags() }
