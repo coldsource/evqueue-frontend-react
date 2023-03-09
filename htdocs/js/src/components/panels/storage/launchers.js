@@ -40,7 +40,7 @@ export class Launchers extends evQueueComponent {
 	}
 	
 	componentDidMount() {
-		let api = {node:'*', group:'launcher',action:'list'};
+		let api = {node:'*', group:'launchers',action:'list'};
 		this.Subscribe('LAUNCHER_CREATED',api);
 		this.Subscribe('LAUNCHER_MODIFIED',api);
 		this.Subscribe('LAUNCHER_REMOVED',api, true);

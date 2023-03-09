@@ -219,10 +219,12 @@ export class Launcher extends evQueueComponent {
 				parameters[key] = value?1:0;
 		}
 		
+		let comment = 'Launched by ' + window.localStorage.getItem('user') + ' with launcher « ' + this.state.launcher_name + ' »';
+		
 		this.simpleAPI({
-			group: 'instance',
+			group: 'launcher',
 			action: 'launch',
-			attributes: {name: this.state.workflow_name, user: this.state.user_value, host: this.state.host_value},
+			attributes: {id: this.props.id, user: this.state.user_value, host: this.state.host_value, comment: comment},
 			parameters: parameters
 		}, "Instance launched").then( () => {
 			this.dlg.current.close();
