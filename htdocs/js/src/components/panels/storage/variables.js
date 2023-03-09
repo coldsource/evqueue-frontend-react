@@ -28,7 +28,8 @@ export class Variables extends evQueueComponent {
 	constructor(props) {
 		super(props);
 		
-		this.state.tree = {subdirs: {}, variables: {}, collapsed: false};
+		this.state.tree = {subdirs: {}, variables: {}};
+		this.state.collapsed = {};
 		
 		this.editVariable = this.editVariable.bind(this);
 	}
@@ -43,8 +44,7 @@ export class Variables extends evQueueComponent {
 	evQueueEvent(data) {
 		let root = {
 			subdirs: {},
-			variables: {},
-			collapsed: false
+			variables: {}
 		};
 		
 		for(let v of this.parseResponse(data).response)
@@ -53,7 +53,7 @@ export class Variables extends evQueueComponent {
 			for(let dir of v.path.split('/'))
 			{
 				if(curdir.subdirs[dir]===undefined)
-					curdir.subdirs[dir] = {subdirs: {}, variables: {}, collapsed: false};
+					curdir.subdirs[dir] = {subdirs: {}, variables: {}};
 				
 				curdir = curdir.subdirs[dir];
 			}
@@ -79,12 +79,12 @@ export class Variables extends evQueueComponent {
 	renderTree(parent) {
 		return Object.keys(parent.subdirs).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())).map((dir, idx, dirs) => {
 			let islast = (idx==dirs.length-1 && Object.keys(parent.variables).length==0);
-			let collapsed = parent.subdirs[dir].collapsed;
+			let collapsed = this.state.collapsed[dir]!==undefined && this.state.collapsed[dir];
 			return (
 				<React.Fragment key={dir}>
 					<div className={"dir" + (islast?' last':'')}>
 						
-						<span className={"faicon " + (collapsed?"fa-plus":"fa-minus")} onClick={ () => {parent.subdirs[dir].collapsed = !collapsed; this.setState({tree: this.state.tree}); } }></span>
+						<span className={"faicon " + (collapsed?"fa-plus":"fa-minus")} onClick={ () => {this.state.collapsed[dir] = !collapsed; this.setState({collapsed: this.state.collapsed}); } }></span>
 						<span className="faicon fa-folder-o"></span> {dir}
 					</div>
 					<div className={"dircontent" + (islast?' last':'')}>
