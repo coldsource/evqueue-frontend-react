@@ -134,7 +134,7 @@ export class EditUserRights extends evQueueComponent {
 					<table className="hover">
 						<thead>
 							<tr>
-								<th>Workflow</th>
+								<th className="left">Workflow</th>
 								<th>Read</th>
 								<th>Edit</th>
 								<th>Execute</th>
