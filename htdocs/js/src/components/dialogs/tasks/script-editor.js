@@ -27,10 +27,39 @@ export class ScriptEditor extends React.Component {
 		super(props);
 		
 		this.state = {
-			script: this.props.script
+			script: this.props.script,
+			scroll: 0
 		};
 		
+		this.code = React.createRef();
+		
+		this.scroll = this.scroll.bind(this);
 		this.onClose = this.onClose.bind(this);
+	}
+	
+	componentDidMount() {
+		hljs.configure({ignoreUnescapedHTML: true});
+		hljs.highlightElement(this.code.current);
+	}
+	
+	componentDidUpdate() {
+		hljs.highlightElement(this.code.current);
+		
+		let code = this.code.current;
+		let classes = code.classList;
+		for(let cl of classes)
+		{
+			if(cl.substr(0, 9)=='language-')
+				classes.remove(cl);
+		}
+		code.scrollTop = code.scrollHeight * this.state.scroll;
+	}
+	
+	scroll(e) {
+		let textarea = e.target;
+		textarea.addEventListener('scroll', () => {
+			this.setState({scroll: textarea.scrollTop / textarea.scrollHeight});
+		});
 	}
 	
 	onClose() {
@@ -54,7 +83,10 @@ export class ScriptEditor extends React.Component {
 							Write here your script. Remember to have a shebang (#!) on the first line !
 						</Help>
 					</h2>
-					<textarea name="script" value={this.state.script} onChange={ (e) => this.setState({script: e.target.value}) } />
+					<textarea name="script" value={this.state.script} onScroll={this.scroll} onChange={ (e) => this.setState({script: e.target.value}) } />
+					<pre>
+						<code ref={this.code}>{this.state.script}</code>
+					</pre>
 				</div>
 			</Dialog>
 		);
