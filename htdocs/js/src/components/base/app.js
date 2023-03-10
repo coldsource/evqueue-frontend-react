@@ -442,4 +442,5 @@ export class App extends React.Component {
 	}
 }
 
-ReactDOM.render(<App />, document.querySelector('#content'));
+const root = ReactDOM.createRoot(document.querySelector('#content'));
+root.render(<App />, );

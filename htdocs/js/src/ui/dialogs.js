@@ -85,5 +85,6 @@ if(!document.querySelector('#evq-dialogs'))
 	var dialogs = document.createElement("div");
 	dialogs.setAttribute("id","evq-dialogs");
 	document.querySelector('body').appendChild(dialogs);
-	ReactDOM.render(<Dialogs />, dialogs);
+	const dlg_root = ReactDOM.createRoot(dialogs);
+	dlg_root.render(<Dialogs />);
 }
