@@ -93,6 +93,7 @@ export class HeaderMenu extends evQueueComponent {
 				submenu: [
 					{ label: 'Variables', icon: 'fa-hashtag', url: 'storage-variables' },
 					{ label: 'Launchers', icon: 'fa-rocket', url: 'storage-launchers' },
+					{ label: 'Displays', icon: 'fa-list', url: 'storage-displays' },
 					{ label: 'Access control', icon: 'fa-id-card-o', url: 'storage-access' }
 				]
 			}

@@ -37,6 +37,7 @@ import {PageELogsAlerts} from '../../pages/elogs-alerts.js';
 import {PageELogsStatistics} from '../../pages/elogs-statistics.js';
 import {PageStorageVariables} from '../../pages/storage-variables.js';
 import {PageStorageLaunchers} from '../../pages/storage-launchers.js';
+import {PageStorageDisplays} from '../../pages/storage-displays.js';
 import {PageStorageAccess} from '../../pages/storage-access.js';
 import {PageWorkflowEditor} from '../../pages/workflow-editor.js';
 import {PageNotificationTypes} from '../../pages/notification-types.js';
@@ -365,6 +366,8 @@ export class App extends React.Component {
 			return (<PageStorageVariables />);
 		else if(path=='storage-launchers')
 			return (<PageStorageLaunchers />);
+		else if(path=='storage-displays')
+			return (<PageStorageDisplays/>);
 		else if(path=='storage-access')
 			return (<PageStorageAccess />);
 		else if(path=='workflow-editor')
