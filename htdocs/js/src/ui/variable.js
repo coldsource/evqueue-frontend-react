@@ -149,7 +149,11 @@ export class Variable extends React.Component {
 			value = value[key];
 		
 		if(this.props.type=='STRING')
+		{
+			if(value.length>64 || value.indexOf("\n")>-1 || value.indexOf("\r")>-1)
+				return (<textarea name={this.props.name} value={value} onChange={e => this.onChange(e, key)}></textarea>);
 			return (<input type="text" name={this.props.name} value={value} onChange={e => this.onChange(e, key)} />);
+		}
 		else if(this.props.type=='INT')
 			return (<InputSpinner name={this.props.name} value={value} onChange={e => this.onChange(e, key)} />);
 		else if(this.props.type=='BOOLEAN')
