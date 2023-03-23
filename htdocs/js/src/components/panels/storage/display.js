@@ -147,12 +147,24 @@ export class Display extends evQueueComponent {
 		return str;
 	}
 	
+	renderContent(content) {
+		// Detect and replace linkg
+		let link_regex = /(https?:\/\/[^\s]+)/;
+		let content_parts = content.split(link_regex);
+		content = content_parts.map((item, idx) => {
+			if(item.match(link_regex))
+				return (<a key={idx} href={item} target="_blank">{item}</a>);
+			return item;
+		});
+		return content;
+	}
+	
 	renderItems() {
 		return this.state.items.map((item, idx) => {
 			return (
 				<div key={idx}>
 					<h2>{item.title}</h2>
-					<pre>{item.content}</pre>
+					<pre>{this.renderContent(item.content)}</pre>
 				</div>
 			);
 		});
