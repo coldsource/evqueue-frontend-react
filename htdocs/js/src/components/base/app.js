@@ -96,21 +96,27 @@ export class App extends React.Component {
 		
 		document.querySelector('#pre-content').style.display='none';
 		
-		var self = this;
+		let self = this;
 		window.onpopstate = (e) => {
 			self.changeURL(document.location.search);
 			return true;
 		};
 		
 		document.addEventListener('click', (e) => {
-			var el = e.target;
+			let el = e.target;
 			while(el)
 			{
 				if(el.tagName=='A' && el.hasAttribute('href') && !el.hasAttribute('download'))
 				{
+					// We only want to intercept local links, external links are let with normal behaviour
+					let href = el.getAttribute('href');
+					let url = new URL(href, document.baseURI);
+					if(url.origin!==window.location.origin)
+						return true;
+					
 					e.preventDefault();
 			
-					this.changeURL(el.getAttribute('href'));
+					this.changeURL(href);
 					return false;
 				}
 				
