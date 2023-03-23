@@ -67,7 +67,6 @@ export class Dialog extends React.Component {
 		
 		// Keyboard handling
 		this.onKeyDown = this.onKeyDown.bind(this);
-		document.addEventListener('keydown', this.onKeyDown);
 		
 		// Global styles
 		this.height_delta = 0;
@@ -107,11 +106,15 @@ export class Dialog extends React.Component {
 			this.height_delta += parseInt(window.getComputedStyle(this.dlg_title.current).getPropertyValue('height'));
 		}
 		
+		document.addEventListener('keydown', this.onKeyDown);
+		
 		if(this.auto_height)
 			this.componentDidUpdate();
 	}
 	
 	componentWillUnmount() {
+		document.removeEventListener('keydown', this.onKeyDown);
+		
 		if(!this.closed)
 			this.close();
 	}
