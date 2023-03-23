@@ -1,0 +1,23 @@
+.evq-displays-list {
+	ul {
+		margin: 0.5rem 0 0 0; 
+	}
+	
+	ul.groups {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1rem;
+		padding: 0px;
+		
+		li {
+			list-style-type: none;
+			text-align: center;
+			font-weight: bold;
+			border: 1px solid;
+			border-radius: 1rem;
+			padding: 1rem;
+			margin: 0px;
+			cursor: pointer;
+		}
+	}
+}

@@ -33,9 +33,12 @@ export class Displays extends evQueueComponent {
 		super(props);
 		
 		this.state.displays = [];
+		this.state.groups = [];
+		this.state.group = false;
 		
 		this.editDisplay = this.editDisplay.bind(this);
 		this.removeDisplay = this.removeDisplay.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 	}
 	
 	componentDidMount() {
@@ -43,12 +46,33 @@ export class Displays extends evQueueComponent {
 		this.Subscribe('DISPLAY_CREATED',api);
 		this.Subscribe('DISPLAY_MODIFIED',api);
 		this.Subscribe('DISPLAY_REMOVED',api, true);
+		
+		// Handle keyboard ESC
+		document.addEventListener('keydown', this.onKeyDown);
+	}
+	
+	componentWillUnmount() {
+		document.removeEventListener('keydown', this.onKeyDown);
 	}
 	
 	evQueueEvent(response, ref) {
 		let displays = this.parseResponse(response,'/response/*').response;
+		
+		// Compute distinct groups
+		let groups = {};
+		for(let display of displays)
+			groups[display.group] = true;
+		
+		groups = Object.keys(groups);
+		groups.sort();
+		
 		displays.sort();
-		this.setState({displays: displays});
+		this.setState({displays: displays, groups: groups});
+	}
+	
+	onKeyDown(e) {
+		 if(e.keyCode === 27)
+			 this.setState({group: false});
 	}
 	
 	editDisplay(e, id) {
@@ -64,8 +88,7 @@ export class Displays extends evQueueComponent {
 	}
 	
 	renderDisplays() {
-
-		return this.state.displays.map( (display, idx) => {
+		return this.state.displays.filter(display => display.group==this.state.group).map( (display, idx) => {
 			return (
 				<Tab key={display.id} title={display.name} action={{icon: 'fa-edit', callback: (e) => { this.editDisplay(e, display.id); }}}>
 					<Display id={display.id} />
@@ -74,17 +97,25 @@ export class Displays extends evQueueComponent {
 		});
 	}
 	
+	renderGroups() {
+		return this.state.groups.map(group => {
+			return (
+				<li key={group} onClick={() => this.setState({group: group})}>{group==''?'No group':group}</li>
+			);
+		});
+	}
+	
 	render() {
-		let actions = [
-			{icon:'fa-file-o', title: "Create new display", callback:this.editDisplay}
-		];
+		let actions = [];
+		
+		if(this.state.group!==false)
+			actions.push({icon:'fa-remove', title: "Go back to display griups", callback:() => this.setState({group: false})});
+		actions.push({icon:'fa-file-o', title: "Create new display", callback:this.editDisplay});
 		
 		return (
 			<div className="evq-displays-list">
 				<Panel noborder left="" title="Displays" actions={actions}>
-					<Tabs>
-						{this.renderDisplays()}
-					</Tabs>
+					{this.state.group===false?(<ul className="groups">{this.renderGroups()}</ul>):(<Tabs>{this.renderDisplays()}</Tabs>)}
 				</Panel>
 			</div>
 		);

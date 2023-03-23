@@ -22,8 +22,8 @@
 import {Dialog} from '../../../ui/dialog.js';
 import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
-import {Autocomplete} from '../../../ui/autocomplete.js';
 import {WorkflowSelector} from '../../base/workflow-selector.js';
+import {DisplayGroupAutocomplete} from '../../base/display-group-autocomplete.js';
 import {VariableAutocomplete} from '../../base/variable-autocomplete.js';
 
 import {evQueueComponent} from '../../base/evqueue-component.js';
@@ -34,6 +34,7 @@ export class EditDisplay extends evQueueComponent {
 		
 		this.state.display = {
 			name: '',
+			group: '',
 			path: '',
 			order: '',
 			item_title: '',
@@ -57,6 +58,7 @@ export class EditDisplay extends evQueueComponent {
 				let display = this.parseResponse(response);
 				this.setState({display: {
 					name: display.name,
+					group: display.group,
 					path: display.path,
 					order: display.order,
 					item_title: display.item_title,
@@ -115,6 +117,10 @@ export class EditDisplay extends evQueueComponent {
 					<div>
 						<label>Name</label>
 						<input type="text" name="name" value={display.name} onChange={this.onChange} />
+					</div>
+					<div>
+						<label>Group</label>
+						<DisplayGroupAutocomplete name="group" value={display.group} onChange={this.onChange} />
 					</div>
 					<div>
 						<label>Variable path</label>
