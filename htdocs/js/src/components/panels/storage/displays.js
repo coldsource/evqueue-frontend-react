@@ -47,6 +47,7 @@ export class Displays extends evQueueComponent {
 	
 	evQueueEvent(response, ref) {
 		let displays = this.parseResponse(response,'/response/*').response;
+		displays.sort();
 		this.setState({displays: displays});
 	}
 	
