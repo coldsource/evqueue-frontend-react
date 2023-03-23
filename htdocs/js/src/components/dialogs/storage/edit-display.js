@@ -104,7 +104,11 @@ export class EditDisplay extends evQueueComponent {
 				<h2>
 					Display properties
 					<Help>
-						DOC
+						Choose a variable structured as a Map or an Array. Display will loop on the values and create an text item with a title and content for each item. You can refer to the current item value with $key and $value parameters.
+						<br />
+						<br />You can use variables in item title or content by using this syntax : {"{path/to/variable/}"}. If variable is a Map, you can access a special key by using {"{path/to/variable}.key"}. $key and $value special variables can be used in variable names.
+						<br />
+						<br />You can also put links, which will be auto detected. You must use absolute links starting with http:// or https://.
 					</Help>
 				</h2>
 				<div className="formdiv">
