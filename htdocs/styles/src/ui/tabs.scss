@@ -10,6 +10,10 @@ ul.evq-tabs {
 		border:1px solid grey;
 		border-radius: 3px;
 		margin:0px 3px 0px 3px;
+		
+		span {
+			margin-left: 0.5rem;
+		}
 	}
 	
 	li.selected {

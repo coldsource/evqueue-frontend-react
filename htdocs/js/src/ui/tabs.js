@@ -48,12 +48,23 @@ export class Tabs extends React.Component {
 		this.setState({current:idx});
 	}
 	
+	renderAction(action) {
+		if(action===undefined)
+			return;
+		
+		return (<span className={"fa " + action.icon} onClick={action.callback}></span>);
+	}
+	
 	renderTabs() {
 		return React.Children.map(this.props.children, (child,i) => {
 			if(child.type!=Tab)
 				return;
 			
-			return (<li key={i} className={this.state.current==i?'selected':''} onClick={ () => { this.changeTab(i) } }>{child.props.title}</li>);
+			return (
+				<li key={i} className={this.state.current==i?'selected':''} onClick={ () => { this.changeTab(i) } }>
+					{child.props.title}
+					{this.renderAction(child.props.action)}
+				</li>);
 		});
 	}
 	
