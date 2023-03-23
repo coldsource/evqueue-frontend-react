@@ -66,8 +66,7 @@ export class Displays extends evQueueComponent {
 
 		return this.state.displays.map( (display, idx) => {
 			return (
-				<Tab key={display.id} title={display.name}>
-					<span className="fa fa-edit" onClick={(e) => { this.editDisplay(e, display.id); }}></span>
+				<Tab key={display.id} title={display.name} action={{icon: 'fa-edit', callback: (e) => { this.editDisplay(e, display.id); }}}>
 					<Display id={display.id} />
 				</Tab>
 			);
