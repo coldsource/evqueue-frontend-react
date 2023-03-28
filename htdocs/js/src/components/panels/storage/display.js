@@ -21,6 +21,7 @@
 
 import {App} from '../../base/app.js';
 import {evQueueComponent} from '../../base/evqueue-component.js';
+import {Markdown} from '../../../ui/markdown.js';
 
 export class Display extends evQueueComponent {
 	constructor(props) {
@@ -109,9 +110,9 @@ export class Display extends evQueueComponent {
 	async replace_variables(str, key, value) {
 		str = str.replaceAll('$key', key);
 		str = str.replaceAll('$value', value);
-		str = await this.replaceAsync(str, /{([^}]+)}(\.([^\s]+))?/g, match => {
+		str = await this.replaceAsync(str, /\{([\p{L}\d_\/]+)\}(\.([\p{L}\d_\/]+))?/gu, match => {
 			return new Promise((resolve, reject) => {
-				let parts = match.match(/{([^}]+)}(\.([^\s]+))?/);
+				let parts = match.match(/\{([\p{L}\d_\/]+)\}(\.([\p{L}\d_\/]+))?/u);
 				let path = parts[1];
 				let key = parts[3];
 				this.get_variable(path, key, value).then(v => {
@@ -147,24 +148,12 @@ export class Display extends evQueueComponent {
 		return str;
 	}
 	
-	renderContent(content) {
-		// Detect and replace linkg
-		let link_regex = /(https?:\/\/[^\s]+)/;
-		let content_parts = content.split(link_regex);
-		content = content_parts.map((item, idx) => {
-			if(item.match(link_regex))
-				return (<a key={idx} href={item} target="_blank">{item}</a>);
-			return item;
-		});
-		return content;
-	}
-	
 	renderItems() {
 		return this.state.items.map((item, idx) => {
 			return (
 				<div key={idx}>
-					<h2>{item.title}</h2>
-					<pre>{this.renderContent(item.content)}</pre>
+					<Markdown md={item.title} />
+					<Markdown md={item.content} />
 				</div>
 			);
 		});
