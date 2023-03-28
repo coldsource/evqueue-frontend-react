@@ -42,13 +42,12 @@ export class Dialog extends React.Component {
 		
 		// Local state
 		var top = window.pageYOffset+200;
-		var left = 500;
 		var width = props.width?parseInt(props.width):200;
+		var left = (window.innerWidth-width)/2;
 		var height = (props.height && props.height!='auto')?parseInt(props.height):200;
 		
 		if(this.props.modal)
 		{
-			left = (window.innerWidth-width)/2;
 			top = window.pageYOffset+(window.innerHeight-height)/2;
 		}
 		
