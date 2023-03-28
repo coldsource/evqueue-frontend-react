@@ -110,7 +110,7 @@ export class EditDisplay extends evQueueComponent {
 						<br />
 						<br />You can use variables in item title or content by using this syntax : {"{path/to/variable/}"}. If variable is a Map, you can access a special key by using {"{path/to/variable}.key"}. $key and $value special variables can be used in variable names.
 						<br />
-						<br />You can also put links, which will be auto detected. You must use absolute links starting with http:// or https://.
+						<br />Both title and content support lightweight Markdown syntax.
 					</Help>
 				</h2>
 				<div className="formdiv">
