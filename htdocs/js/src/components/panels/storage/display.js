@@ -39,6 +39,8 @@ export class Display extends evQueueComponent {
 		
 		this.state.page = 0;
 		this.state.items_per_page = 10;
+		
+		this.vars_cache = {};
 	}
 	
 	componentDidMount() {
@@ -71,7 +73,10 @@ export class Display extends evQueueComponent {
 	}
 	
 	get_variable(path) {
-		return new Promise((resolve, reject) => {
+		if(this.vars_cache[path]!==undefined)
+			return this.vars_cache[path];
+		
+		let p = new Promise((resolve, reject) => {
 			return this.API({
 				group: 'storage',
 				action: 'get',
@@ -82,6 +87,9 @@ export class Display extends evQueueComponent {
 				resolve(variable);
 			});
 		});
+		
+		this.vars_cache[path] = p;
+		return p;
 	}
 	
 	async replaceAsync(str, regex, asyncFn) {
