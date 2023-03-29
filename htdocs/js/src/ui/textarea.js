@@ -29,7 +29,26 @@ export class Textarea extends React.Component {
 			full: false
 		}
 		
+		this.ref = React.createRef();
+		
 		this.changeValue = this.changeValue.bind(this);
+		this.clickHandler = this.clickHandler.bind(this);
+	}
+	
+	componentDidMount() {
+		document.addEventListener('click', this.clickHandler);
+	}
+	
+	componentWillUnmount() {
+		document.removeEventListener('click', this.clickHandler);
+	}
+	
+	clickHandler(e) {
+		if(!this.state.full)
+			return;
+		
+		if(!this.ref.current.contains(e.target))
+			this.setState({full: false});
 	}
 	
 	changeValue(e) {
@@ -42,7 +61,7 @@ export class Textarea extends React.Component {
 	render() {
 		let icon = this.props.value?'fa-check-square-o':'fa-square-o';
 		return (
-			<div className={"evq-textarea" + (this.state.full?' full':'')}>
+			<div className={"evq-textarea" + (this.state.full?' full':'')} ref={this.ref}>
                 <span className="faicon fa-expand" onClick={e => this.setState({full: !this.state.full})}></span>
 				<textarea onChange={this.changeValue} value={this.props.value!==undefined?this.props.value:''}></textarea>
 			</div>
