@@ -110,9 +110,9 @@ export class Display extends evQueueComponent {
 	async replace_variables(str, key, value) {
 		str = str.replaceAll('$key', key);
 		str = str.replaceAll('$value', value);
-		str = await this.replaceAsync(str, /\{([\p{L}\d_\/]+)\}(\.([\p{L}\d_\/]+))?/gu, match => {
+		str = await this.replaceAsync(str, /\{([\p{L}\d_\/-]+)\}(\.([\p{L}\d_\/]+))?/gu, match => {
 			return new Promise((resolve, reject) => {
-				let parts = match.match(/\{([\p{L}\d_\/]+)\}(\.([\p{L}\d_\/]+))?/u);
+				let parts = match.match(/\{([\p{L}\d_\/-]+)\}(\.([\p{L}\d_\/]+))?/u);
 				let path = parts[1];
 				let key = parts[3];
 				this.get_variable(path, key, value).then(v => {
