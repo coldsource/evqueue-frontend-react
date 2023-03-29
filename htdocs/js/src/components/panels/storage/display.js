@@ -29,12 +29,16 @@ export class Display extends evQueueComponent {
 		
 		this.state.display = {
 			path: '',
-			orsder: 'ASC',
+			order: 'ASC',
 			item_title: '',
 			item_content: ''
 		};
 		
 		this.state.items = [];
+		this.state.current_items = [];
+		
+		this.state.page = 0;
+		this.state.items_per_page = 10;
 	}
 	
 	componentDidMount() {
@@ -58,26 +62,11 @@ export class Display extends evQueueComponent {
 					items.push({key: v.value[i], value: v.value[i], title: display.item_title, content: display.item_content});
 			}
 			
-			
-			// Replace variables in items
-			for(let i=0;i<items.length;i++)
-			{
-				items[i].title = await this.replace_variables(items[i].title, items[i].key, items[i].value);
-				items[i].content = await this.replace_variables(items[i].content, items[i].key, items[i].value);
-			}
-			
 			if(display.order=='DESC')
 				items.reverse();
 			
-			this.setState({
-				items: items,
-				display: {
-					path: display.path,
-					order: display.order,
-					item_title: display.item_title,
-					item_content: display.item_content
-				}
-			});
+			
+			this.changePage(this.state.page, display, items);
 		});
 	}
 	
@@ -148,8 +137,39 @@ export class Display extends evQueueComponent {
 		return str;
 	}
 	
+	async changePage(page, display = null, items = null) {
+		if(display===null)
+			display = this.state.display;
+		
+		if(items===null)
+			items = this.state.items;
+		
+		let start_item = page * this.state.items_per_page;
+		let end_item = start_item + this.state.items_per_page;
+		let current_items = items.slice(start_item, end_item);
+		
+		// Replace variables in items
+		for(let i=0;i<current_items.length;i++)
+		{
+			current_items[i].title = await this.replace_variables(current_items[i].title, current_items[i].key, current_items[i].value);
+			current_items[i].content = await this.replace_variables(current_items[i].content, current_items[i].key, current_items[i].value);
+		}
+		
+		this.setState({
+			items: items,
+			current_items: current_items,
+			page: page,
+			display: {
+				path: display.path,
+				order: display.order,
+				item_title: display.item_title,
+				item_content: display.item_content
+			}
+		});
+	}
+	
 	renderItems() {
-		return this.state.items.map((item, idx) => {
+		return this.state.current_items.map((item, idx) => {
 			return (
 				<div key={idx}>
 					<Markdown md={item.title} />
@@ -160,9 +180,17 @@ export class Display extends evQueueComponent {
 	}
 	
 	render() {
+		let page = this.state.page + 1;
+		let npages = (this.state.items.length % this.state.items_per_page==0)?this.state.items.length/this.state.items_per_page:Math.trunc(this.state.items.length/this.state.items_per_page)+1;
+		
 		let display = this.state.display;
 		return (
 			<div className="evq-display">
+				<div className="center">
+					<span className="faicon fa-backward" onClick={ e => { if(page>1) this.changePage(this.state.page - 1); } }></span>
+					&nbsp;{page} of {npages}
+					<span className="faicon fa-forward" onClick={ e => { if(page<npages) this.changePage(this.state.page + 1); } }></span>
+				</div>
 				{this.renderItems()}
 			</div>
 		);
