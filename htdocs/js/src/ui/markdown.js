@@ -32,7 +32,8 @@ export class Markdown extends React.Component {
 			this.md.push({type: 'line', content: line});
 		
 		this.handleFencedCode();
-		this.handleParagraphs('code', /\s{4,}/, false);
+		this.handleParagraphs('code', /^\s{4,}/, false);
+		this.handleParagraphs('quote', /^\>/);
 		this.handleHeadings();
 		this.handleLists('ol', /^\s*[0-9]+\.\s/);
 		this.handleLists('ul', /^\s*\*\s/);
@@ -293,6 +294,9 @@ export class Markdown extends React.Component {
 			
 			if(el.type=='code')
 				return (<pre key={idx}><code>{this.renderMD(el.content)}</code></pre>);
+			
+			if(el.type=='quote')
+				return (<blockquote key={idx}>{this.renderMD(el.content)}</blockquote>);
 		});
 	}
 	
