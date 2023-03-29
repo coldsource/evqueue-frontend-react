@@ -24,6 +24,7 @@ import {EventsUtils} from '../utils/events.js';
 import {InputSpinner} from './input-spinner.js';
 import {Checkbox} from './checkbox.js';
 import {Dialogs} from './dialogs.js';
+import {Textarea} from './textarea.js';
 import {Prompt} from './prompt.js';
 
 export class Variable extends React.Component {
@@ -151,7 +152,7 @@ export class Variable extends React.Component {
 		if(this.props.type=='STRING')
 		{
 			if(value.length>64 || value.indexOf("\n")>-1 || value.indexOf("\r")>-1)
-				return (<textarea name={this.props.name} value={value} onChange={e => this.onChange(e, key)}></textarea>);
+				return (<Textarea name={this.props.name} value={value} onChange={e => this.onChange(e, key)} />);
 			return (<input type="text" name={this.props.name} value={value} onChange={e => this.onChange(e, key)} />);
 		}
 		else if(this.props.type=='INT')

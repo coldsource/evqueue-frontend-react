@@ -1,0 +1,24 @@
+.evq-textarea {
+	position: relative;
+	
+	&.full {
+		position: fixed;
+		top: 10vh;
+		left: 10vw;
+		width: 80vw !important;
+		height: 80vh !important;
+	}
+	
+	span.fa-expand {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+	}
+	
+	textarea {
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		resize: none;
+	}
+}

@@ -19,12 +19,13 @@ div.formdiv {
 			vertical-align: middle;
 		}
 		
-		&>textarea {
+		&>textarea, &>.evq-textarea {
 			width: 21rem;
 			height: 6rem;
 			box-sizing: border-box;
 			resize: none;
 			vertical-align: middle;
+			display: inline-block;
 		}
 		
 		&>.evq-select {

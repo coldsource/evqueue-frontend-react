@@ -22,6 +22,7 @@
 import {Dialog} from '../../../ui/dialog.js';
 import {Help} from '../../../ui/help.js';
 import {Select} from '../../../ui/select.js';
+import {Textarea} from '../../../ui/textarea.js';
 import {WorkflowSelector} from '../../base/workflow-selector.js';
 import {DisplayGroupAutocomplete} from '../../base/display-group-autocomplete.js';
 import {VariableAutocomplete} from '../../base/variable-autocomplete.js';
@@ -136,7 +137,7 @@ export class EditDisplay extends evQueueComponent {
 					</div>
 					<div>
 						<label>Item content</label>
-						<textarea name="item_content" value={display.item_content} onChange={this.onChange}></textarea>
+						<Textarea name="item_content" value={display.item_content} onChange={this.onChange} />
 					</div>
 				</div>
 				<button className="submit" onClick={this.save}>{submit}</button>
