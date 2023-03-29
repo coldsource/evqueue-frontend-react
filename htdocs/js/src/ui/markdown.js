@@ -63,7 +63,6 @@ export class Markdown extends React.Component {
 				}
 				else // End current block
 				{
-					console.log(current_code.content);
 					current_code.content = [{type: 'text', content: current_code.content.join("\n")}];
 					this.md.splice(code_start, code_lines + 1, current_code);
 				}
