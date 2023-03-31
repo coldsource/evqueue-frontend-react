@@ -48,21 +48,25 @@ export class EditVariable extends evQueueComponent {
 	componentDidMount() {
 		if(this.props.id)
 		{
-			this.API({
+			let api = {
 				group: 'storage',
 				action: 'get',
 				attributes: {id: this.props.id}
-			}).then( (response) => {
-				let variable = this.parseResponse(response);
-				this.setState({variable: {
-					path: variable.path,
-					name: variable.name,
-					type: variable.type,
-					structure: variable.structure,
-					value: JSON.parse(variable.value)
-				}});
-			});
+			};
+			
+			this.Subscribe('VARIABLE_SET',api,true,this.props.id);
 		}
+	}
+	
+	evQueueEvent(response) {
+		let variable = this.parseResponse(response);
+		this.setState({variable: {
+			path: variable.path,
+			name: variable.name,
+			type: variable.type,
+			structure: variable.structure,
+			value: JSON.parse(variable.value)
+		}});
 	}
 	
 	getEmptyValue(type) {
