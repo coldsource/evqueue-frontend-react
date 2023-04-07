@@ -196,9 +196,10 @@ export class Markdown extends React.Component {
 		{
 			let richtext = [{type: 'text', content: lines[i]}];
 			this.handleInlineRecursive(richtext, str => this.handleInlineRegex(str, /(\s{2,}$)/, 1, 'line-break')); // Line breaks
-			this.handleInlineRecursive(richtext, str => this.handleInlineRegex(str, /(\*\*.*?\*\*)($|[^\*])/, 2, 'bold')); // Bold
-			this.handleInlineRecursive(richtext, str => this.handleInlineRegex(str, /(\*[^\*]+\*)/, 1, 'em')); // Italic
-			this.handleInlineRecursive(richtext, this.handleInlineLinks); // Italic
+			this.handleInlineRecursive(richtext, str => this.handleInlineRegex(str, /(\*\*.*?\*\*)($|[^\*])/, 2, 'bold')); // Bold **...**
+			this.handleInlineRecursive(richtext, str => this.handleInlineRegex(str, /(\*[^\*]+\*)/, 1, 'em')); // Italic *...*
+			this.handleInlineRecursive(richtext, this.handleInlineImages); // Images ![...](...)
+			this.handleInlineRecursive(richtext, this.handleInlineLinks); // Links [...](...)
 			lines.splice(i, 1, ...richtext);
 			i+= richtext.length-1;
 		}
@@ -217,7 +218,7 @@ export class Markdown extends React.Component {
 					i += res.length - 1;
 				}
 			}
-			else
+			else if(richtext[i].content!==undefined)
 				this.handleInlineRecursive(richtext[i].content, cbk);
 		}
 	}
@@ -241,7 +242,7 @@ export class Markdown extends React.Component {
 	}
 	
 	handleInlineLinks(str) {
-		let parts = str.split(/(\[[^]+\]\([^)]+\))/);
+		let parts = str.split(/(\[[^\]]+\]\([^)]+\))/);
 		
 		if(parts.length==1)
 			return false; // Nothing to replace
@@ -249,9 +250,28 @@ export class Markdown extends React.Component {
 		let res = [];
 		for(let i=0;i<parts.length;i++)
 		{
-			let matches = parts[i].match(/\[([^]+)\]\(([^)]+)\)/);
+			let matches = parts[i].match(/\[([^\]]+)\]\(([^)]+)\)/);
 			if(matches!==null)
 				res.push({type: 'link', name: matches[1], href: matches[2]});
+			else if(parts[i]!='')
+				res.push({type: 'text', content: parts[i]});
+		}
+		
+		return res;
+	}
+	
+	handleInlineImages(str) {
+		let parts = str.split(/(\!\[[^\]]+\]\([^)]+\))/);
+		
+		if(parts.length==1)
+			return false; // Nothing to replace
+		
+		let res = [];
+		for(let i=0;i<parts.length;i++)
+		{
+			let matches = parts[i].match(/\!\[([^\]]+)\]\(([^)]+)\)/);
+			if(matches!==null)
+				res.push({type: 'image', alt: matches[1], src: matches[2]});
 			else if(parts[i]!='')
 				res.push({type: 'text', content: parts[i]});
 		}
@@ -278,6 +298,9 @@ export class Markdown extends React.Component {
 			
 			if(el.type=='link')
 				return (<a target="_blank" key={idx} href={el.href}>{el.name}</a>);
+			
+			if(el.type=='image')
+				return (<img alt={el.alt} key={idx} src={el.src} />);
 			
 			if(el.type=='heading')
 				return React.createElement('h' + el.level, {key: idx}, this.renderMD(el.content));
