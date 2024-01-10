@@ -299,11 +299,8 @@ export class InstanceDetails extends evQueueComponent {
 	
 	taskStatus(task) {
 		let input_errors = this.xpath('input[@error]',task.domnode)
-		input_errors[1] = input_errors[0];
 		if(input_errors.length>0)
-		{
 			return (<span className="faicon fa-exclamation-circle error" title={input_errors[0].error}></span>);
-		}
 		
 		if(task.status=='ABORTED')
 			return (<span className="faicon fa-exclamation-circle error" title={task.status + " - " + task.error}></span>);
