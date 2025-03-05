@@ -9,8 +9,8 @@
     "babel-preset-react": "6.24.1",
     "sass": "1.26.5",
     "npm-run-all": "4.1.5",
-    "webpack": "4.43.0",
-    "webpack-cli": "3.3.11"
+    "webpack": "5.91.0",
+    "webpack-cli": "5.1.4"
   },
   "scripts": {
     "build:js": "node_modules/babel-cli/bin/babel.js htdocs/js/src --out-dir htdocs/js/dist --presets react",
@@ -19,7 +19,7 @@
     "watch:js": "node_modules/babel-cli/bin/babel.js --watch htdocs/js/src --out-dir htdocs/js/dist --presets react",
     "watch:css": "node_modules/sass/sass.js --source-map --style expanded --watch htdocs/styles/src/ui.scss htdocs/styles/dist/ui.css",
     "watch": "node_modules/npm-run-all/bin/npm-run-all/index.js --parallel watch:*",
-    "pack:js": "node_modules/webpack-cli/bin/cli.js --mode=production htdocs/js/dist/components/base/app.js --output htdocs/js/dist/evqueue.js",
+    "pack:js": "node_modules/webpack-cli/bin/cli.js --mode=production",
     "pack:index": "cat htdocs/index.html | sed -e '/DEV/,/END DEV/c\\' | grep -v PROD | grep -v 'END PROD' >htdocs/index.prod.html",
     "pack:extension": "zip evqueue-browser-plugin.zip manifest.json browser-plugin/* htdocs/index.prod.html htdocs/fonts/* htdocs/images/* htdocs/styles/dist/ui.css htdocs/styles/vendor/* htdocs/js/dist/evqueue.js htdocs/js/vendor/*/*; zip evqueue-browser-plugin-src.zip -r browser-plugin htdocs manifest.json package.json README.md && printf \"@ htdocs/index.prod.html\\n@=htdocs/index.html\\n\" | zipnote -w evqueue-browser-plugin.zip && printf \"@ htdocs/index.prod.html\\n@=htdocs/index.html\\n\" | zipnote -w evqueue-browser-plugin-src.zip",
     "pack:dist": "ln -s htdocs evqueue && zip evqueue.zip evqueue/index.prod.html evqueue/fonts/* evqueue/images/* evqueue/styles/dist/ui.css evqueue/styles/vendor/* evqueue/js/dist/evqueue.js evqueue/js/vendor/*/* evqueue/conf/cluster.dist.json && printf \"@ evqueue/index.prod.html\\n@=evqueue/index.html\\n\" | zipnote -w evqueue.zip && printf \"@ evqueue/conf/cluster.dist.json\\n@=evqueue/conf/cluster.json\\n\" | zipnote -w evqueue.zip && rm evqueue",
