@@ -13,7 +13,7 @@ if(browser === undefined)
 else
 	var lsget = browser.storage.local.get;
 
-browser.browserAction.onClicked.addListener(() => {
+browser.action.onClicked.addListener(() => {
 	browser.tabs.create({
 		url: "/htdocs/index.html"
 	});
